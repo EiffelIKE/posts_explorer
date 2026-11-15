@@ -1,0 +1,2605 @@
+
+❯ /impeccable init
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Exploring the project before asking anything.
+
+  Searched for 1 pattern, listed 1 directory, ran 1 shell command (ctrl+o to expand)
+
+● I have the picture: a Vite + React + TS SPA on JSONPlaceholder, with the stack
+  already settled in PLAN.md and no UI built yet. Three gaps would change later
+  design decisions, so I'll ask about those.
+
+● User answered Claude's questions:
+  ⎿  · PRODUCT.md calls Posts Explorer "customer-facing", but the brief reads
+     like a take-home technical exercise. Who should future design work treat as
+     the real audience? → Reviewers, framed as product (Recommended)
+     · Which devices does Posts Explorer need to work well on? → Mobile and
+     desktop equally
+     · Is there an accessibility standard Posts Explorer should meet? → WCAG 2.2
+     AA (Recommended)
+
+● Thanks. Writing PRODUCT.md now, keeping the existing feature list and adding
+  what you just confirmed.
+
+● Write(PRODUCT.md)
+  ⎿  Added 50 lines, removed 3 lines
+       1 -# Posts Explorer — MVP                                         
+       1 +# Product                                                      
+       2  
+       3 -Customer-facing SPA whose main purpose is to list users and the
+         -ir posts.                                                      
+       3 +<!-- impeccable:product-schema 1 -->                           
+       4  
+       5 -## Required MVP features                                       
+       5 +## Platform                                                    
+       6  
+       7 +web                                                            
+       8 +                                                               
+       9 +## Users                                                       
+      10 +                                                               
+      11 +Primary audience: engineering or hiring reviewers who will eval
+         +uate Posts Explorer as a take-home exercise. They will run it l
+         +ocally, try every feature, read the code and README, and judge 
+         +the craft.                                                     
+      12 +                                                               
+      13 +The app is framed as a real customer-facing product: someone wh
+         +o browses a directory of users, opens one, reads their posts, a
+         +nd publishes a new one. Design decisions should hold up for tha
+         +t customer, because the reviewer judges it as if it shipped.   
+      14 +                                                               
+      15 +## Product Purpose                                             
+      16 +                                                               
+      17 +A small single-page app that lists users and their posts, backe
+         +d by the public JSONPlaceholder API (https://jsonplaceholder.ty
+         +picode.com).                                                   
+      18 +                                                               
+      19 +Success means a reviewer can find a user, read their posts, and
+         + create a post without friction or confusion, and sees loading,
+         + error, empty, and validation states handled deliberately rathe
+         +r than as afterthoughts.                                       
+      20 +                                                               
+      21 +## Operating Context                                           
+      22 +                                                               
+      23 +- Data comes from JSONPlaceholder: `GET /users`, `GET /users/:i
+         +d/posts`, `POST /posts`.                                       
+      24 +- The API does not persist writes. `POST /posts` returns `id: 1
+         +01` every time, so the app gives created posts negative local I
+         +Ds (-1, -2, …) and adds them to the cached list. Created posts 
+         +exist only for the session and are lost on reload. Whether to p
+         +ersist them locally is undecided.                              
+      25 +- Reviewers also read the README, which covers how to run the a
+         +pp, the decisions made, next steps, and how AI was used (what w
+         +as asked, accepted, and corrected).                            
+      26 +                                                               
+      27 +## Capabilities and Constraints                                
+      28 +                                                               
+      29 +Required MVP features:                                         
+      30 +                                                               
+      31  - List of users with search by name
+      32  - Selecting a user shows their posts and allows creating a new 
+          one through a validated form (title and body are required)
+      33  - Visible loading and error states
+      34 +                                                               
+      35 +Constraints:                                                   
+      36 +                                                               
+      37 +- All code, UI copy, docs, and commits are in English.         
+      38 +- At least 3 tests (Vitest + Testing Library, network mocked wi
+         +th MSW).                                                       
+      39 +- Stack and decision log live in [PLAN.md](PLAN.md): Vite, Reac
+         +t 19, TypeScript, TanStack Query, plain CSS with CSS Modules an
+         +d BEM class names, Zod, no global state.                       
+      40 +- Mobile and desktop are equal targets from the start; neither 
+         +is an adaptation of the other.                                 
+      41 +                                                               
+      42 +## Evidence on Hand                                            
+      43 +                                                               
+      44 +- User and post content is JSONPlaceholder's placeholder data (
+         +Latin-like text, fictional names, emails, companies). Do not in
+         +vent real-looking customers, metrics, or testimonials.         
+      45 +- No logo, brand assets, or brand voice exist beyond the name "
+         +Posts Explorer" and `public/favicon.svg`.                      
+      46 +                                                               
+      47 +## Product Principles                                          
+      48 +                                                               
+      49 +1. **Every state is designed.** Loading, error, empty search, n
+         +o posts, and form validation are first-class screens, not fallb
+         +acks.                                                          
+      50 +2. **Honest about the fake backend.** The UI never implies that
+         + created posts were saved to a server or will survive a reload.
+      51 +3. **Small and finished over broad and rough.** Ship the three 
+         +required features completely before adding anything else.      
+      52 +4. **Reviewer-legible.** Behaviour and structure should be easy
+         + to verify from the UI, the tests, and the README alike.       
+      53 +                                                               
+      54 +## Accessibility & Inclusion                                   
+      55 +                                                               
+      56 +Target WCAG 2.2 AA: full keyboard navigation, visible focus, la
+         +belled inputs with errors tied to their fields, loading and err
+         +or states announced to assistive tech, AA contrast, and respect
+         + for `prefers-reduced-motion`.                                 
+
+  Searched for 2 patterns (ctrl+o to expand)
+
+● I've rewritten PRODUCT.md and kept your original MVP feature list as it was.
+  It now covers:
+
+  - Audience: the people reviewing the take-home are the real judges, but the
+    app is designed as a real product for customers, so every decision has to
+    hold up for that customer.
+  - Purpose and success: a reviewer can find a user, read their posts, and
+    create one without friction. Loading, error, empty and validation states
+    should all look deliberate.
+  - How the API behaves: JSONPlaceholder doesn't save anything you post, and it
+    gives every new post id: 101. So new posts get negative local IDs and
+    disappear on reload, as PLAN.md already decides.
+  - Constraints: everything is in English, there are at least 3 tests, and
+    mobile and desktop get equal attention from the start. The stack stays in
+    PLAN.md, which PRODUCT.md links to rather than copying.
+  - Principles: every state is designed; the UI is honest that the backend is
+    fake and never implies a post was saved to a server; three finished features
+    beat more half-done ones; behaviour should be easy for a reviewer to check.
+  - Accessibility: WCAG 2.2 AA, including errors tied to their form fields,
+    loading and error states announced to screen readers, and support for
+    reduced motion.
+
+  I left a few things undecided on purpose:
+  - Whether created posts should be saved in the browser so they survive a
+    reload. It's marked as open.
+  - No visual direction yet, because that comes later, when the UI work starts.
+  - No "comp-first" vs "code-first" setting, which only applies to landing
+    pages; app screens are built code-first anyway.
+  - No live-mode setup, since the app is still just a heading. Run /impeccable
+    live once there's UI to iterate on.
+
+  Files to commit: PRODUCT.md. .impeccable/config.local.json should stay on your
+  machine, but your .gitignore only ignores *.local, which doesn't match it.
+  Add .impeccable/config.local.json to .gitignore before your first commit.
+
+  Next: PLAN.md step 2 is "Layout and UI/UX definition". /impeccable shape users
+  and posts explorer would work out the screen layout and states with you
+  before any code. Or just ask me to build the layout, and I'll settle the
+  visual direction with you first.
+
+❯ /impeccable lets start with the design, my first thought is 2 panels, on
+desktop both panels side by side and on mobile one panel at a time by a route,
+this would need to install react-router. Another option was two separated
+routes, but I think on desktop there's a lot of useless space, and to change
+user we would need to use the back button or a back navigation. Lets also add
+as a decision to build the first option, so it would be: one layout route "/"
+with the user list and the search bar (the search bar may be on top), and a
+nested route as "/users/:userId" with all the user posts, also add in moble a
+left-arrow to go back. Lets start with black theme available, with system theme
+as default and an option of change the theme, so we need light and black
+theme, lets use indigo blue and cold grays
+
+  Read 1 file (ctrl+o to expand)
+
+● This is a new screen with no visual system yet, so I'll go through the
+  new-work flow. First I'll record the layout decision you asked for in PLAN.md.
+
+● Update(PLAN.md)
+  ⎿  Added 1 line
+      12  | Validation    | Zod (manual validation would also be enough a
+          t this size) |
+      13  | Tests         | Vitest + Testing Library + MSW (network mocke
+          d, jsdom)    |
+      14  | Lint / format | ESLint (type-aware typescript-eslint) + Prett
+          ier          |
+      15 +| Routing       | React Router (layout route + nested user rout
+         +e)           |                                                 
+      16  | Global state  | None at this stage                           
+                       |
+      17  | Runtime       | Node 24 (pinned in `mise.toml`)              
+                       |
+      18  
+
+● Update(PLAN.md)
+  ⎿  Added 10 lines
+      57  6. **Known audit warning (dev-only):** 7 moderate findings, all
+           from one minimatch ReDoS
+      58     in typescript-eslint's dependency tree. Not shipped to the b
+          undle; the only fix is
+      59     `npm audit fix --force`. Left as is.
+      60 +7. **Two-panel layout with nested routes (master–detail).** Lay
+         +out route `/` holds the                                        
+      61 +   user list with the search bar on top; nested route `/users/:
+         +userId` holds that                                             
+      62 +   user's posts and the create-post form. On desktop both panel
+         +s sit side by side, so                                         
+      63 +   switching users is one click and the wide viewport isn't was
+         +ted. On mobile only one                                        
+      64 +   panel shows at a time, driven by the route, and the posts pa
+         +nel has a left-arrow                                           
+      65 +   back control to `/`. Rejected alternative: two fully separat
+         +e routes, which leaves                                         
+      66 +   dead space on desktop and forces back-navigation to change u
+         +ser. Needs React Router.                                       
+      67 +8. **Theming: light and dark, system by default.** The theme fo
+         +llows                                                          
+      68 +   `prefers-color-scheme` unless the user picks Light or Dark e
+         +xplicitly; the choice is                                       
+      69 +   remembered per browser. Palette: indigo accent over cool gra
+         +ys.                                                            
+
+● User answered Claude's questions:
+  ⎿  · In the posts panel (/users/:userId), where should the create-post form
+     live? → Collapsed composer on top (Recommended)
+     · Besides the name, what should each row in the user list show? → Lets use
+     an avatar with the user's initials, name, username and in bottom
+     company.name
+     · What would make a polished result feel wrong to you? → Over-decorated,
+     Generic template look, Too dense, Too sparse
+
+● PLAN.md now records the layout as decision 7 and theming as decision 8, and
+  lists React Router in the stack table. Next I'll work out candidate visual
+  directions, then roll the concept seed.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The roll landed on my sixth of seven candidate directions. Next I'm drafting
+  the payload schema for the decision page, and I'm checking the quality-bar
+  board for the one challenger I'm seriously weighing. · summary
+
+  Read 1 file, ran 2 shell commands (ctrl+o to expand)
+
+● The console challenger stays as a full alternate since it matches the pinned
+  two-panel layout, and the other five are dropped in favour of their assigned
+  directions. I'm writing the decision page payload next. · summary
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● The decision page is open at http://127.0.0.1:41633/. Now I'll write the four
+  first-viewport sketches the cards display.
+
+● Write(.impeccable/mocks/decision/assigned.html)
+  ⎿  Wrote 59 lines to .impeccable/mocks/decision/assigned.html
+       1 <!doctype html>
+       2 <html lang="en"><head><meta charset="utf-8">
+       3 <link href="https://fonts.googleapis.com/css2?family=Archivo:wgh
+         t@400;500;600;700&display=swap" rel="stylesheet">
+       4 <style>
+       5 *{box-sizing:border-box;margin:0;padding:0}
+       6 body{width:1440px;height:900px;overflow:hidden;background:#F4F5F
+         8;color:#14161D;font:15px/24px Archivo,sans-serif;font-variant-n
+         umeric:tabular-nums}
+       7 .mast{height:48px;background:#4338CA;color:#fff;display:flex;ali
+     … +53 lines (~6 KB) (ctrl+o to expand)
+
+● Write(.impeccable/mocks/decision/model-pick.html)
+  ⎿  Wrote 57 lines to .impeccable/mocks/decision/model-pick.html
+      1 <!doctype html>
+      2 <html lang="en"><head><meta charset="utf-8">
+      3 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght
+        @400;500;600;700;800&display=swap" rel="stylesheet">
+      4 <style>
+      5 *{box-sizing:border-box;margin:0;padding:0}
+      6 body{width:1440px;height:900px;overflow:hidden;background:#EEF0F5
+        ;color:#1A1D26;font:15px/24px Figtree,sans-serif}
+      7 .top{height:56px;display:flex;align-items:center;justify-content:
+        space-between;padding:0 28px;background:#fff;border-bottom:1px so
+     … +51 lines (~6 KB) (ctrl+o to expand)
+
+● Write(.impeccable/mocks/decision/challenger-console.html)
+  ⎿  Wrote 57 lines to .impeccable/mocks/decision/challenger-console.html
+       1 <!doctype html>
+       2 <html lang="en"><head><meta charset="utf-8">
+       3 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@
+         400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="st
+         ylesheet">
+       4 <style>
+       5 *{box-sizing:border-box;margin:0;padding:0}
+       6 body{width:1440px;height:900px;overflow:hidden;background:#0D111
+         7;color:#E6EDF3;font:14px/22px Geist,sans-serif}
+       7 .mono{font-family:"Geist Mono",monospace}
+     … +50 lines (ctrl+o to expand)
+
+● Write(.impeccable/mocks/decision/canon.html)
+  ⎿  Wrote 49 lines to .impeccable/mocks/decision/canon.html
+       1 <!doctype html>
+       2 <html lang="en"><head><meta charset="utf-8">
+       3 <style>
+       4 *{box-sizing:border-box;margin:0;padding:0}
+       5 body{width:1440px;height:900px;overflow:hidden;background:#FAFAF
+         A;color:#09090B;font:14px/22px system-ui,-apple-system,"Segoe UI
+         ",sans-serif}
+       6 .app{display:grid;grid-template-columns:320px 1fr;height:900px}
+       7 .side{background:#fff;border-right:1px solid #E4E4E7;padding:20p
+         x 16px}
+     … +42 lines (ctrl+o to expand)
+
+● The hook flagged low-contrast secondary text in three sketches. These are real
+  problems, not decisions anyone made, so I'm fixing them.
+  Ran 2 shell commands (ctrl+o to expand)
+
+● You picked Name Badge Directory. I'll record the choice and write the
+  direction contract into the surface brief before writing any code.
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+● The surface brief is saved with all six contract blocks and the seed
+  reference. I need one scope answer from you before building, since your plan
+  keeps API work (steps 3–6) separate from layout (step 2). · summary
+
+● User answered Claude's questions:
+  ⎿  · PLAN.md separates step 2 (layout and UI/UX) from steps 3–6 (API layer,
+     users list, posts and form, loading and error states). How far should this
+     design build go? → Design step only (Recommended)
+
+● Design step only. I'm reading the craft floor before touching UI code.
+
+  Read 1 file, listed 1 directory (ctrl+o to expand)
+
+● Installing React Router, a self-hosted Figtree font, and an icon library.
+
+● Bash(npm view react-router version && npm view lucide-react version && npm
+      view @fontsource-variable/figtree version && npm install react-router
+      lucide-react @fontso…)
+  ⎿  Updated package.json (+3 -0)
+      17      "post-agent": "prettier --write . && eslint . --fix --max-w
+          arnings=0 && tsc -b"
+      18    },
+      19    "dependencies": {
+      20 +    "@fontsource-variable/figtree": "^5.3.0",                  
+      21      "@tanstack/react-query": "^5.107.1",
+      22 +    "lucide-react": "^1.73.0",                                 
+      23      "react": "^19.3.1",
+      24      "react-dom": "^19.3.1",
+      25 +    "react-router": "^8.5.1",                                  
+      26      "zod": "^4.6.7"
+      27    },
+      28    "devDependencies": {
+  ⎿  Updated package-lock.json (+70 -1)
+       8        "name": "posts-explorer",
+       9        "version": "0.0.0",
+      10        "dependencies": {
+      11 +        "@fontsource-variable/figtree": "^5.3.0",              
+      12          "@tanstack/react-query": "^5.107.1",
+      13 +        "lucide-react": "^1.73.0",                             
+      14          "react": "^19.3.1",
+      15          "react-dom": "^19.3.1",
+      16 +        "react-router": "^8.5.1",                              
+      17          "zod": "^4.6.7"
+      18        },
+      19        "devDependencies": {
+     ...
+      727        "dev": true,
+      728        "license": "MIT"
+      729      },
+      730 +    "node_modules/@fontsource-variable/figtree": {            
+      731 +      "version": "5.3.0",                                     
+      732 +      "resolved": "https://registry.npmjs.org/@fontsource-vari
+          +able/figtree/-/figtree-5.3.0.tgz",                            
+      733 +      "integrity": "sha512-VRVodD7OiG7apQwE8/2fMjaqpY/a0qRJqL5
+          +HtYj8CKIVps+9amaFcdfKmDIf7iqYQx6iPLlArVXAfKeIZmVcNQ==",       
+      734 +      "license": "OFL-1.1",                                   
+      735 +      "funding": {                                            
+      736 +        "url": "https://github.com/sponsors/ayuhito"          
+      737 +      }                                                       
+      738 +    },                                                        
+      739      "node_modules/@humanfs/core": {
+      740        "version": "0.19.2",
+      741        "resolved": "https://registry.npmjs.org/@humanfs/core/-/
+           core-0.19.2.tgz",
+     ...
+      1085          "url": "https://github.com/sponsors/oxc-project"
+      1086        }
+      1087      },
+      1088 +    "node_modules/@remix-run/route-pattern": {               
+      1089 +      "version": "0.22.1",                                   
+      1090 +      "resolved": "https://registry.npmjs.org/@remix-run/rout
+           +e-pattern/-/route-pattern-0.22.1.tgz",                       
+      1091 +      "integrity": "sha512-czdGJWh09Lapvcqt7Vb09KlrU2PhRJ8xQa
+           +I+AItTuD9aDJ5MAgxnS38lnys6Ll+6RJEqPiaUqTwIQhVLwFvv+w==",     
+      1092 +      "license": "MIT"                                       
+      1093 +    },                                                       
+      1094      "node_modules/@rolldown/binding-android-arm-eabi": {
+      1095        "version": "1.2.19",
+      1096        "resolved": "https://registry.npmjs.org/@rolldown/bindi
+            ng-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
+     ...
+      1871        "version": "19.3.0",
+     … 76 more lines (ctrl+o to expand)
+  ⎿  (files that changed while this command ran, by the command or by
+     another process; a convenience view, not a review or audit of the
+     command)
+
+● React Router is at v8, which may be newer than what I know, so I'll check its
+  exports rather than guess the API.
+
+  Listed 1 directory, ran 1 shell command (ctrl+o to expand)
+
+● The API matches what I expected: RouterProvider comes from react-router/dom,
+  and NavLink supports viewTransition. Next I'll write the tokens, the theme,
+  and the global surfaces.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Writing the foundation files: tokens, global CSS, the theme, fixtures, and
+  helpers.
+
+● Write(src/styles/tokens.css)
+  ⎿  Wrote 155 lines to src/styles/tokens.css
+       1 /*
+       2  * Design tokens. One cool-gray ramp feeds every neutral; indigo
+          is the
+       3  * lanyard: selection, focus and the primary action only.
+       4  * Light is the base; dark applies when the system prefers it (u
+         nless the
+       5  * user forced light) or when the user forced dark.
+       6  */
+       7 :root {
+       8   color-scheme: light;
+     … +147 lines (ctrl+o to expand)
+
+● Write(src/index.css)
+  ⎿  Added 133 lines, removed 2 lines
+        1 +@import '@fontsource-variable/figtree';                       
+        2 +@import './styles/tokens.css';                                
+        3 +                                                              
+        4  *,
+        5  *::before,
+        6  *::after {
+        7    box-sizing: border-box;
+        8  }
+        9  
+       10 +html {                                                        
+       11 +  -webkit-text-size-adjust: 100%;                             
+       12 +  text-size-adjust: 100%;                                     
+       13 +}                                                             
+       14 +                                                              
+       15  body {
+       16    margin: 0;
+        9 -  font-family: system-ui, sans-serif;                         
+       10 -  line-height: 1.5;                                           
+       17 +  min-height: 100dvh;                                         
+       18 +  background: var(--color-ground);                            
+       19 +  color: var(--color-text);                                   
+       20 +  font-family: var(--font-sans);                              
+       21 +  font-size: var(--text-base);                                
+       22 +  line-height: 1.6;                                           
+       23 +  font-variant-numeric: tabular-nums;                         
+       24 +  -webkit-font-smoothing: antialiased;                        
+       25 +  -moz-osx-font-smoothing: grayscale;                         
+       26 +  scrollbar-color: var(--color-line-strong) transparent;      
+       27  }
+       28 +                                                              
+       29 +h1,                                                           
+       30 +h2,                                                           
+       31 +h3,                                                           
+       32 +p {                                                           
+       33 +  margin: 0;                                                  
+       34 +}                                                             
+       35 +                                                              
+       36 +h1,                                                           
+       37 +h2,                                                           
+       38 +h3 {                                                          
+       39 +  text-wrap: balance;                                         
+       40 +}                                                             
+       41 +                                                              
+       42 +ul,                                                           
+       43 +ol {                                                          
+       44 +  margin: 0;                                                  
+       45 +  padding: 0;                                                 
+       46 +  list-style: none;                                           
+       47 +}                                                             
+       48 +                                                              
+       49 +button,                                                       
+       50 +input,                                                        
+       51 +textarea {                                                    
+       52 +  font: inherit;                                              
+       53 +  color: inherit;                                             
+       54 +}                                                             
+       55 +                                                              
+       56 +input,                                                        
+       57 +textarea {                                                    
+       58 +  caret-color: var(--color-accent);                           
+       59 +}                                                             
+       60 +                                                              
+       61 +a {                                                           
+       62 +  color: inherit;                                             
+       63 +  text-underline-offset: 0.2em;                               
+       64 +}                                                             
+       65 +                                                              
+       66 +::selection {                                                 
+       67 +  background: var(--color-accent-soft);                       
+       68 +  color: var(--color-accent-ink);                             
+       69 +}                                                             
+       70 +                                                              
+       71 +:focus-visible {                                              
+       72 +  outline: 2px solid var(--color-accent);                     
+       73 +  outline-offset: 2px;                                        
+       74 +}                                                             
+       75 +                                                              
+       76 +#root {                                                       
+       77 +  min-height: 100dvh;                                         
+       78 +}                                                             
+       79 +                                                              
+       80 +.visually-hidden {                                            
+       81 +  position: absolute;                                         
+       82 +  width: 1px;                                                 
+       83 +  height: 1px;                                                
+       84 +  padding: 0;                                                 
+       85 +  margin: -1px;                                               
+       86 +  overflow: hidden;                                           
+       87 +  clip: rect(0 0 0 0);                                        
+       88 +  white-space: nowrap;                                        
+       89 +  border: 0;                                                  
+       90 +}                                                             
+       91 +                                                              
+       92 +/* View transitions: the badge handoff is the one authored mot
+          +ion. */                                                       
+       93 +::view-transition-group(*) {                                  
+       94 +  animation-duration: var(--duration-base);                   
+       95 +  animation-timing-function: var(--ease-out);                 
+       96 +}                                                             
+       97 +                                                              
+       98 +::view-transition-old(root),                                  
+       99 +::view-transition-new(root) {                                 
+      100 +  animation-duration: 160ms;                                  
+      101 +}                                                             
+      102 +                                                              
+      103 +/* Text snapshots keep their aspect while they morph. */      
+      104 +::view-transition-old(hero-name),                             
+      105 +::view-transition-new(hero-name) {                            
+      106 +  height: 100%;                                               
+      107 +  width: auto;                                                
+      108 +}                                                             
+      109 +                                                              
+      110 +/* The hero's clip tab drops in once per selection. */        
+      111 +::view-transition-old(hero-clip) {                            
+      112 +  display: none;                                              
+      113 +}                                                             
+      114 +                                                              
+      115 +::view-transition-new(hero-clip) {                            
+      116 +  animation: clip-drop 260ms var(--ease-out) both;            
+      117 +}                                                             
+      118 +                                                              
+      119 +@keyframes clip-drop {                                        
+      120 +  from {                                                      
+      121 +    transform: translateY(-100%);                             
+      122 +  }                                                           
+      123 +  to {                                                        
+      124 +    transform: translateY(0);                                 
+      125 +  }                                                           
+      126 +}                                                             
+      127 +                                                              
+      128 +@media (prefers-reduced-motion: reduce) {                     
+      129 +  ::view-transition-group(*),                                 
+      130 +  ::view-transition-old(*),                                   
+      131 +  ::view-transition-new(*) {                                  
+      132 +    animation: none !important;                               
+      133 +  }                                                           
+      134 +                                                              
+      135 +  *,                                                          
+      136 +  *::before,                                                  
+      137 +  *::after {                                                  
+      138 +    animation-duration: 0.01ms !important;                    
+      139 +    animation-iteration-count: 1 !important;                  
+      140 +    transition-duration: 0.01ms !important;                   
+      141 +  }                                                           
+      142 +}                                                             
+
+● Write(src/types.ts)
+  ⎿  Wrote 24 lines to src/types.ts
+       1 // Shapes of the JSONPlaceholder resources the app reads.
+       2 // Only the fields the UI uses are typed; the API returns more.
+       3
+       4 export interface User {
+       5   id: number
+       6   name: string
+       7   username: string
+       8   email: string
+       9   company: {
+      10     name: string
+     … +14 lines (ctrl+o to expand)
+
+● Write(src/lib/names.ts)
+  ⎿  Wrote 32 lines to src/lib/names.ts
+      1 const HONORIFICS = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'pro
+        f'])
+      2 const SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'v'])
+      3
+      4 /** Name words without leading honorifics ("Mrs.") or trailing su
+        ffixes ("V"). */
+      5 function coreWords(name: string): string[] {
+      6   const words = name
+      7     .split(/\s+/)
+      8     .map((word) => word.replace(/[^\p{L}\p{N}'-]/gu, ''))
+     … +24 lines (ctrl+o to expand)
+
+● Write(src/lib/cx.ts)
+  ⎿  Wrote 4 lines to src/lib/cx.ts
+      1 /** Joins truthy class names. */
+      2 export function cx(...classes: Array<string | false | null | unde
+        fined>) {
+      3   return classes.filter(Boolean).join(' ')
+      4 }
+
+● The light --color-danger-soft value picked up a stray non-ASCII character.
+  Fixing it.
+
+● Bash(sed -i 's/--color-danger-soft: #fdece.;/--color-danger-soft: #fdecea;/'
+      src/styles/tokens.css && grep -n "danger-soft" src/styles/tokens.css &&
+      grep -nP '[^\x00…)
+  ⎿  Updated src/styles/tokens.css (+1 -1)
+      51  
+      52    /* Status */
+      53    --color-danger: #b42318;
+      54 -  --color-danger-soft: #fdeceа;                                
+      54 +  --color-danger-soft: #fdecea;                                
+      55  
+      56    /* Depth */
+      57    --shadow-stock: 0 1px 2px rgb(22 25 40 / 0.06);
+
+● Now the fixtures and the theme.
+
+● Write(src/fixtures/data.ts)
+  ⎿  Wrote 43 lines to src/fixtures/data.ts
+       1 // TEMPORARY fixture data for the design step (PLAN step 2). Cop
+         ied from
+       2 // JSONPlaceholder so the UI renders real content; replaced by t
+         he API layer
+       3 // in step 3.
+       4 import type { Post, User } from '../types'
+       5
+       6 export const fixtureUsers: User[] = [
+       7   { id: 1, name: 'Leanne Graham', username: 'Bret', email: 'Sinc
+         ere@april.biz', company: { name: 'Romaguera-Crona' } },
+     … +36 lines (ctrl+o to expand)
+
+● Write(src/fixtures/useFixtureState.ts)
+  ⎿  Wrote 20 lines to src/fixtures/useFixtureState.ts
+       1 // TEMPORARY (design step): lets reviewers force every UI state
+         from the URL,
+       2 // e.g. `/?users=loading` or `/users/1?posts=error&publish=error
+         `.
+       3 // Steps 3–6 replace this with real TanStack Query states.
+       4 import { useSearchParams } from 'react-router'
+       5
+       6 export type UsersState = 'ready' | 'loading' | 'error'
+       7 export type PostsState = 'ready' | 'loading' | 'error' | 'empty'
+       8
+     … +12 lines (ctrl+o to expand)
+
+● Write(src/theme/theme.ts)
+  ⎿  Wrote 42 lines to src/theme/theme.ts
+       1 import { useCallback, useEffect, useState } from 'react'
+       2
+       3 export type ThemePreference = 'system' | 'light' | 'dark'
+       4
+       5 // Keep in sync with the pre-paint script in index.html.
+       6 const STORAGE_KEY = 'posts-explorer:theme'
+       7
+       8 function readPreference(): ThemePreference {
+       9   try {
+      10     const stored = localStorage.getItem(STORAGE_KEY)
+     … +32 lines (ctrl+o to expand)
+
+● Update(index.html)
+  ⎿  Added 10 lines
+       4      <meta charset="UTF-8" />
+       5      <link rel="icon" type="image/svg+xml" href="/favicon.svg" /
+          >
+       6      <meta name="viewport" content="width=device-width, initial-
+          scale=1.0" />
+       7 +    <meta name="color-scheme" content="light dark" />          
+       8      <title>Posts Explorer</title>
+       9 +    <script>                                                   
+      10 +      // Apply a forced theme before first paint to avoid a fla
+         +sh.                                                            
+      11 +      try {                                                    
+      12 +        var theme = localStorage.getItem('posts-explorer:theme'
+         +)                                                              
+      13 +        if (theme === 'light' || theme === 'dark') {           
+      14 +          document.documentElement.dataset.theme = theme       
+      15 +        }                                                      
+      16 +      } catch (e) {}                                           
+      17 +    </script>                                                  
+      18    </head>
+      19    <body>
+      20      <div id="root"></div>
+
+● Write(public/favicon.svg)
+  ⎿  Added 1 line, removed 1 line
+      1 -<svg xmlns="http://www.w3.org/2000/svg" width="48" height="46" f
+        -ill="none" viewBox="0 0 48 46"><path fill="#863bff" d="M25.946 4
+        -4.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.26
+        -2-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.49
+        -7 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.4
+        -74c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-
+        -7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 
+        -1.088.89 1.83L25.947 44.94z" style="fill:#863bff;fill:color(disp
+        -lay-p3 .5252 .23 1);fill-opacity:1"/><mask id="a" width="48" hei
+        -ght="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type
+        -:alpha"><path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-
+        -2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.45
+        -6-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.13
+        -3c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.47
+        -4h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.
+        -578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z
+        -" style="fill:#000;fill-opacity:1"/></mask><g mask="url(#a)"><g 
+        -filter="url(#b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" 
+        -rx="5.508" ry="14.704" style="fill:#ede6ff;fill:color(display-p3
+        - .9275 .9033 1);fill-opacity:1" transform="matrix(.00324 1 1 -.0
+        -0324 -4.47 31.516)"/></g><g filter="url(#c)"><ellipse cx="10.399
+        -" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" style="fill
+        -:#ede6ff;fill:color(display-p3 .9275 .9033 1);fill-opacity:1" tr
+        -ansform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g><g filte
+        -r="url(#d)"><ellipse cx="5.508" cy="30.487" fill="#7e14ff" rx="5
+        -.508" ry="30.487" style="fill:#7e14ff;fill:color(display-p3 .492
+        -2 .0767 1);fill-opacity:1" transform="rotate(89.814 -25.913 -14.
+        -639)scale(1 -1)"/></g><g filter="url(#e)"><ellipse cx="5.508" cy
+        -="30.599" fill="#7e14ff" rx="5.508" ry="30.599" style="fill:#7e1
+        -4ff;fill:color(display-p3 .4922 .0767 1);fill-opacity:1" transfo
+        -rm="rotate(89.814 -32.644 -3.334)scale(1 -1)"/></g><g filter="ur
+        -l(#f)"><ellipse  … [+7522 chars]                                
+      1   No newline at end of file
+      2 +<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rec
+        +t x="5" y="4" width="22" height="25" rx="4" fill="#ffffff" strok
+        +e="#1a1d26" stroke-width="2"/><rect x="12" y="4" width="8" heigh
+        +t="3" rx="1" fill="#4f46e5"/><circle cx="16" cy="14" r="4" fill=
+        +"#4f46e5"/><path d="M10 23h12" stroke="#1a1d26" stroke-width="2"
+        + stroke-linecap="round" stroke-dasharray="2 2"/></svg>          
+● Next, the shared UI pieces: avatar, buttons, state messages, and the theme
+  switch.
+
+● Write(src/ui/Avatar.tsx)
+  ⎿  Wrote 27 lines to src/ui/Avatar.tsx
+       1 import { getInitials } from '../lib/names'
+       2 import { cx } from '../lib/cx'
+       3 import styles from './Avatar.module.css'
+       4
+       5 interface AvatarProps {
+       6   name: string
+       7   size?: 'md' | 'lg'
+       8   selected?: boolean
+       9   className?: string
+      10 }
+     … +17 lines (ctrl+o to expand)
+
+● Write(src/ui/Avatar.module.css)
+  ⎿  Wrote 38 lines to src/ui/Avatar.module.css
+       1 .avatar {
+       2   display: inline-grid;
+       3   place-items: center;
+       4   flex: none;
+       5   width: 44px;
+       6   height: 44px;
+       7   border-radius: 50%;
+       8   background: var(--color-avatar);
+       9   color: var(--color-avatar-ink);
+      10   font-size: var(--text-base);
+     … +28 lines (ctrl+o to expand)
+
+● Write(src/ui/button.module.css)
+  ⎿  Wrote 74 lines to src/ui/button.module.css
+       1 .button {
+       2   display: inline-flex;
+       3   align-items: center;
+       4   justify-content: center;
+       5   gap: var(--space-2);
+       6   min-height: 40px;
+       7   padding: 0 var(--space-4);
+       8   border: 1px solid transparent;
+       9   border-radius: var(--radius-control);
+      10   font-size: var(--text-md);
+     … +64 lines (ctrl+o to expand)
+
+● Write(src/ui/StateMessage.tsx)
+  ⎿  Wrote 40 lines to src/ui/StateMessage.tsx
+       1 import type { ReactNode } from 'react'
+       2 import { CircleAlert, SearchX, FileText, UserX } from 'lucide-re
+         act'
+       3 import { cx } from '../lib/cx'
+       4 import styles from './StateMessage.module.css'
+       5
+       6 const icons = {
+       7   error: CircleAlert,
+       8   'no-results': SearchX,
+       9   'no-posts': FileText,
+     … +31 lines (ctrl+o to expand)
+
+● Write(src/ui/StateMessage.module.css)
+  ⎿  Wrote 51 lines to src/ui/StateMessage.module.css
+       1 .state {
+       2   display: grid;
+       3   grid-template-columns: 40px minmax(0, 1fr);
+       4   gap: var(--space-4);
+       5   align-items: start;
+       6   padding: var(--space-5);
+       7   border: 1px solid var(--color-line);
+       8   border-radius: var(--radius-badge);
+       9   background: var(--color-stock);
+      10 }
+     … +41 lines (ctrl+o to expand)
+
+● Write(src/theme/ThemeSwitch.tsx)
+  ⎿  Wrote 33 lines to src/theme/ThemeSwitch.tsx
+      1 import { Monitor, Moon, Sun } from 'lucide-react'
+      2 import { useThemePreference, type ThemePreference } from './theme
+        '
+      3 import styles from './ThemeSwitch.module.css'
+      4
+      5 const options: Array<{ value: ThemePreference; label: string; Ico
+        n: typeof Sun }> = [
+      6   { value: 'system', label: 'System', Icon: Monitor },
+      7   { value: 'light', label: 'Light', Icon: Sun },
+      8   { value: 'dark', label: 'Dark', Icon: Moon },
+     … +25 lines (ctrl+o to expand)
+
+● Write(src/theme/ThemeSwitch.module.css)
+  ⎿  Wrote 72 lines to src/theme/ThemeSwitch.module.css
+       1 .switch {
+       2   display: inline-flex;
+       3   gap: 2px;
+       4   padding: 3px;
+       5   border-radius: var(--radius-control);
+       6   background: var(--color-ground);
+       7   border: 1px solid var(--color-line);
+       8 }
+       9
+      10 .switch__option {
+     … +62 lines (ctrl+o to expand)
+
+● Now the badge rack: the user badge, search, and users panel.
+
+● Write(src/users/UserBadge.tsx)
+  ⎿  Wrote 55 lines to src/users/UserBadge.tsx
+       1 import { NavLink, useViewTransitionState } from 'react-router'
+       2 import type { User } from '../types'
+       3 import { Avatar } from '../ui/Avatar'
+       4 import { cx } from '../lib/cx'
+       5 import styles from './UserBadge.module.css'
+       6
+       7 /** One user in the rack, drawn as a conference name badge. */
+       8 export function UserBadge({ user }: { user: User }) {
+       9   const to = `/users/${user.id}`
+      10   // While navigating to this badge's route, it lends its monogr
+     … +46 lines (~2 KB) (ctrl+o to expand)
+
+● Write(src/users/UserBadge.module.css)
+  ⎿  Wrote 157 lines to src/users/UserBadge.module.css
+       1 .badge {
+       2   position: relative;
+       3   display: grid;
+       4   grid-template-columns: 44px minmax(0, 1fr);
+       5   grid-template-areas:
+       6     'avatar who'
+       7     'company company';
+       8   column-gap: var(--space-3);
+       9   height: 92px;
+      10   border: 1px solid var(--color-line);
+     … +147 lines (ctrl+o to expand)
+
+● Write(src/users/UsersPanel.tsx)
+  ⎿  Wrote 146 lines to src/users/UsersPanel.tsx
+       1 import { useId, useMemo, useState } from 'react'
+       2 import { Search, X } from 'lucide-react'
+       3 import { fixtureUsers } from '../fixtures/data'
+       4 import { useFixtureState } from '../fixtures/useFixtureState'
+       5 import type { User } from '../types'
+       6 import { StateMessage } from '../ui/StateMessage'
+       7 import button from '../ui/button.module.css'
+       8 import { cx } from '../lib/cx'
+       9 import { UserBadge, UserBadgeSkeleton } from './UserBadge'
+      10 import styles from './UsersPanel.module.css'
+     … +136 lines (ctrl+o to expand)
+
+● Write(src/users/UsersPanel.module.css)
+  ⎿  Wrote 129 lines to src/users/UsersPanel.module.css
+       1 .panel {
+       2   display: flex;
+       3   flex-direction: column;
+       4   min-height: 100%;
+       5 }
+       6
+       7 .panel__top {
+       8   position: sticky;
+       9   top: 0;
+      10   z-index: 1;
+     … +119 lines (ctrl+o to expand)
+
+● Now the posts side: hero badge, composer, post list, the panel, and the empty
+  and not-found states.
+
+● Write(src/posts/HeroBadge.tsx)
+  ⎿  Wrote 49 lines to src/posts/HeroBadge.tsx
+       1 import type { User } from '../types'
+       2 import { Avatar } from '../ui/Avatar'
+       3 import { cx } from '../lib/cx'
+       4 import styles from './HeroBadge.module.css'
+       5
+       6 /** The selected user's badge, clipped to the top of the posts p
+         anel. */
+       7 export function HeroBadge({ user }: { user: User }) {
+       8   return (
+       9     <header className={styles.hero}>
+     … +40 lines (ctrl+o to expand)
+
+● Write(src/posts/HeroBadge.module.css)
+  ⎿  Wrote 145 lines to src/posts/HeroBadge.module.css
+       1 .hero {
+       2   position: relative;
+       3   border: 1px solid var(--color-line);
+       4   border-radius: var(--radius-hero);
+       5   background: var(--color-stock);
+       6   box-shadow: var(--shadow-raised);
+       7   overflow: hidden;
+       8 }
+       9
+      10 .hero__clip {
+     … +135 lines (ctrl+o to expand)
+
+● Write(src/posts/Composer.tsx)
+  ⎿  Wrote 225 lines to src/posts/Composer.tsx
+       1 import { useId, useRef, useState, type FormEvent } from 'react'
+       2 import { CircleAlert, LoaderCircle, PenLine, Plus } from 'lucide
+         -react'
+       3 import { z } from 'zod'
+       4 import type { NewPost } from '../types'
+       5 import { cx } from '../lib/cx'
+       6 import button from '../ui/button.module.css'
+       7 import styles from './Composer.module.css'
+       8
+       9 const postSchema = z.object({
+     … +216 lines (ctrl+o to expand)
+
+● Write(src/posts/Composer.module.css)
+  ⎿  Wrote 200 lines to src/posts/Composer.module.css
+       1 .composer {
+       2   margin-top: var(--space-5);
+       3 }
+       4
+       5 /* Collapsed bar: one button, the prompt plus its primary action
+         . */
+       6 .bar {
+       7   display: flex;
+       8   align-items: center;
+       9   justify-content: space-between;
+     … +191 lines (ctrl+o to expand)
+
+● Write(src/posts/PostList.tsx)
+  ⎿  Wrote 46 lines to src/posts/PostList.tsx
+       1 import type { Post } from '../types'
+       2 import { cx } from '../lib/cx'
+       3 import styles from './PostList.module.css'
+       4
+       5 /** Posts as flat entries on hairlines, one reading measure. */
+       6 export function PostList({ posts }: { posts: Post[] }) {
+       7   return (
+       8     <ul className={styles.list}>
+       9       {posts.map((post) => {
+      10         // Created posts get negative local IDs (see PLAN decisi
+     … +37 lines (~1 KB) (ctrl+o to expand)
+
+● Write(src/posts/PostList.module.css)
+  ⎿  Wrote 76 lines to src/posts/PostList.module.css
+       1 .list {
+       2   border-top: 1px solid var(--color-line-strong);
+       3 }
+       4
+       5 .post {
+       6   padding: var(--space-5) var(--space-1) var(--space-6);
+       7   border-bottom: 1px solid var(--color-line);
+       8 }
+       9
+      10 .post__title {
+     … +66 lines (ctrl+o to expand)
+
+● Write(src/posts/localIds.ts)
+  ⎿  Wrote 8 lines to src/posts/localIds.ts
+      1 // POST /posts always answers id 101, so created posts get decrem
+        enting
+      2 // negative IDs instead (PLAN decision 2): still numbers, never c
+        lash with
+      3 // server IDs, deterministic in tests.
+      4 let nextId = -1
+      5
+      6 export function nextLocalPostId() {
+      7   return nextId--
+      8 }
+
+● Write(src/posts/UserPostsPanel.tsx)  ⎿  Wrote 121 lines to src/posts/UserPostsPanel.tsx
+       1 import { useState } from 'react'
+       2 import { Link, useParams } from 'react-router'
+       3 import { ArrowLeft } from 'lucide-react'
+       4 import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
+       5 import { useFixtureState } from '../fixtures/useFixtureState'
+       6 import { getFirstName } from '../lib/names'
+       7 import { cx } from '../lib/cx'
+       8 import type { NewPost, Post } from '../types'
+       9 import { StateMessage } from '../ui/StateMessage'
+      10 import button from '../ui/button.module.css'
+     … +111 lines (ctrl+o to expand)
+
+● Write(src/posts/UserPostsPanel.module.css)
+  ⎿  Wrote 73 lines to src/posts/UserPostsPanel.module.css
+      1 .panel {
+      2   width: 100%;
+      3   max-width: calc(var(--measure) + 2 * var(--space-12));
+      4   padding: var(--space-8) var(--space-12) var(--space-12);
+      5 }
+      6
+      7 .back {
+      8   display: none;
+      9 }
+     … +64 lines (ctrl+o to expand)
+
+● Write(src/posts/NoUserSelected.tsx)
+  ⎿  Wrote 20 lines to src/posts/NoUserSelected.tsx
+       1 import styles from './NoUserSelected.module.css'
+       2
+       3 /** Desktop detail panel before a badge is picked: an empty badg
+         e slot. */
+       4 export function NoUserSelected() {
+       5   return (
+       6     <div className={styles.empty}>
+       7       <div className={styles.empty__slot} aria-hidden="true">
+       8         <span className={styles.empty__avatar} />
+       9         <span className={styles.empty__lines}>
+     … +11 lines (ctrl+o to expand)
+
+● Write(src/posts/NoUserSelected.module.css)
+  ⎿  Wrote 59 lines to src/posts/NoUserSelected.module.css
+      1 .empty {
+      2   display: flex;
+      3   flex-direction: column;
+      4   align-items: center;
+      5   justify-content: center;
+      6   min-height: 100%;
+      7   padding: var(--space-12) var(--space-8);
+      8   text-align: center;
+      9 }
+     … +50 lines (ctrl+o to expand)
+
+● Write(src/layout/RootLayout.tsx)
+  ⎿  Wrote 36 lines to src/layout/RootLayout.tsx
+       1 import { Link, Outlet, useMatch } from 'react-router'
+       2 import { ThemeSwitch } from '../theme/ThemeSwitch'
+       3 import { UsersPanel } from '../users/UsersPanel'
+       4 import { cx } from '../lib/cx'
+       5 import styles from './RootLayout.module.css'
+       6
+       7 /**
+       8  * Master–detail shell. Desktop shows the badge rack and the det
+         ail panel side
+       9  * by side; mobile shows one at a time, chosen by the route (PLA
+     … +28 lines (ctrl+o to expand)
+
+● Write(src/layout/RootLayout.module.css)
+  ⎿  Wrote 101 lines to src/layout/RootLayout.module.css
+       1 .layout {
+       2   min-height: 100dvh;
+       3 }
+       4
+       5 .skip {
+       6   position: absolute;
+       7   top: var(--space-2);
+       8   left: var(--space-2);
+       9   z-index: 10;
+      10   padding: var(--space-2) var(--space-3);
+     … +91 lines (ctrl+o to expand)
+
+● Write(src/layout/NotFound.tsx)
+  ⎿  Wrote 25 lines to src/layout/NotFound.tsx
+       1 import { Link } from 'react-router'
+       2 import { StateMessage } from '../ui/StateMessage'
+       3 import button from '../ui/button.module.css'
+       4 import { cx } from '../lib/cx'
+       5 import styles from './NotFound.module.css'
+       6
+       7 /** Unknown routes render inside the detail panel. */
+       8 export function NotFound() {
+       9   return (
+      10     <div className={styles.page}>
+     … +15 lines (ctrl+o to expand)
+
+● Write(src/layout/NotFound.module.css)
+  ⎿  Wrote 10 lines to src/layout/NotFound.module.css
+       1 .page {
+       2   max-width: calc(var(--measure) + 2 * var(--space-12));
+       3   padding: var(--space-8) var(--space-12);
+       4 }
+       5
+       6 @media (max-width: 767px) {
+       7   .page {
+       8     padding: var(--space-4);
+       9   }
+      10 }
+
+● Write(src/router.tsx)
+  ⎿  Wrote 17 lines to src/router.tsx
+       1 import { createBrowserRouter } from 'react-router'
+       2 import { NotFound } from './layout/NotFound'
+       3 import { RootLayout } from './layout/RootLayout'
+       4 import { NoUserSelected } from './posts/NoUserSelected'
+       5 import { UserPostsRoute } from './posts/UserPostsPanel'
+       6
+       7 export const router = createBrowserRouter([
+       8   {
+       9     path: '/',
+      10     element: <RootLayout />,
+     … +7 lines (ctrl+o to expand)
+
+● Write(src/main.tsx)
+  ⎿  Added 3 lines, removed 2 lines
+       2  import { createRoot } from 'react-dom/client'
+       3  import { QueryClient, QueryClientProvider } from '@tanstack/rea
+          ct-query'
+       4  import { ReactQueryDevtools } from '@tanstack/react-query-devto
+          ols'
+       5 +import { RouterProvider } from 'react-router/dom'              
+       6  import './index.css'
+       6 -import App from './App.tsx'                                    
+       7 +import { router } from './router'                              
+       8  
+       9  const queryClient = new QueryClient()
+      10  
+      11  createRoot(document.getElementById('root')!).render(
+      12    <StrictMode>
+      13      <QueryClientProvider client={queryClient}>
+      13 -      <App />                                                  
+      14 +      <RouterProvider router={router} />                       
+      15        <ReactQueryDevtools initialIsOpen={false} />
+      16      </QueryClientProvider>
+      17    </StrictMode>,
+
+● Running the post-agent gate (prettier, eslint, tsc). App.tsx is no longer
+  used, so I'm removing it.
+
+● Bash(rm src/App.tsx && npm run post-agent 2>&1 | tail -30)
+  ⎿  Deleted src/App.tsx (+0 -9)
+      1 -function App() {                                                
+      2 -  return (                                                      
+      3 -    <main>                                                      
+      4 -      <h1>Posts Explorer</h1>                                   
+      5 -    </main>                                                     
+      6 -  )                                                             
+      7 -}                                                               
+      8 -                                                                
+      9 -export default App                                              
+  ⎿  Updated .agents/skills/impeccable/agents/openai.yaml (+1 -1)
+      1  interface:
+      2    display_name: Impeccable
+      3    short_description: Use when the user wants to design, redesign
+         , shape, critique, audit, polish, simplify,...
+      4 -  default_prompt: Use Impeccable to redesign, critique, audit, o
+        -r polish this frontend.                                         
+      4   No newline at end of file
+      5 +  default_prompt: Use Impeccable to redesign, critique, audit, o
+        +r polish this frontend.                                         
+  ⎿  Updated .agents/skills/impeccable/reference/adapt.md (+38 -14)
+      37  ### Mobile Adaptation (Desktop → Mobile)
+      38  
+      39  **Layout Strategy**:
+      40 +                                                               
+      41  - Single column instead of multi-column
+      42  - Vertical stacking instead of side-by-side
+      43  - Full-width components instead of fixed widths
+      44  - Bottom navigation instead of top/side navigation
+      45  
+      46  **Interaction Strategy**:
+      47 +                                                               
+      48  - Touch targets 44x44px minimum (not hover-dependent)
+      49  - Swipe gestures where appropriate (lists, carousels)
+      50  - Bottom sheets instead of dropdowns
+     ...
+      52  - Larger tap areas with more spacing
+      53  
+      54  **Content Strategy**:
+      55 +                                                               
+      56  - Progressive disclosure (don't show everything at once)
+      57  - Prioritize primary content (secondary content in tabs/accordi
+          ons)
+      58  - Shorter text (more concise)
+      59  - Larger text (16px minimum)
+      60  
+      61  **Navigation Strategy**:
+      62 +                                                               
+      63  - Hamburger menu or bottom navigation
+      64  - Reduce navigation complexity
+      65  - Sticky headers for context
+     ...
+      68  ### Tablet Adaptation (Hybrid Approach)
+      69  
+      70  **Layout Strategy**:
+      71 +                                                               
+      72  - Two-column layouts (not single or three-column)
+      73  - Side panels for secondary content
+      74  - Master-detail views (list + detail)
+      75  - Adaptive based on orientation (portrait vs landscape)
+      76  
+      77  **Interaction Strategy**:
+      78 +                                                               
+      79  - Support both touch and pointer
+     … 144 more lines (ctrl+o to expand)
+  ⎿  Updated .agents/skills/impeccable/reference/adapt.native.md (+10 -9)
+      26  
+      27  Translate idioms; never transplant them:
+      28  
+      29 -| iOS | Android |                                              
+      30 -|---|---|                                                      
+      31 -| Tab bar | Navigation bar / rail / drawer |                   
+      32 -| Edge-swipe back, back chevron | Predictive Back gesture / but
+         -ton |                                                          
+      33 -| Switch, segmented control, system pickers | Material switch, 
+         -chips, Material pickers |                                      
+      34 -| Action sheet | Bottom sheet / Material dialog |              
+      35 -| SF Symbols, SF Pro, Dynamic Type | Material Symbols, Roboto, 
+         -sp scaling |                                                   
+      36 -| Semantic system colors, materials | Material color roles, ton
+         -al elevation |                                                 
+      37 -| System push/sheet transitions | Container transform, shared-a
+         -xis, fade-through |                                            
+      29 +| iOS                                       | Android          
+         +                              |                                
+      30 +| ----------------------------------------- | -----------------
+         +----------------------------- |                                
+      31 +| Tab bar                                   | Navigation bar / 
+         +rail / drawer                 |                                
+      32 +| Edge-swipe back, back chevron             | Predictive Back g
+         +esture / button               |                                
+      33 +| Switch, segmented control, system pickers | Material switch, 
+         +chips, Material pickers       |                                
+      34 +| Action sheet                              | Bottom sheet / Ma
+         +terial dialog                 |                                
+      35 +| SF Symbols, SF Pro, Dynamic Type          | Material Symbols,
+         + Roboto, sp scaling           |                                
+      36 +| Semantic system colors, materials         | Material color ro
+         +les, tonal elevation          |                                
+      37 +| System push/sheet transitions             | Container transfo
+         +rm, shared-axis, fade-through |                                
+      38  
+      39  Rebuild navigation and controls in the target's vocabulary; car
+          ry over the brand's expressive layer (palette intent, type acce
+          nt, motion personality) through the target's theming system.
+      40  
+     ...
+      51  When the adaptation feels native to each context, hand off to `
+          $impeccable polish` for the final pass.
+      52  
+      53  **Avoid**:
+      54 +                                                               
+      55  - Ship a stretched phone layout on a tablet
+      56  - Port one platform's controls or navigation onto the other
+      57  - Hide core functionality on smaller devices (if it matters, ma
+          ke it work)
+  ⎿  Updated .agents/skills/impeccable/reference/animate.md (+5 -5)
+      51  
+      52  Timing should express distance and consequence:
+      53  
+      54 -| Duration | Typical use |                                     
+      55 -|---|---|                                                      
+      56 -| 100–150 ms | immediate feedback |                            
+      57 -| 150–300 ms | routine state change |                          
+      58 -| 300–500 ms | layout, overlay, or view transition |           
+      54 +| Duration   | Typical use                            |        
+      55 +| ---------- | -------------------------------------- |        
+      56 +| 100–150 ms | immediate feedback                     |        
+      57 +| 150–300 ms | routine state change                   |        
+      58 +| 300–500 ms | layout, overlay, or view transition    |        
+      59  | 500–800 ms | a deliberately authored focal entrance |
+      60  
+      61  Exit faster than entrance. Use natural deceleration such as `cu
+          bic-bezier(0.16, 1, 0.3, 1)` for confident arrivals; do not use
+           bounce or elastic curves by reflex. Long feedback feels like l
+          atency.
+  ⎿  … 86 more files changed
+
+● ESLint is linting the skill's vendored scripts under .claude/, which aren't
+  project code. Checking the ignore files before changing anything.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● src lints and type-checks clean; the gate only fails because ESLint and
+  prettier are scanning the vendored .claude/ tooling, so I'm excluding those
+  folders from both. · summary
+
+● Bash(sed -i "s/globalIgnores(\['dist', 'coverage'\])/globalIgnores(['dist',
+      'coverage', '.claude', '.agents', '.codex', '.impeccable'])/"
+      eslint.config.js && grep -n…)
+  ⎿  Updated eslint.config.js (+8 -1)
+       7  import tseslint from 'typescript-eslint'
+       8  
+       9  export default defineConfig([
+      10 -  globalIgnores(['dist', 'coverage']),                         
+      10 +  globalIgnores([                                              
+      11 +    'dist',                                                    
+      12 +    'coverage',                                                
+      13 +    '.claude',                                                 
+      14 +    '.agents',                                                 
+      15 +    '.codex',                                                  
+      16 +    '.impeccable',                                             
+      17 +  ]),                                                          
+      18    {
+      19      files: ['**/*.{ts,tsx}'],
+      20      extends: [
+  ⎿  Updated .prettierignore (+4 -0)
+      3  package-lock.json
+      4  coding_agents
+      5  PLAN.md
+      6 +.claude                                                         
+      7 +.agents                                                         
+      8 +.codex                                                          
+      9 +.impeccable                                                     
+
+● The gate passes. Next I'll start the dev server and inspect the render at
+  desktop and mobile sizes.
+
+  Read 1 file, called chrome-devtools 3 times, ran 1 shell command (ctrl+o to expand)
+
+● Two fixes from this look: the badge monogram sits flush against the name, and
+  the API's hard line breaks make post bodies read like verse. Fixing both, then
+  checking the other states.
+
+● Bash(sed -i 's/  grid-template-columns: 44px minmax(0, 1fr);/
+      grid-template-columns: 56px minmax(0, 1fr);/'
+      src/users/UserBadge.module.css && sed -i 's/  white-spac…)
+  ⎿  Updated src/users/UserBadge.module.css (+1 -1)
+      1  .badge {
+      2    position: relative;
+      3    display: grid;
+      4 -  grid-template-columns: 44px minmax(0, 1fr);                   
+      4 +  grid-template-columns: 56px minmax(0, 1fr);                   
+      5    grid-template-areas:
+      6      'avatar who'
+      7      'company company';
+  ⎿  Updated src/posts/PostList.module.css (+1 -1)
+      37    max-width: 68ch;
+      38    margin-top: var(--space-1);
+      39    color: var(--color-text-2);
+      40 -  white-space: pre-line;                                       
+      40 +  white-space: normal;                                         
+      41  }
+      42  
+      43  .post__body::first-letter {
+
+  Read 1 file, called chrome-devtools 5 times (ctrl+o to expand)
+
+● Dark theme and validation errors render cleanly. One small fix: the scroll
+  triggered by focusing an invalid field hides that field's label. I'll add a
+  scroll margin, then check mobile.
+
+● Update(src/posts/Composer.module.css)
+  ⎿  Added 1 line
+       95    background: var(--color-stock);
+       96    font-size: var(--text-base);
+       97    line-height: 1.5;
+       98 +  scroll-margin-top: 48px;                                    
+       99    transition:
+      100      border-color var(--duration-fast) ease-out,
+      101      box-shadow var(--duration-fast) ease-out;
+
+  Read 1 file, called chrome-devtools 3 times (ctrl+o to expand)
+
+● The mobile rack looks right. Now the detail route and the back arrow.
+
+  Read 1 file, called chrome-devtools 3 times (ctrl+o to expand)
+
+● Mobile handoff and detail work are clean, with no console errors or horizontal
+  overflow. I'm adding ScrollRestoration so the mobile detail opens at the top
+  and Back returns to the list position, then checking loading and empty states
+  on desktop. · summary
+● Update(src/layout/RootLayout.tsx)
+  ⎿  Added 1 line, removed 1 line
+      1 -import { Link, Outlet, useMatch } from 'react-router'           
+      1 +import { Link, Outlet, ScrollRestoration, useMatch } from 'react
+        +-router'                                                        
+      2  import { ThemeSwitch } from '../theme/ThemeSwitch'
+      3  import { UsersPanel } from '../users/UsersPanel'
+      4  import { cx } from '../lib/cx'
+
+● Update(src/layout/RootLayout.tsx)
+  ⎿  Added 2 lines
+      31            <Outlet />
+      32          </main>
+      33        </div>
+      34 +      {/* Mobile scrolls the window: open details at the top, r
+         +estore the list on back. */}                                   
+      35 +      <ScrollRestoration />                                    
+      36      </div>
+      37    )
+      38  }
+
+  Read 1 file, called chrome-devtools 6 times, ran 1 shell command (ctrl+o to expand)
+
+● The loading skeletons, the empty search result, and the no-user-selected panel
+  all hold together. Running the gate and the design detector.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Gate passes and the detector finds nothing. Next, a fresh finish reviewer that
+  hasn't seen this conversation.
+
+● impeccable-finish-reviewer(Finish review of Posts Explorer UI)
+  ⎿  Backgrounded agent (↓ to manage · ctrl+o to expand)
+
+● While the reviewer runs, I'll add the design-step decisions to PLAN.md.
+
+● Update(PLAN.md)
+  ⎿  Added 14 lines
+      67  8. **Theming: light and dark, system by default.** The theme fo
+          llows
+      68     `prefers-color-scheme` unless the user picks Light or Dark e
+          xplicitly; the choice is
+      69     remembered per browser. Palette: indigo accent over cool gra
+          ys.
+      70 +9. **Visual direction: "Name Badge Directory".** Each user is a
+         + conference badge                                              
+      71 +   (initials monogram, name, @username, company on the lower ba
+         +nd); the selected badge                                        
+      72 +   hangs from an indigo clip and reappears as the posts panel h
+         +eader. Indigo is reserved                                      
+      73 +   for selection, focus and the primary action. Tokens live in 
+         +`src/styles/tokens.css`.                                       
+      74 +   Figtree is self-hosted via `@fontsource-variable/figtree`; i
+         +cons come from                                                 
+      75 +   `lucide-react`. Mobile navigation uses a View Transition (th
+         +e badge's monogram morphs                                      
+      76 +   into the header), disabled under `prefers-reduced-motion`.  
+      77 +10. **Design step runs on fixtures.** `src/fixtures/` holds JSO
+         +NPlaceholder-shaped data,                                      
+      78 +    and `useFixtureState` forces every UI state from the URL (`
+         +?users=loading|error`,                                         
+      79 +    `?posts=loading|error|empty`, `?publish=error`). Steps 3–6 
+         +replace both with                                              
+      80 +    TanStack Query; components take data and callbacks, so no r
+         +estyling is needed.                                            
+      81 +11. **Agent tooling is out of lint/format scope.** `.claude`, `
+         +.agents`, `.codex` and                                         
+      82 +    `.impeccable` are in ESLint's `globalIgnores` and `.prettie
+         +rignore`; the vendored skill                                   
+      83 +    scripts were failing `post-agent`.                         
+
+● I'll wait for the reviewer's verdict before marking step 2 done.
+
+● Ran 1 stop hook (ctrl+o to expand)
+  ⎿  Stop hook feedback: [impeccable@1] Findings marked attribution
+  unknown may predate this session; do not treat them as regressions or
+  broaden the task to chase them.
+
+  [impeccable@1] Design hook findings requiring review across 4 files (9
+  issue(s)):
+  .impeccable/mocks/decision/assigned.html (2 issue(s)):
+  - [cramped-padding] [attribution unknown] Cramped padding. Text is too
+  close to the edge of its container. Two shapes: (1) an element with
+  its own text where the space between the rendered text and the border
+  box is too small for the font size, and (2) a wrapper whose children's
+  text lands flush against a visible boundary (border, outline, or
+  non-transparent background) with nothing to inset it. Add at least 8px
+  (ideally 12–16px) of space inside bordered, outlined, or colored
+  containers.
+  - [skipped-heading] [attribution unknown] Skipped heading level.
+  Heading levels should not skip (e.g. h1 then h3 with no h2). Screen
+  readers use heading hierarchy for navigation. Skipping levels breaks
+  the document outline.
+  .impeccable/mocks/decision/model-pick.html (1 issue(s)):
+  - [skipped-heading] [attribution unknown] Skipped heading level.
+  .impeccable/mocks/decision/challenger-console.html (5 issue(s)):
+  - [cramped-padding] [attribution unknown] Cramped padding.
+  - [cramped-padding] [attribution unknown] Cramped padding.
+  - ... 3 more in .impeccable/mocks/decision/challenger-console.html
+  (see /impeccable audit).
+  .impeccable/mocks/decision/canon.html (1 issue(s)):
+  - ... 1 more in .impeccable/mocks/decision/canon.html (see /impeccable
+  audit).
+
+  Triage per the session policy: fix real problems; persist confident
+  false-positive or sanctioned-exception ignores via `impeccable hooks
+  ignore-value` and disclose them in your reply; unsure, leave it with a
+  reason.
+
+● These findings are all in the decision-round sketches, which are throwaway
+  previews and never ship. I'll suppress them narrowly, per file and per rule.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I suppressed the nine detector findings in the four decision-page preview
+  files under .impeccable/mocks/decision/. Each suppression is scoped to one
+  file and one rule and recorded in .impeccable/config.json. Those previews are
+  throwaway mockups used only to pick the visual direction, and nothing in src/
+  was affected. The detector reports nothing on src/ or index.html.
+
+  The finish reviewer is still running. I'll report its verdict and apply any
+  fixes it asks for before I mark PLAN.md step 2 done and write DESIGN.md.
+
+› Message from impeccable-finish-reviewer
+  disposition: fix
+
+  Inputs: all six captures are present and valid. `desktop.png` is stale: it was
+  taken before the monogram-gap and paragraph-wrap fixes. Both fixes show in
+  `desktop-dark-composer.png`, so light desktop /users/1 after the fixes was not
+  inspected. Read: the surface brief, craft floor, `model-pick.html`, tokens,
+  index.css, the UserBadge, HeroBadge, PostList, UserPostsPanel, UsersPanel and
+  RootLayout CSS/TSX, plus a grep of ThemeSwitch. Not read: Composer,
+  StateMessage, Avatar, NotFound, NoUserSelected, PRODUCT.md (existence only),
+  and the fixtures.
+
+  ## persistence
+  Pass. PRODUCT.md exists. This build is code-led, so it has no `state.json` or
+  comp round to check. The only mocks are in `.impeccable/mocks/decision/`,
+  which is exempt. DESIGN.md is absent, which is expected for a new world (the
+  documenter writes it next). FORM carries `seed:cc90696b80e0f370`, and
+  `concept-seed --check-seed` confirms it: "SEED KNOWN … rolled on this
+  machine", exit 0.
+
+  ## fidelity
+  This is code-led: `model-pick.html` is a critique reference, not a spec, so
+  these rows are judged against OWN-WORLD and the contract.
+  - TYPE: match. Figtree is self-hosted (`@fontsource-variable/figtree`,
+  index.css:1). The weight steps are 400/500/600/700/800. The hero name is
+  34px/800 at -0.02em, matching the contract.
+  - MATERIAL: match. The badges are flat stock: 1px border, 10px radius, a
+  dashed rule above the company band. There is no faked physicality: no bevel,
+  emboss or plastic sheen.
+  - GROUND, light: match. #eef0f5 is a cool-gray ground under white stock,
+  identical to the sketch's #EEF0F5.
+  - GROUND, dark: contradicted. OWN-WORLD names a graphite ground under raised
+  slate stock. The build ships `--color-ground: #0f1117` (gray-950) and stock
+  #1b1f2a. That is near-black with a blue cast, the blue-black prior this check
+  hunts for. `desktop-dark-composer.png` reads as black, and the slate stock
+  barely separates from the ground (rail #13161e, stock #1b1f2a).
+  - Top bar (56px, wordmark left, System/Light/Dark segmented control right):
+  match. The mobile control goes icon-only, which is an adaptation to the 390px
+  width.
+  - Badge rack (400px, sticky search, 8px gap, fixed 92px rows,
+  monogram/name/@username/company band): match.
+  - Selected badge (indigo clip tab, indigo monogram, 2px indigo ring): match.
+  - Hero badge (88px monogram, 34px name, @username · email, dashed company
+  band, 64px clip tab): match. On mobile it compacts to a 56px monogram and 24px
+  name, which FIRST VIEWPORT allows.
+  - Composer bar ("Write a new post as Leanne" with a primary "New post"):
+  match. The mobile version drops the pencil icon, an acceptable adaptation.
+  - Posts as flat entries on hairlines at one measure (68ch body): match.
+  - Indigo used only as the lanyard: match. Unselected monograms are gray, and
+  the sketch's indigo "Explorer" in the wordmark was rightly dropped.
+  - No user selected (blank dashed badge plus "Pick someone from the
+  directory"): match.
+  - "Local only" tag and the "Saved for this tab only" disclosure: match.
+  - Loading skeletons: contradicted against FORM's discipline that "skeletons
+  hold the loaded geometry exactly". With `?users=loading`, the right panel
+  shows the hero skeleton followed directly by post bones. It has no
+  composer-bar placeholder and no "Posts" heading, so roughly 130px of content
+  appears and pushes the posts down when loading ends. The post bones are also
+  88% wide (~720px), wider than any loaded 68ch body line.
+  - Desktop badge handoff: missing. STORY says the visitor "watches it become
+  the panel header", and FORM makes the morph the signature interaction. On
+  desktop the morph is disabled (UserBadge.module.css:106 limits
+  `badge--handoff` to ≤767px), so desktop only drops the clip tab. This is
+  uncited: the CSS comment gives an implementation reason (a duplicate
+  `view-transition-name` with the old hero), not a product truth.
+  - Rack width when the search has no results: contradicted, a layout shift.
+  When results empty out, the rack scrollbar disappears and the count jumps from
+  x≈364 to x≈379 while the search field widens (`desktop-empty.png` against
+  `desktop.png`).
+
+  ## ceiling
+  The world's own devices are only partly used:
+  - **Lanyard:** it appears only as a 5px tab. There is no punched slot or clip
+  hole, so the tab reads as a decorative notch rather than a clip.
+  - **Company band:** it uses the same plain 13px gray as the metadata, not a
+  band with its own register (tinted stock strip, a weight or tracking change).
+  - **Wordmark:** it is generic bold text and carries nothing from the world.
+  - **Motion:** on desktop, the primary review viewport, the one authored moment
+  does not happen.
+
+  Everything else is at the bar: the dashed company band, the badge-to-hero
+  scale step, the blank-badge empty state, and the theme-matched selection and
+  caret.
+
+  ## material_fixes
+  1. **Dark ground (fidelity, GROUND).** In `src/styles/tokens.css:104` and
+  `:132`, plus the matching rail and stock lines `:105–106` and `:133–134`, lift
+  the dark ground off near-black to a graphite value (about #17191e–#1b1d23,
+  keeping the cool tint the user asked for). Make the stock a distinctly raised
+  slate (about #252a35) and keep the rail between them. Re-check text-2/text-3
+  contrast at ≥4.5:1 against the new ground.
+  2. **Skeleton geometry (contract, FORM discipline).** In
+  `src/posts/UserPostsPanel.tsx:39–46`, the users-loading branch has to render a
+  composer-bar placeholder at the loaded height and margins, then the `posts`
+  section with its "Posts" heading (count omitted), then `PostListSkeleton`. In
+  `src/posts/PostList.module.css:61`, cap `.bone--line` at the body measure
+  (`max-width: 68ch` on the line or its container) so the bones never run wider
+  than real text.
+  3. **Desktop badge handoff (contract, STORY and FORM signature interaction).**
+  Enable the monogram and name morph at ≥768px. In
+  `src/posts/HeroBadge.module.css:186–205`, apply `hero-avatar`/`hero-name` to
+  the outgoing hero only when no handoff is pending (for example, a class driven
+  by `useViewTransitionState` on the hero, or a document-level flag), so the
+  clicked badge alone carries the names in the old snapshot. Then remove the
+  `@media (max-width: 767px)` guard at `src/users/UserBadge.module.css:106`.
+  Keep the crossfade under reduced motion.
+  4. **Rack scrollbar shift (craft, layout stability).** Add `scrollbar-gutter:
+  stable` to `.rack` (and `.detail`) in
+  `src/layout/RootLayout.module.css:180–190` so the search field and count stop
+  jumping when the results empty out.
+  5. **Light desktop evidence (evidence follow-up).** Recapture `desktop.png`
+  (light, /users/1, 1440x900) after the fixes above, so the light theme is
+  inspected with the widened monogram gap and the paragraph-wrapped bodies.
+
+  ## keep
+  Indigo stays the lanyard and nothing else. Keep the badge geometry (fixed 92px
+  rows, the dashed company band, the clip tab) and the flat hairline posts at
+  one 68ch measure. None of the fixes above should add cards, colour or
+  decoration.
+
+● The reviewer returned fix, with four material fixes and a recapture. I'm
+  applying all four in one batch.
+
+● Bash(f=src/styles/tokens.css && sed -i \
+       -e 's/--color-ground: var(--gray-950);/--color-ground: #17191f;/' \…)
+  ⎿  Updated src/styles/tokens.css (+18 -18)
+      101  @media (prefers-color-scheme: dark) {
+      102    :root:not([data-theme='light']) {
+      103      color-scheme: dark;
+      104 -    --color-ground: var(--gray-950);                          
+      105 -    --color-rail: var(--gray-900);                            
+      106 -    --color-stock: var(--gray-850);                           
+      107 -    --color-stock-hover: #212634;                             
+      108 -    --color-line: var(--gray-800);                            
+      109 -    --color-line-strong: #3a4050;                             
+      110 -    --color-skeleton: var(--gray-800);                        
+      104 +    --color-ground: #17191f;                                  
+      105 +    --color-rail: #1c1f26;                                    
+      106 +    --color-stock: #252a35;                                   
+      107 +    --color-stock-hover: #2b303c;                             
+      108 +    --color-line: #313643;                                    
+      109 +    --color-line-strong: #434958;                             
+      110 +    --color-skeleton: #313643;                                
+      111      --color-text: #e8eaf0;
+      112      --color-text-2: #a6acba;
+      113      --color-text-3: #9097a6;
+      114      --color-accent: #818cf8;
+      115      --color-accent-fill: #5850ec;
+      116      --color-accent-fill-hover: #6a63f0;
+      117 -    --color-accent-soft: #262a4a;                             
+      117 +    --color-accent-soft: #30356a;                             
+      118      --color-accent-ink: #c7cbfd;
+      119 -    --color-avatar: var(--gray-800);                          
+      119 +    --color-avatar: #333846;                                  
+      120      --color-avatar-ink: #d5d8e2;
+      121      --color-danger: #f59a90;
+      122      --color-danger-soft: #3a1e1e;
+     ...
+      129  
+      130  :root[data-theme='dark'] {
+      131    color-scheme: dark;
+      132 -  --color-ground: var(--gray-950);                            
+      133 -  --color-rail: var(--gray-900);                              
+      134 -  --color-stock: var(--gray-850);                             
+      135 -  --color-stock-hover: #212634;                               
+      136 -  --color-line: var(--gray-800);                              
+      137 -  --color-line-strong: #3a4050;                               
+     … 22 more lines (ctrl+o to expand)
+
+● Agent "Finish review of Posts Explorer UI" finished · 2m 16s
+
+● The dark ramp is lifted in both theme blocks. Now the handoff, the skeleton,
+  and the scrollbar gutter.
+
+  Read 3 files (ctrl+o to expand)
+
+● NavLink only exposes isActive inside its render callbacks, so I'm computing it
+  with useMatch and marking the badge with a data attribute. That lets the hero
+  pass its transition names to the clicked badge on any viewport. · summary
+
+● Update(src/users/UserBadge.tsx)
+  ⎿  Added 7 lines, removed 4 lines
+      1 -import { NavLink, useViewTransitionState } from 'react-router'  
+      1 +import { NavLink, useMatch, useViewTransitionState } from 'react
+        +-router'                                                        
+      2  import type { User } from '../types'
+      3  import { Avatar } from '../ui/Avatar'
+      4  import { cx } from '../lib/cx'
+     ...
+       7  /** One user in the rack, drawn as a conference name badge. */
+       8  export function UserBadge({ user }: { user: User }) {
+       9    const to = `/users/${user.id}`
+      10 +  const isCurrent = useMatch(to) !== null                      
+      11    // While navigating to this badge's route, it lends its monog
+          ram and name to
+      11 -  // the hero badge (mobile handoff; see UserBadge.module.css).
+      12 -  const isHandingOff = useViewTransitionState(to)              
+      12 +  // the hero badge (the handoff). `data-handoff` tells the out
+         +going hero to                                                  
+      13 +  // release those transition names for the old snapshot (HeroB
+         +adge.module.css).                                              
+      14 +  const isHandingOff = useViewTransitionState(to) && !isCurrent
+      15  
+      16    return (
+      17      <NavLink
+      18        to={to}
+      19        viewTransition
+      20 +      data-handoff={isHandingOff ? '' : undefined}             
+      21        className={({ isActive }) =>
+      22          cx(
+      23            styles.badge,
+      24            isActive && styles['badge--selected'],
+      22 -          isHandingOff && !isActive && styles['badge--handoff']
+         -,                                                              
+      25 +          isHandingOff && styles['badge--handoff'],            
+      26          )
+      27        }
+      28      >
+
+● Update(src/users/UserBadge.module.css)
+  ⎿  Added 6 lines, removed 9 lines
+      101    view-transition-name: badge-clip;
+      102  }
+      103  
+      104 -/* Mobile handoff: the tapped badge's monogram and name become
+          - the hero's.                                                  
+      105 -   Desktop keeps both panels on screen, so the clip slides ins
+          -tead. */                                                      
+      106 -@media (max-width: 767px) {                                   
+      107 -  .badge--handoff .badge__avatar {                            
+      108 -    view-transition-name: hero-avatar;                        
+      109 -  }                                                           
+      104 +/* Handoff: the clicked badge's monogram and name become the h
+          +ero's. */                                                     
+      105 +.badge--handoff .badge__avatar {                              
+      106 +  view-transition-name: hero-avatar;                          
+      107 +}                                                             
+      108  
+      111 -  .badge--handoff .badge__name {                              
+      112 -    view-transition-name: hero-name;                          
+      113 -  }                                                           
+      109 +.badge--handoff .badge__name {                                
+      110 +  view-transition-name: hero-name;                            
+      111  }
+      112  
+      113  /* Skeleton */
+
+● Update(src/posts/HeroBadge.module.css)
+  ⎿  Added 7 lines
+      70    text-decoration: underline;
+      71  }
+      72  
+      73 +/* While a badge hands off to a new hero, the outgoing hero rel
+         +eases its                                                      
+      74 +   transition names so the clicked badge alone carries them. */
+      75 +:global(body:has([data-handoff])) .hero__avatar,               
+      76 +:global(body:has([data-handoff])) .hero__name {                
+      77 +  view-transition-name: none;                                  
+      78 +}                                                              
+      79 +                                                               
+      80  .hero__company {
+      81    padding: var(--space-3) var(--space-8);
+      82    border-top: 1px dashed var(--color-line-strong);
+
+● Update(src/posts/UserPostsPanel.tsx)
+  ⎿  Added 8 lines, removed 1 line
+      41        <div className={styles.panel}>
+      42          <BackLink />
+      43          <HeroBadgeSkeleton />
+      44 -        <PostListSkeleton />                                   
+      44 +        {/* Same geometry as the loaded panel: composer bar, he
+         +ading, posts. */}                                              
+      45 +        <div className={styles.composerBone} aria-hidden="true"
+         + />                                                            
+      46 +        <section className={styles.posts} aria-label="Posts">  
+      47 +          <div className={styles.posts__heading}>              
+      48 +            <h2 className={styles.posts__title}>Posts</h2>     
+      49 +          </div>                                               
+      50 +          <PostListSkeleton />                                 
+      51 +        </section>                                             
+      52        </div>
+      53      )
+      54    }
+
+● Update(src/posts/UserPostsPanel.module.css)
+  ⎿  Added 10 lines
+      12    margin-top: var(--space-10);
+      13  }
+      14  
+      15 +/* Matches the collapsed composer bar (Composer.module.css). */
+      16 +.composerBone {                                                
+      17 +  height: 56px;                                                
+      18 +  margin-top: var(--space-5);                                  
+      19 +  border: 1px solid var(--color-line);                         
+      20 +  border-radius: var(--radius-badge);                          
+      21 +  background: var(--color-stock);                              
+      22 +  box-shadow: var(--shadow-stock);                             
+      23 +}                                                              
+      24 +                                                               
+      25  .posts__heading {
+      26    display: flex;
+      27    align-items: baseline;
+
+● Update(src/posts/PostList.module.css)
+  ⎿  Added 1 line
+      60  
+      61  .bone--line {
+      62    width: 88%;
+      63 +  max-width: 68ch;                                             
+      64    height: 10px;
+      65    margin-bottom: 14px;
+      66  }
+
+● Bash(f=src/layout/RootLayout.module.css && sed -i 's/^  overflow-y: auto;$/
+      overflow-y: auto;\n  scrollbar-gutter: stable;/' $f && grep -c
+      "scrollbar-gutter" $f &&…)  ⎿  Updated src/layout/RootLayout.module.css (+2 -0)
+      50  
+      51  .rack {
+      52    overflow-y: auto;
+      53 +  scrollbar-gutter: stable;                                    
+      54    border-right: 1px solid var(--color-line);
+      55    background: var(--color-rail);
+      56    overscroll-behavior: contain;
+     ...
+      58  
+      59  .detail {
+      60    overflow-y: auto;
+      61 +  scrollbar-gutter: stable;                                    
+      62    overscroll-behavior: contain;
+      63  }
+      64  
+
+● Gate passes. Recapturing, and checking the desktop handoff for duplicate
+  transition names.
+
+  Called chrome-devtools 2 times (ctrl+o to expand)
+
+● The handoff works on desktop. Each transition name appears once in the old
+  snapshot, the clicked badge carries the monogram and name, and no errors are
+  thrown. Recapturing the evidence.
+
+  Read 1 file, called chrome-devtools 9 times, ran 1 shell command (ctrl+o to expand)
+
+● The new desktop.png came out dark: a forced Dark choice from earlier is still
+  in localStorage. Clearing it and recapturing the light capture.
+
+  Read 1 file, called chrome-devtools 4 times (ctrl+o to expand)
+
+● The light-mode capture is clean; the forced Dark setting is leftover
+  localStorage in this test browser, not an app bug. I'm sending the recaptures
+  back to the same reviewer to score the fixes. · summary
+  ⎿  Resuming agent a59c655
+
+● All four fixes are in, and the light and dark desktop captures are refreshed.
+  The reviewer is checking them now. When it reports back, I'll mark PLAN.md
+  step 2 done and generate DESIGN.md.
+
+› Message from impeccable-finish-reviewer
+  ## verdict
+  1. **Dark ground: resolved.** `desktop-dark.png` now reads as a lifted
+  graphite (#17191f), not black. The slate stock (#252a35) separates clearly
+  from both the ground and the rail on the badges, the hero and the composer,
+  and indigo still appears only as the clip tabs, the selected monogram and
+  ring, and "New post". The new values are at `src/styles/tokens.css:104–106`
+  and `:132–134`. Body text-2 sits on the ground, which is darker than the
+  stock, so its contrast is higher than the ≈6.4:1 you quoted.
+  2. **Skeleton geometry: resolved.** In `desktop-loading.png` the composer bone
+  sits at y≈302–356 (loaded bar: 302–357). The "Posts" heading, its hairline
+  and the post bones follow at the loaded rhythm. Body bones end at x≈1106, the
+  same edge as the loaded 68ch text (≈1101). One leftover: the heading and
+  hairline sit about 2px higher (410/436) than when loaded (412/438). The count
+  span is probably what makes the difference. It is not material.
+  3. **Desktop badge handoff: resolved, on code rather than capture.** A still
+  capture cannot show a morph, so I checked the code myself instead of taking
+  your account of it:
+     - `src/users/UserBadge.tsx:14` gates the handoff on
+  `useViewTransitionState(to) && !isCurrent`, so only the clicked badge carries
+  the names in the old snapshot.
+     - The new snapshot leaves them to the hero.
+     - `src/posts/HeroBadge.module.css:75–76` strips the outgoing hero's names
+  while `[data-handoff]` exists.
+     - The ≤767px guard is gone from `src/users/UserBadge.module.css:105–111`.
+
+     The logic is sound. The browser run that showed each name once and no
+  rejections is your evidence, not something I saw.
+  4. **Scrollbar shift: resolved.** In `desktop-empty.png` the count "0 of 10"
+  right-aligns at x≈364, and the search field ends at 363, the same as the
+  populated rack in `desktop.png`. The rule is `scrollbar-gutter: stable` at
+  `src/layout/RootLayout.module.css:53` and `:61`.
+  5. **Light desktop evidence: resolved.** `desktop.png` is now light, System
+  theme, /users/1. The name is clearly spaced from the monogram, post bodies
+  wrap as paragraphs at the measure, and light still matches the earlier review.
+
+  The fixes introduced no regressions I can see in the four recaptures.
+
+  ## remaining
+  Clear of material findings. One non-material nit: the "Posts" heading sits 2px
+  higher in the loading skeleton. A placeholder for the count, or a fixed
+  line-height on the heading row, would remove it.
+
+  This ship covers the five scored fixes and the regression check on these four
+  captures, not a fresh full-surface review. The mobile captures were not
+  retaken in this round.
+
+  disposition: ship
+
+● The reviewer returned ship on the five scored fixes. That covers those fixes
+  and a regression check of the four recaptured desktop screenshots, not a fresh
+  full review, and the mobile screenshots weren't retaken. I'll fix the 2px nit
+  it noted, since it costs one line. I'll also re-point the surface brief from
+  the deleted App.tsx to RootLayout.tsx, then hand off to the documenter.
+
+● Update(src/posts/UserPostsPanel.tsx)
+  ⎿  Added 4 lines
+      46          <section className={styles.posts} aria-label="Posts">
+      47            <div className={styles.posts__heading}>
+      48              <h2 className={styles.posts__title}>Posts</h2>
+      49 +            {/* Holds the count's line box so the heading row k
+         +eeps its height. */}                                           
+      50 +            <span className={styles.posts__count} aria-hidden="
+         +true">                                                         
+      51 +              &nbsp;                                           
+      52 +            </span>                                            
+      53            </div>
+      54            <PostListSkeleton />
+      55          </section>
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Agent "Finish review of Posts Explorer UI" finished · 41s
+
+● Now the documenter writes DESIGN.md from the shipped build. No DESIGN.md
+  exists, so this is a fresh write and there's no overwrite choice to make.
+
+● impeccable-documenter(Write DESIGN.md from the built world)
+  ⎿  Backgrounded agent (↓ to manage · ctrl+o to expand)
+
+● Marking step 2 done in PLAN.md while the documenter works.
+
+● Update(PLAN.md)
+  ⎿  Added 1 line, removed 1 line
+      19  ## Steps
+      20  
+      21  - [x] 1. Project setup: scaffold, tooling, `post-agent` gate
+      22 -- [ ] 2. Layout and UI/UX definition                           
+      22 +- [x] 2. Layout and UI/UX definition (on fixtures; see decision
+         +s 7–10 and DESIGN.md)                                          
+      23  - [ ] 3. API layer + types (`/users`, `/users/:id/posts`, `POST
+           /posts`)
+      24  - [ ] 4. Users list with search by name
+      25  - [ ] 5. User posts + create-post form (validated, required tit
+          le and body)
+
+● The documenter is still writing DESIGN.md. I'll check its output when it
+  finishes.
+
+❯ <ide_opened_file>The user opened the file
+  /home/eiffelike/work/users_post/src/App.tsx in the IDE. This may or may not
+  be related to the current task.</ide_opened_file>
+
+❯ send an agent to review the design for  desktop +1420px , I saw a pretty
+  large empty space on the right
+
+● I'll capture the posts screen at several wide desktop widths, then give the
+  screenshots to a fresh reviewer that hasn't seen my reasoning.
+
+  Called chrome-devtools 13 times (ctrl+o to expand)
+
+● Screenshots captured. Spawning a fresh layout reviewer and giving it the code
+  and captures without my own reading.
+
+● Agent(Review wide-desktop layout)
+  ⎿  Backgrounded agent (↓ to manage · ctrl+o to expand)
+
+● I've sent a layout reviewer to look at the wide-screen layout. It has
+  screenshots at 1440, 1680, 1920 and 2560px, of both the posts screen and the
+  "pick someone" state, plus the layout code. I didn't give it my own reading of
+  the problem, so its diagnosis is independent. It will measure the empty
+  space, weigh two or three fixes, and recommend exact CSS. I'll bring you its
+  findings and apply the fix you choose.
+
+  The DESIGN.md writer is still running too. If we change the layout, I'll
+  update DESIGN.md to match.
+
+  The src/App.tsx open in your editor is a stale tab. I deleted that file during
+  the design step, and the app now starts from src/router.tsx and
+  src/layout/RootLayout.tsx.
+
+› Message from general-purpose
+  ## 1. Diagnosis
+
+  **Cause.** Two things combine.
+  - `.body` is `grid-template-columns: var(--rack-width) minmax(0,1fr)`. The
+  rack is fixed at 400px (`tokens.css --rack-width`).
+  - `.panel` in `UserPostsPanel.module.css` is `width:100%; max-width:
+  calc(820px + 2*48px) = 916px`. It has **no `margin-inline:auto`**, so it hugs
+  the rack. Left padding is 48px.
+
+  The content column therefore sits at x=448 to 1268 at every width. All growth
+  in the window becomes dead space on the right of the detail pane. The detail
+  scroll area also reserves about 15px for `scrollbar-gutter: stable`.
+
+  Measured from the screenshots and CSS:
+
+  | Viewport | Rack | Detail pane | Column | Gap rack to column | Dead space
+  right of column (minus about 15px gutter) | Column as % of viewport |
+  |---|---|---|---|---|---|---|
+  | 1420 | 400 | 1020 | 820 | 48 | about 137 | 58% |
+  | 1440 | 400 | 1040 | 820 | 48 | about 157 | 57% |
+  | 1680 | 400 | 1280 | 820 | 48 | about 397 | 49% |
+  | 1920 | 400 | 1520 | 820 | 48 | about 637 | 43% |
+  | 2560 | 400 | 2160 | 820 | 48 | about 1277 | 32% |
+
+  - The column hits its cap at about 1331px. So the lopsidedness starts just
+  below the 1420 mark the user named: 48px of space on the left against 137px or
+  more on the right.
+  - By 1680 the right strip is 8 times the left gap. At 2560 the right half of
+  the screen is an empty gray field next to a small column.
+
+  **What reads wrong.**
+  1. **The composition is anchored left and the weight is lopsided.** The eye
+  sees a content block with a large unexplained void beside it. It looks
+  unfinished rather than intentional, which is the "too sparse" outcome the user
+  wants to avoid.
+  2. **The empty state does not line up with the populated state.** `.empty` is
+  a centered flex box, so its axis is the center of the whole pane (x of about
+  1152 at 1920). The populated column's center is about 858. Going between `/`
+  and `/users/1` makes the focal point jump 300px sideways, and 800px or more at
+  2560. The pane has two different alignment rules.
+  3. **There is dead space inside the column too.** Post bodies are `max-width:
+  68ch`. In the 1440 screenshot the text ends at about x=1100, but the hero,
+  composer and hairlines run to 1268. That leaves a ragged strip of about 170px
+  on the right inside the column. This is acceptable once the column is
+  centered, but it is another reason not to widen the column.
+  4. **The empty state is undersized.** The `.empty__slot` is 300px wide in a
+  1520px to 2160px pane. At 2560 it looks like a lost thumbnail.
+  5. **The rack is fixed at 400px.** That is correct at 1920 and heavy at 1024
+  (39% of the width). There is also a 400px to 340px jump at the 1023/1024
+  boundary, because `.layout` sets `--rack-width: 340px` only below 1024.
+
+  ## 2. Options
+
+  **A. Center the reading column in the detail pane (`margin-inline:auto`).**
+  - Pros:
+    - Gutters are equal on both sides: about 102px at 1440, 222px at 1680, 342px
+  at 1920, 662px at 2560.
+    - It puts populated and empty states on the same axis.
+    - It is a one-line fix, and it keeps the 820px column and the 68ch body
+  measure unchanged.
+    - It is the standard master-detail reading-pane pattern (mail and chat
+  apps).
+  - Cons:
+    - At 2560 there are still about 660px of ground on each side. That is calm,
+  but it is not "filled".
+    - The rack stays pinned to the left window edge, so the rack to column gap
+  grows from 48px to 100px or more.
+
+  **B. Cap the whole shell (`.body` and topbar at max-width of about 1680,
+  centered).**
+  - Pros: the rack and the column move as one unit, so they keep a tight
+  relationship.
+  - Cons:
+    - The blank space is split into two outer margins instead of being removed.
+    - Two independent scrollbars end up floating mid-screen.
+    - The topbar either detaches from the content or has to be capped too.
+    - It reads like a marketing page, not a directory app.
+    - The rack is no longer anchored to the window edge.
+  - Not recommended.
+
+  **C. Add a second column at 1600px and wider: a sticky hero badge on the left,
+  posts and composer on the right.**
+  - Pros: it actually uses the space, and it makes the badge the lanyard anchor,
+  which suits the concept.
+  - Cons:
+    - It is the largest change. The hero is currently a wide horizontal badge,
+  and its skeleton, view-transition morph and composer placement all change.
+    - The composer position becomes ambiguous.
+    - There are two layouts to maintain, and it risks "over-decorated".
+    - It is a redesign, not a fix, and it still needs A for the 1331px to 1600px
+  range.
+  - Defer this.
+
+  **Rejected variants.**
+  - Widening `--measure` fills space but breaks the 65 to 75ch body measure.
+  - Growing the rack past 400px only makes the badges emptier.
+
+  ## 3. Recommendation: A, plus a rack clamp and a larger empty state
+
+  All changes hold from 1024px to 2560px and wider.
+
+  1. `/home/eiffelike/work/users_post/src/posts/UserPostsPanel.module.css`,
+  `.panel`: add `margin-inline: auto;`. Keep `width:100%` and `max-width:
+  calc(var(--measure) + 2 * var(--space-12))`. The existing media-query paddings
+  stay as they are.
+  2. `/home/eiffelike/work/users_post/src/layout/NotFound.module.css`, the
+  selector that has the same `max-width: calc(var(--measure) +
+  2*var(--space-12))`: add `margin-inline: auto;` for consistency.
+  3. `/home/eiffelike/work/users_post/src/styles/tokens.css`, `:root`: change
+  `--rack-width: 400px` to `--rack-width: clamp(340px, 28vw, 400px);`. This
+  gives about 340px at 1024 to 1214, 358px at 1280, and 400px from about 1430px
+  up.
+     - It is identical to today at 1440 and wider, so the wide screenshots do
+  not change in rack width.
+     - It removes the jump at the 1023/1024 boundary, because the existing
+  `@media (max-width:1023px)` rule sets the same 340px.
+  4. `/home/eiffelike/work/users_post/src/layout/NoUserSelected.module.css`:
+     - `.empty__slot`: `width: 300px` becomes `width: 360px`.
+     - `.empty`: `padding: var(--space-12) var(--space-8)` becomes `padding:
+  var(--space-12) var(--space-8) calc(var(--space-12) + 8vh)`. This lifts the
+  prompt to the optical center and keeps it on the same horizontal axis as the
+  centered column.
+     - Leave `.empty__title` and `.empty__text` (36ch) alone.
+  5. Optional, only if the right edge of the post text still looks ragged
+  against the hairlines after centering: in
+  `/home/eiffelike/work/users_post/src/posts/PostList.module.css`, change
+  `.post__body { max-width: 68ch }` to `72ch`. That stays inside the 65 to 75ch
+  limit.
+     - I would not shrink `--measure`, because that makes the page sparser.
+
+  **Re-check after the change.**
+  - **1024 to 1280px:**
+    - The `margin-inline:auto` is a no-op while the pane is narrower than 916px,
+  so nothing shifts.
+    - At 1024 the detail pane becomes 684px (was 624px). The column is about
+  573px (684 − 15 scrollbar − 96 padding), up from about 513px. Confirm the 34px
+  hero name ("Nicholas Runolfsdottir V") and the composer prompt plus "New
+  post" button do not wrap awkwardly.
+    - Confirm the rack rows (monogram, name, company band) still look right at
+  340px, since they already do below 1024.
+    - Check there is no horizontal scroll.
+  - **1331 to 1420px:** the column is centered and the gutters grow from 0 to
+  about 100px. Check the rack to column gap looks deliberate, with at least
+  48px.
+  - **View transition:**
+    - Run the badge-to-hero morph at 2560. The travel distance is longer now.
+    - Confirm the `hero-avatar`, `hero-name` and `hero-clip` transitions still
+  land correctly. Skeleton geometry is unchanged, because the panel width logic
+  is unchanged.
+  - **Empty and selected states:** at 1920 and 2560, confirm the empty prompt's
+  center and the column's center are the same x. Both should be about 400 + (vw
+  − 400 − 15)/2.
+  - **Dark theme:** same layout, nothing color-specific changes.
+  - **Mobile:** at 767px and below, the panel is full width and
+  `margin-inline:auto` is a no-op.
+
+  **Honest caveat.** At 2560px, centering leaves about 660px of ground on each
+  side of an 820px column. That is the correct, calm result for a reading pane
+  and fixes the lopsidedness and the empty-state jump. If the user wants the
+  2560 screen to feel more "filled", the only real route is option C at 1600px
+  and wider. I would hold that until after A is seen.
+
+● The reviewer confirmed the problem and measured it.
+
+  Why the space appears: the reading column is capped at 820px and pinned to the
+  left of the right-hand panel, right next to the user list. Every extra pixel
+  of window width ends up as blank space on the right:
+
+  ┌──────────────┬─────────────────────────────────┐
+  │ Window width │ Empty space right of the column │
+  ├──────────────┼─────────────────────────────────┤
+  │ 1440px       │ ~157px (vs 48px on the left)    │
+  ├──────────────┼─────────────────────────────────┤
+  │ 1680px       │ ~397px                          │
+  ├──────────────┼─────────────────────────────────┤
+  │ 1920px       │ ~637px                          │
+  ├──────────────┼─────────────────────────────────┤
+  │ 2560px       │ ~1277px (about half the screen) │
+  └──────────────┴─────────────────────────────────┘
+
+  It also found a second issue: the "Pick someone from the directory" prompt is
+  centered in the panel, but the posts column isn't. Going from / to /users/1
+  makes the focus jump about 300px sideways at 1920px.
+
+  Options it weighed:
+  - A. Center the column in the panel. Equal margins on both sides, and the
+    empty prompt and the posts share one axis. Essentially a one-line fix. The
+    column width and the comfortable reading line length stay the same. This is
+    the standard layout for mail and chat apps.
+  - B. Cap the whole app's width and center it. Not recommended: the blank space
+    moves to the outer edges, scrollbars float mid-screen, and it reads like a
+    marketing page.
+  - C. Add a second column at 1600px and up, with the user's badge held in place
+    on the left and the posts on the right. It actually fills the space, but
+    it's a redesign rather than a fix, and it changes the badge animation and
+    where the composer sits.
+
+  Its recommendation is A, plus three small things:
+  - the user list narrows smoothly from 400px down to 340px on smaller desktops,
+    instead of jumping at 1024px;
+  - a larger empty-badge placeholder, raised to the visual center of the panel;
+  - the same centering on the not-found page.
+
+  Its honest caveat: at 2560px, centering still leaves about 660px of background
+  on each side. That's calm and balanced, not "filled". Only C would fill it.
+
+● User answered Claude's questions:
+  ⎿  · On wide desktops, the posts column sits at the left with a large empty
+     space on its right (about 640px at 1920px). Which fix should I apply? → A:
+     center the column (Recommended)
+● Agent "Review wide-desktop layout" finished · 1m 13s
+
+› Message from impeccable-documenter
+  I wrote both files. The front-matter YAML and the sidecar JSON both parse, and
+  DESIGN.md has the 8 standard sections in order. Nothing under src/ was
+  touched.
+
+  Paths written:
+  - /home/eiffelike/work/users_post/DESIGN.md (front matter holds 36 colours (18
+  light and 18 `dark-` pairs), 7 type roles, 4 radii, a 9-step spacing scale
+  and 18 component variants)
+  - /home/eiffelike/work/users_post/.impeccable/design.json (schemaVersion 2).
+  It holds:
+    - colour metadata with 8-step tonal ramps, taken from the project's own grey
+  and indigo values; the danger ramp is synthesized
+    - type metadata
+    - 4 shadows, with light and dark values
+    - 7 motion tokens and 3 breakpoints (640, 768, 1024)
+    - layout constants
+    - 9 self-contained component snippets that read the `:root` variables:
+  primary, secondary and ghost buttons, search field, form field, user badge
+  with its selected state, hero badge, theme switch, and state message
+    - the narrative copied word for word from DESIGN.md
+
+  The sidecar was generated by /tmp/claude-1000/-home-eiffelike-work-users-post/
+  4884619e-c0f5-4af1-94a9-6b1ed1f0f54d/scratchpad/sidecar.py, which reads
+  DESIGN.md.
+
+  Evidence used:
+  - Code: src/styles/tokens.css, src/index.css, every *.module.css under users/,
+  posts/, ui/, theme/ and layout/, plus UserBadge.tsx, HeroBadge.tsx and
+  Avatar.tsx. I also grepped the icon imports: they are lucide-react inline
+  SVGs, not glyph characters.
+  - Context: the direction contract, PRODUCT.md, and
+  .impeccable/review/desktop.png.
+  - src/fixtures/ is left out of the documented system, as you asked.
+  - Where the contract and the build differ, I followed the build:
+    - Weight 500 is in use (rack badge company band), so the system lists
+  400–800, not the contract's four weights.
+    - Under reduced motion the build turns View Transition animations off
+  entirely (an instant change), not the crossfade the contract describes.
+
+  System summary:
+  - **Palette:** a cool-grey neutral range (ground #eef0f5, rail #f6f7fa, white
+  badge stock, hairlines #e3e6ed and #cdd2dc, ink #1a1d26, #555b6b, #646a7a).
+  Indigo #4f46e5 is the lanyard, hover #4338ca, soft #e6e7fa. Danger #b42318 is
+  used for errors only. In dark the ground is graphite #17191f and the badge
+  stock is slate #252a35.
+  - **Type:** Figtree Variable only, tabular numerals everywhere. Display
+  34/800/-0.02em, Headline 20/800, Title 17/700, Badge name 15/700, Body
+  15/400/1.6, Label 14/600, Caption 13/600.
+  - **Layout and shape:**
+    - Top bar 56px; badge rack 400px (340px below 1024px), single pane below
+  768px.
+    - Reading width 820px, post bodies capped at 68ch; spacing on a 4px base.
+    - Corner radii 8px for controls, 10px for badges, 14px for the hero.
+    - Rack badges are a fixed 92px tall.
+  - **Depth and motion:** three shadows (stock, raised for the hero and open
+  form, selected indigo glow). State changes fade over 120ms; the badge handoff
+  runs 220ms ease-out; the clip tab drops in over 260ms.
+  - **Named rules:** Lanyard, Two Indigos (dark mode uses #818cf8 for strokes
+  and #5850ec for fills behind white text), One Ramp, One Family, Sentence Case,
+  Same Height, Stock-and-Lift, Perforation.
+
+  Not canonized:
+  - **"Local only" tag:** it uses indigo soft fill and ink
+  (src/posts/PostList.module.css, `.post__local`). That breaks the contract's
+  "indigo is never decoration" rule. I left it out of the front-matter
+  components and the rules, and did not change it.
+  - **One-off sizes:** the large avatar's 30px type and the 4px and 6px inner
+  radii are not on the scale. DESIGN.md mentions them in passing (as 4–6px inner
+  corners for bones, clip tabs and the tag) but they are not tokens.
+
+  No kickers, eyebrows, hard offset shadows, glyph icons or system display faces
+  were found.
+
+● Agent "Write DESIGN.md from the built world" finished · 3m 13s
+
+● Applying option A.
+
+● Bash(set -e
+      # 1. Center the reading column in the detail panel…)
+  ⎿  Updated src/posts/UserPostsPanel.module.css (+1 -0)
+      1  .panel {
+      2    width: 100%;
+      3    max-width: calc(var(--measure) + 2 * var(--space-12));
+      4 +  margin-inline: auto;                                          
+      5    padding: var(--space-8) var(--space-12) var(--space-12);
+      6  }
+      7  
+  ⎿  Updated src/layout/NotFound.module.css (+1 -0)
+      1  .page {
+      2    max-width: calc(var(--measure) + 2 * var(--space-12));
+      3 +  margin-inline: auto;                                          
+      4    padding: var(--space-8) var(--space-12);
+      5  }
+      6  
+  ⎿  Updated src/styles/tokens.css (+1 -1)
+      89  
+      90    /* Layout */
+      91    --topbar-height: 56px;
+      92 -  --rack-width: 400px;                                         
+      92 +  --rack-width: clamp(340px, 28vw, 400px);                     
+      93    --measure: 820px;
+      94  
+      95    /* Motion */
+  ⎿  Updated src/posts/NoUserSelected.module.css (+2 -2)
+       4    align-items: center;
+       5    justify-content: center;
+       6    min-height: 100%;
+       7 -  padding: var(--space-12) var(--space-8);                     
+       7 +  padding: var(--space-12) var(--space-8) calc(var(--space-12) 
+         ++ 8vh);                                                        
+       8    text-align: center;
+       9  }
+      10  
+     ...
+      13    display: flex;
+      14    align-items: center;
+      15    gap: var(--space-4);
+      16 -  width: 300px;                                                
+      16 +  width: 360px;                                                
+      17    padding: var(--space-6) var(--space-5);
+      18    margin-bottom: var(--space-8);
+      19    border: 1.5px dashed var(--color-line-strong);
+
+● Layout is fixed; I'm also changing the "Local only" tag from indigo to the
+  neutral monogram tones, since indigo is reserved for selection, focus and the
+  primary action. · summary
+
+● Bash(perl -0pi -e 's/(\.post__local \{.*?)  background:
+      var\(--color-accent-soft\);\n  color: var\(--color-accent-ink\);/$1
+      background: var(--color-avatar);\n  colo…)
+  ⎿  Updated src/posts/PostList.module.css (+2 -2)
+      24    margin-left: var(--space-2);
+      25    padding: 1px 7px;
+      26    border-radius: 4px;
+      27 -  background: var(--color-accent-soft);                        
+      28 -  color: var(--color-accent-ink);                              
+      27 +  background: var(--color-avatar);                             
+      28 +  color: var(--color-text-2);                                  
+      29    font-size: var(--text-xs);
+      30    font-weight: 700;
+      31    line-height: 1.6;
+
+● Gate passes. Now I'm checking the result at 1024, 1440, 1920 and 2560px, plus
+  the empty state, and running the badge animation at 2560px.
+
+  Read 1 file, called chrome-devtools 13 times, ran 1 shell command (ctrl+o to expand)
+
+● The column is centered at 1920px and 2560px and shares its axis with the empty
+  prompt, and at 2560px each side now gets 662px. The layout still fits at
+  1024px with no horizontal scroll and the badge animation runs cleanly; next
+  I'm updating DESIGN.md and its sidecar. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Bash(for f in DESIGN.md .impeccable/design.json; do perl -pi -e '
+      s/a grid of a 400px badge rack and a flexible reading panel/a grid of a
+      badge rack (clamp(340px, 28…)
+  ⎿  Updated DESIGN.md (+2 -2)
+      267  
+      268  ## Layout
+      269  
+      270 -A two-pane directory. Desktop: a sticky 56px top bar (wordmark
+          - left, theme switch right) over a grid of a 400px badge rack a
+          -nd a flexible reading panel; each pane scrolls on its own with
+          - a stable scrollbar gutter. The rack narrows to 340px below 10
+          -24px. Below 768px the layout becomes one pane at a time, chose
+          -n by the route: the rack fills the width on the index route, a
+          -nd the posts route shows a back-arrow link above a compact her
+          -o.                                                            
+      270 +A two-pane directory. Desktop: a sticky 56px top bar (wordmark
+          + left, theme switch right) over a grid of a badge rack (clamp(
+          +340px, 28vw, 400px): 340px on small desktops, 400px from about
+          + 1430px) and a flexible reading panel; each pane scrolls on it
+          +s own with a stable scrollbar gutter. Below 768px the layout b
+          +ecomes one pane at a time, chosen by the route: the rack fills
+          + the width on the index route, and the posts route shows a bac
+          +k-arrow link above a compact hero.                            
+      271  
+      272 -The reading panel content is capped at an 820px measure plus 4
+          -8px gutters each side; post bodies cap at 68ch inside it. Pane
+          -l padding steps down from 32/48/48 to 24/32/40 below 1024px an
+          -d 8/16/40 below 768px.                                        
+      272 +The reading panel content is capped at an 820px measure plus 4
+          +8px gutters each side and centered in the panel (margin-inline
+          +: auto), so wide screens get equal margins and the no-user-sel
+          +ected prompt shares the same axis; post bodies cap at 68ch ins
+          +ide it. Panel padding steps down from 32/48/48 to 24/32/40 bel
+          +ow 1024px and 8/16/40 below 768px.                            
+      273  
+      274  Spacing is a 4px-based scale (4, 8, 12, 16, 20, 24, 32, 40, 48
+           ). Badges stack 8px apart; the rack's sticky header pads 20px 
+           (16px on mobile).
+      275  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The detector now checks code against DESIGN.md for off-scale corner radii, and
+  git shows the agent skill files as modified because prettier reformatted them
+  before I added the ignore entries. I'm checking both now. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Prettier's changes to the agent folders came from my first gate run, before
+  the ignore entries existed, so I'm confirming they're formatting-only before
+  reverting. The radius findings are deliberate inner corners that DESIGN.md
+  never tokenized. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The diff is only formatting changes, so I'm reverting my side edits in the
+  three agent folders and adding the inner radii to the DESIGN.md scale next.
+  · summary
+
+● Bash(git checkout -- .agents .claude/agents .claude/skills && git status
+      --short -- .agents .claude | grep -v '^??' | head -3; echo "tool dirs
+      restored"; sed -n 78,9…)
+  ⎿  Updated .agents/skills/impeccable/SKILL.md (+28 -29)
+  ⎿  Updated .agents/skills/impeccable/agents/openai.yaml (+1 -1)
+  ⎿  Updated .agents/skills/impeccable/reference/adapt.md (+14 -38)
+  ⎿  Updated .agents/skills/impeccable/reference/adapt.native.md (+9 -10)
+  ⎿  Updated .agents/skills/impeccable/reference/animate.md (+5 -5)
+  ⎿  … 72 more files changed
+  ⎿  (a git step in this command can move the working tree, so these may be
+     its changes, not edits) (ctrl+o to expand)
+
+  Searched for 1 pattern, ran 2 shell commands (ctrl+o to expand)
+
+● I'm leaving the two inner radii and the hero monogram's type size as the
+  reviewer approved them, and documenting them instead. The hero clip's 5px
+  corners are the one real stray, so I'm changing them to 6px. · summary
+
+● Bash(perl -0pi -e "s/(  caption:\n    fontFamily: [^\n]*\n    fontSize:
+      '0.8125rem'\n    fontWeight: 600\n    lineHeight: 1.5\n)rounded:\n
+      control: '8px'/\$1  monog…)
+  ⎿  Updated DESIGN.md (+9 -1)
+      77      fontSize: '0.8125rem'
+      78      fontWeight: 600
+      79      lineHeight: 1.5
+      80 +  monogram-hero:                                               
+      81 +    fontFamily: "'Figtree Variable', 'Figtree', ui-sans-serif, 
+         +system-ui, sans-serif"                                         
+      82 +    fontSize: '1.875rem'                                       
+      83 +    fontWeight: 700                                            
+      84 +    lineHeight: 1                                              
+      85 +    letterSpacing: '0.01em'                                    
+      86  rounded:
+      87 +  inner: '4px'                                                 
+      88 +  inner-control: '6px'                                         
+      89    control: '8px'
+      90    badge: '10px'
+      91    hero: '14px'
+     ...
+      301  
+      302  ## Shapes
+      303  
+      296 -A three-step radius ladder: controls (buttons, fields, theme s
+          -witch) at 8px, badge-sized surfaces (rack badges, search, comp
+          -oser, state messages) at 10px, and the hero badge and empty sl
+          -ot at 14px. Monograms are full circles. Small inner parts (ske
+          -leton bones, clip-tab bottoms, inline tag) use 4 to 6px.      
+      304 +A three-step radius ladder: controls (buttons, fields, theme s
+          +witch) at 8px, badge-sized surfaces (rack badges, search, comp
+          +oser, state messages) at 10px, and the hero badge and empty sl
+          +ot at 14px. Monograms are full circles. Two inner steps sit be
+          +low the ladder: `inner` 4px for skeleton bones, clip-tab botto
+          +ms and the inline "Local only" tag, and `inner-control` 6px fo
+          +r controls nested inside a control (theme-switch options, the 
+          +search clear button, the hero clip tab). The 88px hero monogra
+          +m sets its initials in the `monogram-hero` role (30px/700).   
+      305  
+      306  The badge silhouette carries two marks: a clip tab, a short in
+           digo bar centered on the top edge with rounded bottom corners 
+           (40 by 5px on rack badges, 64 by 7px on the hero); and a perfo
+           ration, a 1px dashed Hairline Strong rule above the company ba
+           nd.
+      307  
+  ⎿  Updated src/posts/HeroBadge.module.css (+1 -1)
+      14    width: 64px;
+      15    height: 7px;
+      16    margin-left: -32px;
+      17 -  border-radius: 0 0 5px 5px;                                  
+      17 +  border-radius: 0 0 6px 6px;                                  
+      18    background: var(--color-accent);
+      19    view-transition-name: hero-clip;
+      20  }
+
+● The detector is clean on src. Last, I'll confirm DESIGN.md's front matter
+  still parses and the gate passes.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I applied option A, and the wide-screen gap is fixed. The posts column now
+  sits centered in the right panel instead of hugging the user list:
+
+  ┌──────────────┬─────────────────────────────────┬─────────────────┐
+  │ Window width │ Before (left / right of column) │ Now (each side) │
+  ├──────────────┼─────────────────────────────────┼─────────────────┤
+  │ 1440px       │ 48px / ~157px                   │ ~102px          │
+  ├──────────────┼─────────────────────────────────┼─────────────────┤
+  │ 1920px       │ 48px / ~637px                   │ ~342px          │
+  ├──────────────┼─────────────────────────────────┼─────────────────┤
+  │ 2560px       │ 48px / ~1277px                  │ ~662px          │
+  └──────────────┴─────────────────────────────────┴─────────────────┘
+
+  The "Pick someone from the directory" prompt now lines up with the posts
+  column, so the focus no longer jumps sideways when you open a user. I checked
+  this at 1024, 1440, 1920 and 2560px: the column measures centered at 2560px,
+  there's no horizontal scroll, and the badge animation still runs without
+  errors at that width.
+
+  - User list: it now narrows smoothly from 400px to 340px on smaller desktops,
+    instead of jumping at 1024px. At 1440px and up it's unchanged.
+  - Empty state: the placeholder badge is larger (360px) and sits a little above
+    center.
+  - Not-found page: centered the same way.
+  - "Local only" tag: it's now neutral gray instead of indigo, so indigo keeps
+    meaning only "selected", "focused" and "New post". The DESIGN.md writer
+    flagged the clash.
+
+  DESIGN.md is written from the finished code: palette for both themes, type,
+  spacing, components and the naming rules. Its machine-readable companion file
+  is .impeccable/design.json. I updated both for the centered layout, and
+  DESIGN.md also gained two small corner sizes and the large-initials text size.
+  Without those entries, the design checker flagged the existing code as
+  off-system.
+
+  A side effect I undid: my first run of npm run post-agent let prettier
+  reformat the skill files in .agents/ and .claude/ (formatting only). I
+  restored them from your commit. Those folders are now excluded from prettier
+  and ESLint, so it won't happen again.
+
+  Before you commit, two things:
+  - Your .gitignore ignores all of .impeccable/, so design.json, the design
+    brief and the review screenshots won't be committed. If teammates or other
+    agents should get them, un-ignore .impeccable/design.json and
+    .impeccable/surfaces/.
+  - Nothing is committed yet. The changes are in src/, index.html,
+    public/favicon.svg, package.json, PLAN.md, DESIGN.md and the lint and
+    prettier configs. The dev server is still running at http://localhost:5179.
+
+● Ran 1 stop hook (ctrl+o to expand)
+  ⎿  Stop hook feedback: [impeccable@1] Findings marked attribution
+  unknown may predate this session; do not treat them as regressions or
+  broaden the task to chase them.
+
+  [impeccable@1] Design hook findings requiring review across 2 files (6
+  issue(s)):
+  .impeccable/mocks/decision/assigned.html (2 issue(s)):
+  - [design-system-font] [attribution unknown] Font outside DESIGN.md. A
+  font is used that is not declared in DESIGN.md typography. Use the
+  documented type system or update DESIGN.md if this is an intentional
+  brand addition. If intentional: `ignore-value design-system-font
+  archivo`.
+  - L3 [design-system-font] [attribution unknown] Font outside
+  DESIGN.md. If intentional: `ignore-value design-system-font Archivo`.
+  .impeccable/mocks/decision/challenger-console.html (4 issue(s)):
+  - [design-system-font] [attribution unknown] Font outside DESIGN.md.
+  If intentional: `ignore-value design-system-font geist`.
+  - L7 [design-system-font] [attribution unknown] Font outside
+  DESIGN.md. If intentional: `ignore-value design-system-font 'geist
+  mono'`.
+  - L3 [design-system-font] [attribution unknown] Font outside
+  DESIGN.md. If intentional: `ignore-value design-system-font Geist`.
+  - ... 1 more in .impeccable/mocks/decision/challenger-console.html
+  (see /impeccable audit).
+
+  Triage per the session policy: fix real problems; persist confident
+  false-positive or sanctioned-exception ignores via `impeccable hooks
+  ignore-value` and disclose them in your reply; unsure, leave it with a
+  reason.
+
+  [impeccable@1] DESIGN.md is newer than .impeccable/design.json. Run
+  /impeccable document to refresh the design-system sidecar.
+
+● Two follow-ups from the hook. The font findings are in the same throwaway
+  decision previews as before, so I'll suppress them per file. The sidecar is
+  flagged as stale only because I edited DESIGN.md after it was generated. The
+  documenter left a generator script that rebuilds it from DESIGN.md, so I'll
+  check that script and rerun it.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● The constants in the script are written without spaces, so my patterns missed.
+  Fixing the patterns and passing the project root.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Both hook items are cleared:
+
+  - Font findings: these were in two of the throwaway preview mockups from the
+    direction-picking step. I suppressed the font check for just those two files
+    (recorded in .impeccable/config.json). They're never shipped, and nothing
+    in src/ was affected.
+  - Out-of-date design.json: I re-ran the documenter's generator script after
+    updating its hard-coded user-list width. .impeccable/design.json now matches
+    DESIGN.md again, including the 340–400px user-list width.

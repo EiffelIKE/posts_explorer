@@ -1,0 +1,155 @@
+/*
+ * Design tokens. One cool-gray ramp feeds every neutral; indigo is the
+ * lanyard: selection, focus and the primary action only.
+ * Light is the base; dark applies when the system prefers it (unless the
+ * user forced light) or when the user forced dark.
+ */
+:root {
+  color-scheme: light;
+
+  /* Cool-gray ramp */
+  --gray-0: #ffffff;
+  --gray-25: #f6f7fa;
+  --gray-50: #eef0f5;
+  --gray-100: #e3e6ed;
+  --gray-200: #cdd2dc;
+  --gray-300: #a9afbd;
+  --gray-400: #8a90a0;
+  --gray-500: #646a7a;
+  --gray-600: #555b6b;
+  --gray-700: #3b3f55;
+  --gray-800: #2a2f3c;
+  --gray-850: #1b1f2a;
+  --gray-900: #13161e;
+  --gray-950: #0f1117;
+
+  /* Surfaces */
+  --color-ground: var(--gray-50);
+  --color-rail: var(--gray-25);
+  --color-stock: var(--gray-0);
+  --color-stock-hover: #fafbfd;
+  --color-line: var(--gray-100);
+  --color-line-strong: var(--gray-200);
+  --color-skeleton: var(--gray-100);
+
+  /* Text */
+  --color-text: #1a1d26;
+  --color-text-2: var(--gray-600);
+  --color-text-3: var(--gray-500);
+
+  /* Indigo lanyard */
+  --color-accent: #4f46e5;
+  --color-accent-fill: #4f46e5;
+  --color-accent-fill-hover: #4338ca;
+  --color-accent-soft: #e6e7fa;
+  --color-accent-ink: #3730a3;
+  --color-on-accent: #ffffff;
+
+  /* Monogram */
+  --color-avatar: #e9eaf3;
+  --color-avatar-ink: var(--gray-700);
+
+  /* Status */
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+
+  /* Depth */
+  --shadow-stock: 0 1px 2px rgb(22 25 40 / 0.06);
+  --shadow-raised:
+    0 1px 2px rgb(22 25 40 / 0.06), 0 12px 32px -16px rgb(22 25 40 / 0.22);
+  --shadow-selected: 0 6px 16px -8px rgb(79 70 229 / 0.45);
+
+  /* Shape */
+  --radius-control: 8px;
+  --radius-badge: 10px;
+  --radius-hero: 14px;
+
+  /* Type */
+  --font-sans:
+    'Figtree Variable', 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 0.75rem; /* 12 */
+  --text-sm: 0.8125rem; /* 13 */
+  --text-md: 0.875rem; /* 14 */
+  --text-base: 0.9375rem; /* 15 */
+  --text-lg: 1.0625rem; /* 17 */
+  --text-xl: 1.25rem; /* 20 */
+  --text-2xl: 1.5rem; /* 24 */
+  --text-3xl: 2.125rem; /* 34 */
+
+  /* Space (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Layout */
+  --topbar-height: 56px;
+  --rack-width: clamp(340px, 28vw, 400px);
+  --measure: 820px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-ground: #17191f;
+    --color-rail: #1c1f26;
+    --color-stock: #252a35;
+    --color-stock-hover: #2b303c;
+    --color-line: #313643;
+    --color-line-strong: #434958;
+    --color-skeleton: #313643;
+    --color-text: #e8eaf0;
+    --color-text-2: #a6acba;
+    --color-text-3: #9097a6;
+    --color-accent: #818cf8;
+    --color-accent-fill: #5850ec;
+    --color-accent-fill-hover: #6a63f0;
+    --color-accent-soft: #30356a;
+    --color-accent-ink: #c7cbfd;
+    --color-avatar: #333846;
+    --color-avatar-ink: #d5d8e2;
+    --color-danger: #f59a90;
+    --color-danger-soft: #3a1e1e;
+    --shadow-stock: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-raised:
+      0 1px 2px rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.6);
+    --shadow-selected: 0 6px 18px -8px rgb(88 80 236 / 0.55);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-ground: #17191f;
+  --color-rail: #1c1f26;
+  --color-stock: #252a35;
+  --color-stock-hover: #2b303c;
+  --color-line: #313643;
+  --color-line-strong: #434958;
+  --color-skeleton: #313643;
+  --color-text: #e8eaf0;
+  --color-text-2: #a6acba;
+  --color-text-3: #9097a6;
+  --color-accent: #818cf8;
+  --color-accent-fill: #5850ec;
+  --color-accent-fill-hover: #6a63f0;
+  --color-accent-soft: #30356a;
+  --color-accent-ink: #c7cbfd;
+  --color-avatar: #333846;
+  --color-avatar-ink: #d5d8e2;
+  --color-danger: #f59a90;
+  --color-danger-soft: #3a1e1e;
+  --shadow-stock: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-raised:
+    0 1px 2px rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.6);
+  --shadow-selected: 0 6px 18px -8px rgb(88 80 236 / 0.55);
+}

@@ -1,0 +1,177 @@
+
+❯ /clear
+
+❯ Before continuing to the next step, lets verify this two edge cases that we
+  need to keep in mind and also add to the testing step, 1-when creating a
+  post, if we change user, a delayed response from the server DOESNT ever
+  change the ui of the new user, 2-also if we create a post, we change user,
+  and then we go back to the previous user, the new post must be visible only
+  in that sesion of course
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● The code paths look right on read. Before I say so, I'll confirm it with a
+  real test run. First, the test setup:
+
+  Searched for 1 pattern, ran 1 shell command (ctrl+o to expand)
+
+● TanStack's mutation callbacks fire even after the panel unmounts, and
+  onSuccess still writes to the original user's cache key. I'm writing a
+  throwaway test against the real components to confirm it. · summary
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Write(src/posts/UserPostsPanel/edgecases.tmp.test.tsx)
+  ⎿  Wrote 88 lines to src/posts/UserPostsPanel/edgecases.tmp.test.tsx
+       1 import { QueryClientProvider } from '@tanstack/react-query'
+       2 import { act, render, screen } from '@testing-library/react'
+       3 import userEvent from '@testing-library/user-event'
+       4 import { http, HttpResponse } from 'msw'
+       5 import { createMemoryRouter, RouterProvider } from 'react-router
+         '
+       6 import { describe, expect, it } from 'vitest'
+       7 import { API_BASE_URL } from '../../api/client'
+       8 import { createQueryClient } from '../../api/queries'
+       9 import { server } from '../../test/server'
+     … +79 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All 3 pass. I'll move the temp test out of src (step 7 can reuse it) and add
+  both cases to the plan:
+
+● Bash(mv src/posts/UserPostsPanel/edgecases.tmp.test.tsx
+      /tmp/claude-1000/-home-eiffelike-work-users-post/323619b6-26fd-420b-8c0f-f
+      d3f36303001/scratchpad/ && git stat…)
+  ⎿  Deleted src/posts/UserPostsPanel/edgecases.tmp.test.tsx (+0 -88)
+       1 -import { QueryClientProvider } from '@tanstack/react-query'    
+       2 -import { act, render, screen } from '@testing-library/react'   
+       3 -import userEvent from '@testing-library/user-event'            
+       4 -import { http, HttpResponse } from 'msw'                       
+       5 -import { createMemoryRouter, RouterProvider } from 'react-route
+         -r'                                                             
+       6 -import { describe, expect, it } from 'vitest'                  
+       7 -import { API_BASE_URL } from '../../api/client'                
+       8 -import { createQueryClient } from '../../api/queries'          
+       9 -import { server } from '../../test/server'                     
+      10 -import { UserPostsRoute } from './UserPostsPanel'              
+      11 -                                                               
+      12 -function renderApp(url: string) {                              
+      13 -  const router = createMemoryRouter(                           
+      14 -    [{ path: '/users/:userId', element: <UserPostsRoute /> }], 
+      15 -    { initialEntries: [url] },                                 
+      16 -  )                                                            
+      17 -  render(                                                      
+      18 -    <QueryClientProvider client={createQueryClient()}>         
+      19 -      <RouterProvider router={router} />                       
+      20 -    </QueryClientProvider>,                                    
+      21 -  )                                                            
+      22 -  return router                                                
+      23 -}                                                              
+      24 -                                                               
+      25 -/** Holds POST /posts until release() is called. */            
+      26 -function holdPublish() {                                       
+      27 -  let release!: () => void                                     
+      28 -  const gate = new Promise<void>((resolve) => (release = resolv
+         -e))                                                            
+      29 -  server.use(                                                  
+      30 -    http.post(`${API_BASE_URL}/posts`, async ({ request }) => {
+      31 -      const post = (await request.json()) as object            
+      32 -      await gate                                               
+      33 -      return HttpResponse.json({ ...post, id: 101 }, { status: 
+         -201 })                                                         
+      34 -    }),                                                        
+      35 -  )                                                            
+      36 -  return () => act(release)                                    
+      37 -}                                                              
+      38 -                                                               
+      39 -async function writePost(title: string) {                      
+      40 -  const user = userEvent.setup()                               
+     … 48 more lines (ctrl+o to expand)
+
+● Update(PLAN.md)
+  ⎿  Added 4 lines, removed 1 line
+      24  - [x] 4. Users list with search by name (synced with `?q=`, see
+           decision 15)
+      25  - [x] 5. User posts + create-post form (validated, required tit
+          le and body; see decision 16)
+      26  - [ ] 6. Loading and error states
+      27 -- [ ] 7. Tests (at least 3) and add them to the `post-agent` ga
+         -te                                                             
+      27 +- [ ] 7. Tests (at least 3) and add them to the `post-agent` ga
+         +te. Must cover the                                             
+      28 +      user-switch cases in decision 17: a delayed publish never
+         + lands on the user                                             
+      29 +      switched to, and a created post shows again only for its 
+         +author when coming                                             
+      30 +      back, and only for this session                          
+      31  - [ ] 8. README (run, decisions, next steps, AI usage)
+      32  
+      33  ## Agent workflow
+
+● Bash(cat >> PLAN.md <<'EOF'
+      17. **Created posts stay with their author when switching users.**
+      Verified with a…)
+  ⎿  Updated PLAN.md (+11 -0)
+      124      The rules live in `src/posts/Composer/newPostSchema.ts`, s
+           o step 7 can test them
+      125      directly. Errors show after the first submit attempt, then
+            update live, and the
+      126      trimmed values are what gets published.
+      127 +17. **Created posts stay with their author when switching user
+          +s.** Verified with a                                          
+      128 +    throwaway test before step 7. `useCreatePost(userId)` sets
+          + `onSuccess` in the                                           
+      129 +    `useMutation` options. TanStack attaches those options to 
+          +the mutation itself, so                                       
+      130 +    they still run after the panel unmounts, and the `userId` 
+          +they hold is the author's.                                    
+      131 +    The panel is keyed by `userId`, so the user you switch to 
+          +gets a fresh composer and                                     
+      132 +    reads only its own `['local-posts', id]`. A late response 
+          +therefore never changes                                       
+      133 +    that user's UI: no post, no "Published" notice. The post g
+          +oes into the author's                                         
+      134 +    entry, which never expires (`gcTime: Infinity`, decision 1
+          +2), so it shows when you                                      
+      135 +    go back to them. It lives only in memory, so a reload clea
+          +rs it.                                                        
+      136 +    Known limit: if that late request fails, nobody sees the e
+          +rror, because the composer                                    
+      137 +    that would show it has unmounted and its draft is gone.   
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Both cases already work as you described, and I didn't change any code. I
+  added them to the plan's testing step.
+
+  How I checked: I wrote a temporary test against the real UserPostsRoute,
+  holding back the POST /posts response with MSW. All 3 checks passed:
+
+  1. Late response after switching user: I published as Leanne, switched to
+     Ervin, then let the server answer. Ervin's panel showed neither the post
+     nor the "Published" message. Going back to Leanne, the post was there.
+     - Why it works: onSuccess in useCreatePost(userId) belongs to the request
+       itself, so it still runs after the panel closes. It still holds Leanne's
+       ID, so it only writes to ['local-posts', 1]. The panel is keyed by user,
+       so Ervin gets a new composer and only reads his own posts.
+  2. Switch away and back: I created a post as Leanne, switched to Ervin (the
+     post wasn't there), then went back to Leanne (it was).
+     - Only for that session: a fresh query client, which is what a reload gives
+       you, starts with no created posts. They live only in memory, and the
+       never-expire setting from decision 12 keeps them until the tab reloads.
+
+  Changes to PLAN.md:
+  - Step 7 now says the tests must cover both cases.
+  - New decision 17 explains why they work and lists the known limit below.
+
+  Known limit: if that late request fails instead of succeeding, nobody sees the
+  error. The composer that would show it has closed and its draft is gone.
+  That's acceptable for a demo, but say if you'd like it handled in step 6, for
+  example with a message on the author's panel when you return.
+
+  The test is at /tmp/claude-1000/-home-eiffelike-work-users-post/323619b6-26fd-
+  420b-8c0f-fd3f36303001/scratchpad/edgecases.tmp.test.tsx, so step 7 can reuse
+  it instead of starting from scratch. I kept it out of src until then. The
+  scratchpad can be cleared, so move it into the project if you want to be sure
+  it's kept.

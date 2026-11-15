@@ -1,0 +1,696 @@
+
+❯ /clear
+
+❯ lets start working on the 5th step of the curent PLAN.md, for validations I
+  think is enough with required after trim(), we can add a minimun of 2 on
+  title as a product decision
+
+  Searched for 1 pattern, read 1 file, listed 1 directory, ran 2 shell commands (ctrl+o to expand)
+
+● Wiring step 5 now: replacing the posts panel's fixtures with the TanStack
+  Query hooks, and moving the form validation into its own module with the rules
+  you described.
+
+● Bash(git mv src/fixtures/data.ts src/test/data.ts && git rm -q
+      src/fixtures/useFixtureState.ts && sed -i "s#'../fixtures/data'#'./data'#"
+      src/test/handlers.ts && sed…)
+  ⎿  Deleted src/fixtures/data.ts (+0 -150)
+        1 -// TEMPORARY fixture data for the design step (PLAN step 2). C
+          -opied from                                                    
+        2 -// JSONPlaceholder so the UI renders real content; replaced by
+          - the API layer                                                
+        3 -// in step 3.                                                 
+        4 -import type { Post, User } from '../types'                    
+        5 -                                                              
+        6 -export const fixtureUsers: User[] = [                         
+        7 -  {                                                           
+        8 -    id: 1,                                                    
+        9 -    name: 'Leanne Graham',                                    
+       10 -    username: 'Bret',                                         
+       11 -    email: 'Sincere@april.biz',                               
+       12 -    company: { name: 'Romaguera-Crona' },                     
+       13 -  },                                                          
+       14 -  {                                                           
+       15 -    id: 2,                                                    
+       16 -    name: 'Ervin Howell',                                     
+       17 -    username: 'Antonette',                                    
+       18 -    email: 'Shanna@melissa.tv',                               
+       19 -    company: { name: 'Deckow-Crist' },                        
+       20 -  },                                                          
+       21 -  {                                                           
+       22 -    id: 3,                                                    
+       23 -    name: 'Clementine Bauch',                                 
+       24 -    username: 'Samantha',                                     
+       25 -    email: 'Nathan@yesenia.net',                              
+       26 -    company: { name: 'Romaguera-Jacobson' },                  
+       27 -  },                                                          
+       28 -  {                                                           
+       29 -    id: 4,                                                    
+       30 -    name: 'Patricia Lebsack',                                 
+       31 -    username: 'Karianne',                                     
+       32 -    email: 'Julianne.OConner@kory.org',                       
+       33 -    company: { name: 'Robel-Corkery' },                       
+       34 -  },                                                          
+       35 -  {                                                           
+       36 -    id: 5,                                                    
+       37 -    name: 'Chelsey Dietrich',                                 
+       38 -    username: 'Kamren',                                       
+       39 -    email: 'Lucio_Hettinger@annie.ca',                        
+       40 -    company: { name: 'Keebler LLC' },                         
+     … 110 more lines (ctrl+o to expand)
+  ⎿  Created src/test/data.ts (+150 -0)
+        1 +// TEMPORARY fixture data for the design step (PLAN step 2). C
+          +opied from                                                    
+        2 +// JSONPlaceholder so the UI renders real content; replaced by
+          + the API layer                                                
+        3 +// in step 3.                                                 
+        4 +import type { Post, User } from '../types'                    
+        5 +                                                              
+        6 +export const fixtureUsers: User[] = [                         
+        7 +  {                                                           
+        8 +    id: 1,                                                    
+        9 +    name: 'Leanne Graham',                                    
+       10 +    username: 'Bret',                                         
+       11 +    email: 'Sincere@april.biz',                               
+       12 +    company: { name: 'Romaguera-Crona' },                     
+       13 +  },                                                          
+       14 +  {                                                           
+       15 +    id: 2,                                                    
+       16 +    name: 'Ervin Howell',                                     
+       17 +    username: 'Antonette',                                    
+       18 +    email: 'Shanna@melissa.tv',                               
+       19 +    company: { name: 'Deckow-Crist' },                        
+       20 +  },                                                          
+       21 +  {                                                           
+       22 +    id: 3,                                                    
+       23 +    name: 'Clementine Bauch',                                 
+       24 +    username: 'Samantha',                                     
+       25 +    email: 'Nathan@yesenia.net',                              
+       26 +    company: { name: 'Romaguera-Jacobson' },                  
+       27 +  },                                                          
+       28 +  {                                                           
+       29 +    id: 4,                                                    
+       30 +    name: 'Patricia Lebsack',                                 
+       31 +    username: 'Karianne',                                     
+       32 +    email: 'Julianne.OConner@kory.org',                       
+       33 +    company: { name: 'Robel-Corkery' },                       
+       34 +  },                                                          
+       35 +  {                                                           
+       36 +    id: 5,                                                    
+       37 +    name: 'Chelsey Dietrich',                                 
+       38 +    username: 'Kamren',                                       
+       39 +    email: 'Lucio_Hettinger@annie.ca',                        
+       40 +    company: { name: 'Keebler LLC' },                         
+     … 110 more lines (ctrl+o to expand)
+  ⎿  Deleted src/fixtures/useFixtureState.ts (+0 -32)
+       1 -// TEMPORARY (design step): lets reviewers force every UI state
+         - from the URL,                                                 
+       2 -// e.g. `/?users=loading` or `/users/1?posts=error&publish=erro
+         -r`.                                                            
+       3 -// Steps 3–6 replace this with real TanStack Query states.     
+       4 -import { useSearchParams } from 'react-router'                 
+       5 -                                                               
+       6 -export type UsersState = 'ready' | 'loading' | 'error'         
+       7 -export type PostsState = 'ready' | 'loading' | 'error' | 'empty
+         -'                                                              
+       8 -                                                               
+       9 -function pick<T extends string>(                               
+      10 -  value: string | null,                                        
+      11 -  allowed: readonly T[],                                       
+      12 -  fallback: T,                                                 
+      13 -): T {                                                         
+      14 -  return allowed.includes(value as T) ? (value as T) : fallback
+      15 -}                                                              
+      16 -                                                               
+      17 -export function useFixtureState() {                            
+      18 -  const [params] = useSearchParams()                           
+      19 -  return {                                                     
+      20 -    users: pick<UsersState>(                                   
+      21 -      params.get('users'),                                     
+      22 -      ['ready', 'loading', 'error'],                           
+      23 -      'ready',                                                 
+      24 -    ),                                                         
+      25 -    posts: pick<PostsState>(                                   
+      26 -      params.get('posts'),                                     
+      27 -      ['ready', 'loading', 'error', 'empty'],                  
+      28 -      'ready',                                                 
+      29 -    ),                                                         
+      30 -    publishFails: params.get('publish') === 'error',           
+      31 -  }                                                            
+      32 -}                                                              
+  ⎿  Updated src/test/handlers.ts (+1 -1)
+      1  import { http, HttpResponse } from 'msw'
+      2  import { API_BASE_URL } from '../api/client'
+      3  import type { NewPost } from '../api/schemas'
+      4 -import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
+      4 +import { fixturePostsFor, fixtureUsers } from './data'          
+      5  
+      6  /** Happy-path API; tests override single endpoints with `server
+         .use(...)`. */
+      7  export const handlers = [
+  ⎿  Updated src/users/UsersPanel/UsersPanel.test.tsx (+1 -1)
+       4  import { createMemoryRouter, RouterProvider } from 'react-route
+          r'
+       5  import { describe, expect, it } from 'vitest'
+       6  import { createQueryClient } from '../../api/queries'
+       7 -import { fixtureUsers } from '../../fixtures/data'             
+       7 +import { fixtureUsers } from '../../test/data'                 
+       8  import { UsersPanel } from './UsersPanel'
+       9  
+      10  function renderPanel(url = '/') {
+
+● Bash(python3 - <<'EOF'
+      p='src/test/data.ts'…)
+  ⎿  Updated src/test/data.ts (+3 -3)
+      1 -// TEMPORARY fixture data for the design step (PLAN step 2). Cop
+        -ied from                                                        
+      2 -// JSONPlaceholder so the UI renders real content; replaced by t
+        -he API layer                                                    
+      3 -// in step 3.                                                   
+      1 +// JSONPlaceholder-shaped data served by the MSW handlers in tes
+        +ts. Started as                                                  
+      2 +// the design step's fixtures (PLAN decision 10); the app itself
+        + now reads the                                                  
+      3 +// real API.                                                    
+      4  import type { Post, User } from '../types'
+      5  
+      6  export const fixtureUsers: User[] = [
+  ⎿  Created src/posts/Composer/newPostSchema.ts (+36 -0)
+       1 +import { z } from 'zod'                                        
+       2 +import type { NewPost } from '../../types'                     
+       3 +                                                               
+       4 +export const TITLE_MIN_LENGTH = 2                              
+       5 +                                                               
+       6 +/**                                                            
+       7 + * Create-post form rules (PLAN decision 16): both fields are r
+         +equired after                                                  
+       8 + * trimming, and the title needs at least two characters. Parsi
+         +ng returns the                                                 
+       9 + * trimmed values, which are what gets published.              
+      10 + */                                                            
+      11 +export const newPostSchema = z.object({                        
+      12 +  title: z                                                     
+      13 +    .string()                                                  
+      14 +    .trim()                                                    
+      15 +    .min(1, 'Add a title.')                                    
+      16 +    .min(                                                      
+      17 +      TITLE_MIN_LENGTH,                                        
+      18 +      `Use at least ${TITLE_MIN_LENGTH} characters for the titl
+         +e.`,                                                           
+      19 +    ),                                                         
+      20 +  body: z.string().trim().min(1, 'Write something in the body.'
+         +),                                                             
+      21 +})                                                             
+      22 +                                                               
+      23 +export type NewPostField = keyof NewPost                       
+      24 +export type NewPostErrors = Partial<Record<NewPostField, string
+         +>>                                                             
+      25 +                                                               
+      26 +/** First message per field; an empty object means the draft is
+         + valid. */                                                     
+      27 +export function validateNewPost(values: NewPost): NewPostErrors
+         + {                                                             
+      28 +  const result = newPostSchema.safeParse(values)               
+      29 +  if (result.success) return {}                                
+      30 +  const errors: NewPostErrors = {}                             
+      31 +  for (const issue of result.error.issues) {                   
+      32 +    const field = issue.path[0] as NewPostField                
+      33 +    errors[field] ??= issue.message                            
+      34 +  }                                                            
+      35 +  return errors                                                
+      36 +}                                                              
+
+● Bash(python3 - <<'EOF'
+      p='src/posts/Composer/Composer.tsx'…)
+  ⎿  Updated src/posts/Composer/Composer.tsx (+9 -28)
+       1  import { useId, useRef, useState, type FormEvent } from 'react'
+       2  import { CircleAlert, LoaderCircle, PenLine, Plus } from 'lucid
+          e-react'
+       3 -import { z } from 'zod'                                        
+       3  import type { NewPost } from '../../types'
+       4  import { cx } from '../../lib/cx'
+       5  import button from '../../ui/button.module.css'
+       6 +import {                                                       
+       7 +  validateNewPost,                                             
+       8 +  type NewPostErrors,                                          
+       9 +  type NewPostField,                                           
+      10 +} from './newPostSchema'                                       
+      11  import styles from './Composer.module.css'
+      12  
+       9 -const postSchema = z.object({                                  
+      10 -  title: z                                                     
+      11 -    .string()                                                  
+      12 -    .trim()                                                    
+      13 -    .min(1, 'Add a title.')                                    
+      14 -    .max(120, 'Keep the title under 120 characters.'),         
+      15 -  body: z.string().trim().min(1, 'Write something in the body.'
+         -),                                                             
+      16 -})                                                             
+      17 -                                                               
+      18 -type Field = keyof NewPost                                     
+      19 -type FieldErrors = Partial<Record<Field, string>>              
+      20 -                                                               
+      21 -function validate(values: NewPost): FieldErrors {              
+      22 -  const result = postSchema.safeParse(values)                  
+      23 -  if (result.success) return {}                                
+      24 -  const errors: FieldErrors = {}                               
+      25 -  for (const issue of result.error.issues) {                   
+      26 -    const field = issue.path[0] as Field                       
+      27 -    errors[field] ??= issue.message                            
+      28 -  }                                                            
+      29 -  return errors                                                
+      30 -}                                                              
+      31 -                                                               
+      13  const emptyDraft: NewPost = { title: '', body: '' }
+      14  
+      15  interface ComposerProps {
+     ...
+      21  export function Composer({ authorFirstName, onPublish }: Compos
+          erProps) {
+     … 28 more lines (ctrl+o to expand)
+
+● Now the posts panel itself.
+
+● Write(src/posts/UserPostsPanel/UserPostsPanel.tsx)
+  ⎿  Added 107 lines, removed 62 lines
+       1 -import { useState } from 'react'                               
+       1 +import type { ReactNode } from 'react'                         
+       2  import { Link, useLocation, useParams } from 'react-router'
+       3  import { ArrowLeft } from 'lucide-react'
+       4 -import { fixturePostsFor, fixtureUsers } from '../../fixtures/d
+         -ata'                                                           
+       5 -import { useFixtureState } from '../../fixtures/useFixtureState
+         -'                                                              
+       4 +import {                                                       
+       5 +  useCreatePost,                                               
+       6 +  useLocalPosts,                                               
+       7 +  useUser,                                                     
+       8 +  useUserPosts,                                                
+       9 +} from '../../api/queries'                                     
+      10  import { getFirstName } from '../../lib/names'
+      11  import { cx } from '../../lib/cx'
+       8 -import type { NewPost, Post } from '../../types'               
+      12 +import type { NewPost } from '../../types'                     
+      13  import { StateMessage } from '../../ui/StateMessage/StateMessag
+          e'
+      14  import button from '../../ui/button.module.css'
+      15  import { Composer } from '../Composer/Composer'
+      16  import { HeroBadge, HeroBadgeSkeleton } from '../HeroBadge/Hero
+          Badge'
+      13 -import { nextLocalPostId } from '../../api/localIds'           
+      17  import { PostList, PostListSkeleton } from '../PostList/PostLis
+          t'
+      18  import styles from './UserPostsPanel.module.css'
+      19  
+      17 -const wait = (ms: number) => new Promise((resolve) => setTimeou
+         -t(resolve, ms))                                                
+      20 +/** JSONPlaceholder IDs are positive integers; anything else ca
+         +n't exist. */                                                  
+      21 +function parseUserId(param: string | undefined): number | null 
+         +{                                                              
+      22 +  if (!param || !/^\d+$/.test(param)) return null              
+      23 +  const id = Number(param)                                     
+      24 +  return id > 0 ? id : null                                    
+      25 +}                                                              
+      26  
+      27  /** Route element for /users/:userId; remounts per user so draf
+          ts don't leak. */
+      28  export function UserPostsRoute() {
+      21 -  const { userId } = useParams()                               
+      22 -  return <UserPostsPanel key={userId} userId={Number(userId)} /
+         ->                                                              
+      29 +  const { userId: param } = useParams()                        
+      30 +  const userId = parseUserId(param)                            
+      31 +  if (userId === null) return <UserNotFound />                 
+      32 +  return <UserPostsPanel key={userId} userId={userId} />       
+      33  }
+      34  
+      35  function BackLink() {
+     ...
+      42    )
+      43  }
+      44  
+      35 -function UserPostsPanel({ userId }: { userId: number }) {      
+      36 -  const fixture = useFixtureState()                            
+      45 +function Panel({ children }: { children: ReactNode }) {        
+      46 +  return (                                                     
+      47 +    <div className={styles.panel}>                             
+      48 +      <BackLink />                                             
+      49 +      {children}                                               
+      50 +    </div>                                                     
+      51 +  )                                                            
+      52 +}                                                              
+      53 +                                                               
+      54 +function UserNotFound() {                                      
+      55    const { search } = useLocation()
+      38 -  const user = fixtureUsers.find((candidate) => candidate.id ==
+         -= userId)                                                      
+      39 -  const [localPosts, setLocalPosts] = useState<Post[]>([])     
+      56 +  return (                                                     
+      57 +    <Panel>                                                    
+      58 +      <StateMessage                                            
+      59 +        kind="not-found"                                       
+      60 +        title="We couldn’t find that user"                     
+      61 +        action={                                               
+      62 +          <Link                                                
+      63 +            to={{ pathname: '/', search }}                     
+      64 +            className={cx(button.button, button['button--second
+         +ary'])}                                                        
+      65 +          >                                                    
+      66 +            Back to all users                                  
+      67 +          </Link>                                              
+      68 +        }                                                      
+      69 +      >                                                        
+      70 +        The link may be wrong, or the user no longer exists.   
+      71 +      </StateMessage>                                          
+      72 +    </Panel>                                                   
+      73 +  )                                                            
+      74 +}                                                              
+      75  
+      41 -  if (fixture.users === 'loading') {                           
+      76 +function UserPostsPanel({ userId }: { userId: number }) {      
+      77 +  // Posts load in parallel with the user list, not after it.  
+      78 +  const userQuery = useUser(userId)                            
+      79 +  const postsQuery = useUserPosts(userId)                      
+      80 +  const localPosts = useLocalPosts(userId)                     
+      81 +  const createPost = useCreatePost(userId)                     
+      82 +                                                               
+      83 +  if (userQuery.isPending) {                                   
+      84      return (
+      43 -      <div className={styles.panel}>                           
+      44 -        <BackLink />                                           
+      85 +      <Panel>                                                  
+      86          <HeroBadgeSkeleton />
+      87          {/* Same geometry as the loaded panel: composer bar, he
+          ading, posts. */}
+      88          <div className={styles.composerBone} aria-hidden="true"
+           />
+     ...
+       96            </div>
+       97            <PostListSkeleton />
+       98          </section>
+       58 -      </div>                                                  
+       99 +      </Panel>                                                
+      100      )
+      101    }
+      102  
+       62 -  if (!user) {                                                
+      103 +  if (userQuery.isError) {                                    
+      104      return (
+       64 -      <div className={styles.panel}>                          
+       65 -        <BackLink />                                          
+      105 +      <Panel>                                                 
+      106          <StateMessage
+       67 -          kind="not-found"                                    
+       68 -          title="We couldn’t find that user"                  
+      107 +          kind="error"                                        
+      108 +          title="Couldn’t load this user"                     
+      109            action={
+       70 -            <Link                                             
+       71 -              to={{ pathname: '/', search }}                  
+      110 +            <button                                           
+      111 +              type="button"                                   
+      112                className={cx(button.button, button['button--sec
+           ondary'])}
+      113 +              onClick={() => void userQuery.refetch()}        
+      114              >
+       74 -              Back to all users                               
+       75 -            </Link>                                           
+      115 +              Try again                                       
+      116 +            </button>                                         
+      117            }
+      118          >
+       78 -          The link may be wrong, or the user no longer exists.
+      119 +          Check your connection, then try again.              
+      120          </StateMessage>
+       80 -      </div>                                                  
+      121 +      </Panel>                                                
+      122      )
+      123    }
+      124  
+      125 +  const user = userQuery.data                                 
+      126 +  if (!user) return <UserNotFound />                          
+      127 +                                                              
+      128    const firstName = getFirstName(user.name)
+       85 -  const serverPosts = fixture.posts === 'empty' ? [] : fixture
+          -PostsFor(user.id)                                             
+       86 -  const posts = [...localPosts, ...serverPosts]               
+      129 +  const serverPosts = postsQuery.data                         
+      130 +  const posts = [...localPosts, ...(serverPosts ?? [])]       
+      131  
+      132    async function publish(values: NewPost) {
+       89 -    await wait(600)                                           
+       90 -    if (fixture.publishFails) throw new Error('Publish failed'
+          -)                                                             
+       91 -    setLocalPosts((current) => [                              
+       92 -      { id: nextLocalPostId(), userId, ...values },           
+       93 -      ...current,                                             
+       94 -    ])                                                        
+      133 +    await createPost.mutateAsync(values)                      
+      134    }
+      135  
+      136    return (
+       98 -    <div className={styles.panel}>                            
+       99 -      <BackLink />                                            
+      137 +    <Panel>                                                   
+      138        <HeroBadge user={user} />
+      139        <Composer authorFirstName={firstName} onPublish={publish
+           } />
+      140  
+     ...
+      143            <h2 id="posts-heading" className={styles.posts__titl
+           e}>
+      144              Posts
+      145            </h2>
+      108 -          {fixture.posts !== 'loading' && fixture.posts !== 'e
+          -rror' && (                                                    
+      146 +          {serverPosts && (                                   
+      147              <span className={styles.posts__count}>{posts.lengt
+           h}</span>
+      148            )}
+      149          </div>
+      150  
+      113 -        {fixture.posts === 'loading' && <PostListSkeleton />} 
+      114 -                                                              
+      115 -        {fixture.posts === 'error' && (                       
+      116 -          <StateMessage                                       
+      117 -            kind="error"                                      
+      118 -            title={`Couldn’t load ${firstName}’s posts`}      
+      119 -            action={                                          
+      120 -              <button                                         
+      121 -                type="button"                                 
+      122 -                className={cx(button.button, button['button--s
+          -econdary'])}                                                  
+      123 -              >                                               
+      124 -                Try again                                     
+      125 -              </button>                                       
+      126 -            }                                                 
+      127 -          >                                                   
+      128 -            Check your connection, then try again. You can sti
+          -ll write a new                                                
+      129 -            post.                                             
+      130 -          </StateMessage>                                     
+      131 -        )}                                                    
+      132 -                                                              
+      133 -        {(fixture.posts === 'ready' || fixture.posts === 'empt
+          -y') &&                                                        
+      134 -          (posts.length === 0 ? (                             
+      151 +        {serverPosts ? (                                      
+      152 +          posts.length === 0 ? (                              
+      153              <StateMessage
+      154                kind="no-posts"
+      155                title={`${firstName} hasn’t posted yet`}
+     ...
+      158              </StateMessage>
+      159            ) : (
+      160              <PostList posts={posts} />
+      143 -          ))}                                                 
+      161 +          )                                                   
+      162 +        ) : (                                                 
+      163 +          <>                                                  
+      164 +            {/* Posts created while the list loads or after it
+          + failed (PLAN decision 12). */}                               
+      165 +            {localPosts.length > 0 && <PostList posts={localPo
+          +sts} />}                                                      
+      166 +                                                              
+      167 +            {postsQuery.isPending && <PostListSkeleton />}    
+      168 +                                                              
+      169 +            {postsQuery.isError && (                          
+      170 +              <StateMessage                                   
+      171 +                kind="error"                                  
+      172 +                title={`Couldn’t load ${firstName}’s posts`}  
+      173 +                action={                                      
+      174 +                  <button                                     
+      175 +                    type="button"                             
+      176 +                    className={cx(button.button, button['butto
+          +n--secondary'])}                                              
+      177 +                    onClick={() => void postsQuery.refetch()} 
+      178 +                  >                                           
+      179 +                    Try again                                 
+      180 +                  </button>                                   
+      181 +                }                                             
+      182 +              >                                               
+      183 +                Check your connection, then try again. You can
+          + still write a                                                
+      184 +                new post.                                     
+      185 +              </StateMessage>                                 
+      186 +            )}                                                
+      187 +          </>                                                 
+      188 +        )}                                                    
+      189        </section>
+      145 -    </div>                                                    
+      190 +    </Panel>                                                  
+      191    )
+      192  }
+
+● Update(src/posts/UserPostsPanel/UserPostsPanel.tsx)
+  ⎿  Added 1 line, removed 1 line
+      100      )
+      101    }
+      102  
+      103 -  if (userQuery.isError) {                                    
+      103 +  if (userQuery.isError && !userQuery.data) {                 
+      104      return (
+      105        <Panel>
+      106          <StateMessage
+
+● Bash(npm run post-agent 2>&1 | tail -20 && npx vitest run 2>&1 | tail -15)
+  ⎿  Updated src/posts/UserPostsPanel/UserPostsPanel.tsx (+2 -2)
+      180                    </button>
+      181                  }
+      182                >
+      183 -                Check your connection, then try again. You can
+          - still write a                                                
+      184 -                new post.                                     
+      183 +                Check your connection, then try again. You can
+          + still write a new                                            
+      184 +                post.                                         
+      185                </StateMessage>
+      186              )}
+      187            </>
+
+● The gate passes and the existing tests still pass. I'm writing a throwaway
+  test of the full flow against MSW to check the wiring before step 7. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All four flows pass, and I deleted the throwaway test. Last thing: updating
+  PLAN.md.
+
+● Bash(python3 - <<'EOF'
+      p='PLAN.md'…)
+  ⎿  Updated PLAN.md (+16 -3)
+      22  - [x] 2. Layout and UI/UX definition (on fixtures; see decision
+          s 7–10 and DESIGN.md)
+      23  - [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST
+           /posts`)
+      24  - [x] 4. Users list with search by name (synced with `?q=`, see
+           decision 15)
+      25 -- [ ] 5. User posts + create-post form (validated, required tit
+         -le and body)                                                   
+      25 +- [x] 5. User posts + create-post form (validated, required tit
+         +le and body; see decision 16)                                  
+      26  - [ ] 6. Loading and error states
+      27  - [ ] 7. Tests (at least 3) and add them to the `post-agent` ga
+          te
+      28  - [ ] 8. README (run, decisions, next steps, AI usage)
+     ...
+      74     Figtree is self-hosted via `@fontsource-variable/figtree`; i
+          cons come from
+      75     `lucide-react`. Mobile navigation uses a View Transition (th
+          e badge's monogram morphs
+      76     into the header), disabled under `prefers-reduced-motion`.
+      77 -10. **Design step runs on fixtures.** `src/fixtures/` holds JSO
+         -NPlaceholder-shaped data,                                      
+      78 -    and `useFixtureState` forces every UI state from the URL (`
+         -?users=loading|error`,                                         
+      77 +10. **Design step runs on fixtures.** `src/fixtures/` held JSON
+         +Placeholder-shaped data,                                       
+      78 +    and `useFixtureState` forced every UI state from the URL (`
+         +?users=loading|error`,                                         
+      79      `?posts=loading|error|empty`, `?publish=error`). Steps 3–6 
+          replace both with
+      80      TanStack Query; components take data and callbacks, so no r
+          estyling is needed.
+      81 +    Since step 5 the app reads only the real API: `useFixtureSt
+         +ate` is gone and the                                           
+      82 +    data moved to `src/test/data.ts`, where it backs the MSW ha
+         +ndlers.                                                        
+      83  11. **Agent tooling is out of lint/format scope.** `.claude`, `
+          .agents`, `.codex` and
+      84      `.impeccable` are in ESLint's `globalIgnores` and `.prettie
+          rignore`; the vendored skill
+      85      scripts were failing `post-agent`.
+     ...
+      110      loading/error UI is live and "Try again" refetches; the po
+           sts panel still uses
+      111      fixtures until step 5. `src/users/UsersPanel/UsersPanel.te
+           st.tsx` covers the search rules
+      112      (not yet in the `post-agent` gate; step 7).
+      113 +16. **Posts panel on live data; create-post rules.** `UserPost
+          +sPanel` reads `useUser`,                                      
+      114 +    `useUserPosts`, `useLocalPosts` and `useCreatePost`. The p
+          +osts request starts                                           
+      115 +    alongside the users request instead of waiting for it. A `
+          +:userId` that isn't a                                         
+      116 +    positive integer shows "not found" without any request; an
+          + ID missing from the                                          
+      117 +    list shows it once users load. Posts created while the lis
+          +t is loading or failed                                        
+      118 +    show above the skeleton or error. Form rules: title and bo
+          +dy are required after                                         
+      119 +    `trim()`, and the title needs at least 2 characters (a pro
+          +duct decision: a                                              
+      120 +    one-character title isn't a real title). There is no maxim
+          +um length.                                                    
+      121 +    The rules live in `src/posts/Composer/newPostSchema.ts`, s
+          +o step 7 can test them                                        
+      122 +    directly. Errors show after the first submit attempt, then
+          + update live, and the                                         
+      123 +    trimmed values are what gets published.                   
+
+● Step 5 is done. The posts panel now reads the real API instead of fixtures,
+  and the form uses your validation rules. npm run post-agent passes and the 5
+  existing tests still pass. Nothing is committed.
+
+  Validation (newPostSchema.ts (src/posts/Composer/newPostSchema.ts))
+  - The title is required after trim() and needs at least 2 characters. An empty
+    title shows "Add a title."; a one-character title shows "Use at least 2
+    characters for the title."
+  - The body is required after trim() ("Write something in the body.").
+  - I removed the old 120-character cap on the title, since you said "required"
+    is enough. Tell me if you want it back.
+  - The rules are in their own file, so step 7 can test them directly.
+    Composer.tsx (src/posts/Composer/Composer.tsx) imports them and otherwise
+    works as before: errors appear after the first submit attempt, then update
+    as you type.
+
+  Posts panel (UserPostsPanel.tsx (src/posts/UserPostsPanel/UserPostsPanel.tsx))
+  - It uses useUser, useUserPosts, useLocalPosts and useCreatePost. Posts start
+    loading at the same time as the users list instead of waiting for it.
+  - If :userId isn't a positive integer (like /users/abc), it shows "not found"
+    without sending a request. An ID that isn't in the list (like /users/99)
+    shows "not found" once users load.
+  - If loading the user fails, the panel shows its own error with "Try again".
+    On mobile only this panel is visible, so it can't rely on the users panel's
+    error.
+  - Posts you create while the list is still loading or has failed appear above
+    the skeleton or the error.
+
+  Fixtures
+  - useFixtureState is deleted, and the fixture data moved to src/test/data.ts,
+    where it feeds the mock API in tests.
+  - This means URLs like ?posts=error no longer force a state. For step 6 you'll
+    need MSW overrides or DevTools network throttling to see those states.
+
+  PLAN.md: step 5 is checked off, decision 10 is updated, and decision 16
+  records the panel behaviour and the title minimum as a product decision.
+
+  To check the wiring, I ran a temporary test for these cases and then deleted
+  it:
+  - validation errors, then publishing a valid post (the count goes from 10 to
+    11 and "Local only" appears)
+  - publishing while the posts request fails
+  - both "not found" cases
+
+  I haven't clicked through it in a browser.

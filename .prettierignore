@@ -3,3 +3,7 @@ coverage
 package-lock.json
 coding_agents
 PLAN.md
+.claude
+.agents
+.codex
+.impeccable

@@ -1,0 +1,14 @@
+/* The SVG's own color hook, fed the primary fill so the white glyphs keep
+   their contrast in both themes. */
+.logo {
+  --posts-explorer-primary: var(--color-accent-fill);
+
+  display: block;
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
+.logo__disc {
+  fill: var(--posts-explorer-primary, #5048e4);
+}

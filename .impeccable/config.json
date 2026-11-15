@@ -1,0 +1,107 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.001Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.008Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.016Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.024Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-console.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.031Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-console.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.039Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "overused-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-console.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.047Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-console.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.054Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-11-15T04:55:14.062Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-15T05:08:37.433Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-console.html"
+        ],
+        "createdAt": "2026-11-15T05:08:37.442Z",
+        "reason": "Claude: throwaway decision-round sketch under .impeccable/mocks, never shipped"
+      }
+    ]
+  }
+}

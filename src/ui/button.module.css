@@ -1,0 +1,86 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) ease-out,
+    border-color var(--duration-fast) ease-out,
+    color var(--duration-fast) ease-out;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+}
+
+/* Busy, not unavailable: keeps focus, ignores clicks (see RetryButton). */
+.button[aria-disabled='true'] {
+  cursor: progress;
+}
+
+.button svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.button--primary {
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--color-accent-fill-hover);
+}
+
+.button--primary:disabled {
+  opacity: 0.7;
+}
+
+.button--secondary {
+  background: var(--color-stock);
+  border-color: var(--color-line-strong);
+  color: var(--color-text);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: var(--color-stock-hover);
+  border-color: var(--color-text-3);
+}
+
+.button--secondary[aria-disabled='true'],
+.button--secondary[aria-disabled='true']:hover {
+  background: var(--color-stock);
+  border-color: var(--color-line-strong);
+  color: var(--color-text-2);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--color-text-2);
+}
+
+.button--ghost:hover:not(:disabled) {
+  background: var(--color-line);
+  color: var(--color-text);
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
