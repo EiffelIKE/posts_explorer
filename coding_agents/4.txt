@@ -1,0 +1,350 @@
+
+❯ /clear
+
+❯ <ide_opened_file>The user opened the file
+  /home/eiffelike/work/users_post/PLAN.md in the IDE. This may or may not be
+  related to the current task.</ide_opened_file>
+
+❯ lets start on the 4th step in the PLAN.md above, as a new requirement, the
+  searchQuery must live in the URL, in order to persist re-loads and
+  navigation, and of course the start value of the search input would be the
+  query, a few constrains or search value rules: 1- must match partial names,
+  ignoring case and leading or trailing whitespace for example LEAN  should
+  match Leanne Graham. 2-show all users when the search is empty or contains
+  only whitespace 3-keep the input value exactly as typed and apply trim() and
+  lowercase conversion when comparing against user names so users can type
+  spaces naturally 4-there's only 10 users so allow 1 character searches and
+  the maxLength to 60, 5-if the search already syncs with ?q= lets preserve
+  that behavior, 6-use the trimmed value in the URL and preserve the users
+  casing and remove q when the trimmed value is empty, of course preserve other
+  query parameters
+
+  Listed 1 directory, ran 2 shell commands (ctrl+o to expand)
+
+● I'm adding a search-query module that filters by name and syncs the trimmed
+  input to the URL, then wiring it into UsersPanel with real data and a
+  60-character limit. · summary
+
+● Write(src/users/searchQuery.ts)
+  ⎿  Wrote 60 lines to src/users/searchQuery.ts
+       1 import { useState } from 'react'
+       2 import { useSearchParams } from 'react-router'
+       3
+       4 export const SEARCH_PARAM = 'q'
+       5 /** Only 10 users: one character is a useful search; 60 fits any
+          real name. */
+       6 export const SEARCH_MAX_LENGTH = 60
+       7
+       8 /**
+       9  * Users whose name contains the query, ignoring case and surrou
+     … +52 lines (~2 KB) (ctrl+o to expand)
+
+● Now the panel: real data from useUsers(), the hook, and maxLength.
+
+● Bash(python3 - <<'EOF'
+      p='src/users/UsersPanel.tsx'…)
+  ⎿  Updated src/users/UsersPanel.tsx (+17 -20)
+       1 -import { useId, useMemo, useState } from 'react'               
+       1 +import { useId, useMemo } from 'react'                         
+       2  import { Search, X } from 'lucide-react'
+       3 -import { fixtureUsers } from '../fixtures/data'                
+       4 -import { useFixtureState } from '../fixtures/useFixtureState'  
+       5 -import type { User } from '../types'                           
+       3 +import { useUsers } from '../api/queries'                      
+       4  import { StateMessage } from '../ui/StateMessage'
+       5  import button from '../ui/button.module.css'
+       6  import { cx } from '../lib/cx'
+       7 +import { filterByName, SEARCH_MAX_LENGTH, useSearchQuery } from
+         + './searchQuery'                                               
+       8  import { UserBadge, UserBadgeSkeleton } from './UserBadge'
+       9  import styles from './UsersPanel.module.css'
+      10  
+      12 -function filterByName(users: User[], query: string) {          
+      13 -  const needle = query.trim().toLocaleLowerCase()              
+      14 -  if (!needle) return users                                    
+      15 -  return users.filter((user) => user.name.toLocaleLowerCase().i
+         -ncludes(needle))                                               
+      16 -}                                                              
+      17 -                                                               
+      11  /** The badge rack: search on top, the directory of users below
+          . */
+      12  export function UsersPanel() {
+      20 -  const fixture = useFixtureState()                            
+      21 -  const [query, setQuery] = useState('')                       
+      13 +  const { data: users, isPending, isError, refetch } = useUsers
+         +()                                                             
+      14 +  const [query, setQuery] = useSearchQuery()                   
+      15    const searchId = useId()
+      23 -  const users = fixtureUsers                                   
+      24 -  const visible = useMemo(() => filterByName(users, query), [us
+         -ers, query])                                                   
+      16 +  const visible = useMemo(                                     
+      17 +    () => (users ? filterByName(users, query) : []),           
+      18 +    [users, query],                                            
+      19 +  )                                                            
+      20    const isFiltering = query.trim() !== ''
+      21  
+      22    let count = ''
+      28 -  if (fixture.users === 'ready') {                             
+      23 +  if (users) {                                                 
+      24      count = isFiltering
+      25        ? `${visible.length} of ${users.length}`
+     … 55 more lines (ctrl+o to expand)
+  ⎿  (files that changed while this command ran, by the command or by
+     another process; a convenience view, not a review or audit of the
+     command)
+
+● Now make in-app links carry the query string so ?q= survives navigation.
+
+● Bash(python3 - <<'EOF'
+      import re…)
+  ⎿  import { Link } from 'react-router'
+     import { StateMessage } from '../ui/StateMessage'
+     import button from '../ui/button.module.css'
+     … +51 lines (ctrl+o to expand)
+  ⎿  Updated src/users/UserBadge.tsx (+9 -2)
+      1 -import { NavLink, useMatch, useViewTransitionState } from 'react
+        --router'                                                        
+      1 +import {                                                        
+      2 +  NavLink,                                                      
+      3 +  useLocation,                                                  
+      4 +  useMatch,                                                     
+      5 +  useViewTransitionState,                                       
+      6 +} from 'react-router'                                           
+      7  import type { User } from '../types'
+      8  import { Avatar } from '../ui/Avatar'
+      9  import { cx } from '../lib/cx'
+     ...
+      12  /** One user in the rack, drawn as a conference name badge. */
+      13  export function UserBadge({ user }: { user: User }) {
+      14    const to = `/users/${user.id}`
+      15 +  // Keep `?q=` (and any other params) so the search survives t
+         +he navigation.                                                 
+      16 +  const { search } = useLocation()                             
+      17    const isCurrent = useMatch(to) !== null
+      18    // While navigating to this badge's route, it lends its monog
+          ram and name to
+      19    // the hero badge (the handoff). `data-handoff` tells the out
+          going hero to
+     ...
+      22  
+      23    return (
+      24      <NavLink
+      18 -      to={to}                                                  
+      25 +      to={{ pathname: to, search }}                            
+      26        viewTransition
+      27        data-handoff={isHandingOff ? '' : undefined}
+      28        className={({ isActive }) =>
+  ⎿  Updated src/layout/RootLayout.tsx (+9 -2)
+       1 -import { Link, Outlet, ScrollRestoration, useMatch } from 'reac
+         -t-router'                                                      
+       1 +import {                                                       
+       2 +  Link,                                                        
+       3 +  Outlet,                                                      
+       4 +  ScrollRestoration,                                           
+       5 +  useLocation,                                                 
+       6 +  useMatch,                                                    
+       7 +} from 'react-router'                                          
+       8  import { ThemeSwitch } from '../theme/ThemeSwitch'
+       9  import { UsersPanel } from '../users/UsersPanel'
+      10  import { cx } from '../lib/cx'
+     ...
+      16   */
+      17  export function RootLayout() {
+      18    const atRoot = useMatch({ path: '/', end: true })
+      19 +  const { search } = useLocation()                             
+      20  
+      21    return (
+      22      <div className={cx(styles.layout, !atRoot && styles['layout
+          --detail'])}>
+     ...
+      24          Skip to content
+      25        </a>
+      26        <header className={styles.topbar}>
+      20 -        <Link to="/" className={styles.wordmark}>              
+      27 +        <Link to={{ pathname: '/', search }} className={styles.
+         +wordmark}>                                                     
+      28            Posts Explorer
+      29          </Link>
+      30          <ThemeSwitch />
+  ⎿  Updated src/posts/UserPostsPanel.tsx (+3 -2)
+      1  import { useState } from 'react'
+      2 -import { Link, useParams } from 'react-router'                  
+      2 +import { Link, useLocation, useParams } from 'react-router'     
+      3  import { ArrowLeft } from 'lucide-react'
+      4  import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
+      5  import { useFixtureState } from '../fixtures/useFixtureState'
+     ...
+      23  }
+      24  
+      25  function BackLink() {
+      26 +  const { search } = useLocation()                             
+      27    return (
+      27 -    <Link to="/" viewTransition className={styles.back}>       
+      28 +    <Link to={{ pathname: '/', search }} viewTransition classNa
+         +me={styles.back}>                                              
+      29        <ArrowLeft aria-hidden="true" />
+      30        All users
+      31      </Link>
+
+● Bash(python3 - <<'EOF'
+      def edit(p, reps):…)
+  ⎿  src/posts/HeroBadge.tsx 9ms (unchanged)
+     src/posts/NoUserSelected.module.css 7ms (unchanged)
+     src/posts/NoUserSelected.tsx 4ms (unchanged)
+     … +27 lines (ctrl+o to expand)
+  ⎿  Updated src/layout/NotFound.tsx (+3 -2)
+      1 -import { Link } from 'react-router'                             
+      1 +import { Link, useLocation } from 'react-router'                
+      2  import { StateMessage } from '../ui/StateMessage'
+      3  import button from '../ui/button.module.css'
+      4  import { cx } from '../lib/cx'
+     ...
+       6  
+       7  /** Unknown routes render inside the detail panel. */
+       8  export function NotFound() {
+       9 +  const { search } = useLocation()                             
+      10    return (
+      11      <div className={styles.page}>
+      12        <h1 className="visually-hidden">Page not found</h1>
+     ...
+      15          title="This page doesn’t exist"
+      16          action={
+      17            <Link
+      17 -            to="/"                                             
+      18 +            to={{ pathname: '/', search }}                     
+      19              className={cx(button.button, button['button--second
+          ary'])}
+      20            >
+      21              Go to all users
+  ⎿  Updated src/posts/UserPostsPanel.tsx (+2 -1)
+      34  
+      35  function UserPostsPanel({ userId }: { userId: number }) {
+      36    const fixture = useFixtureState()
+      37 +  const { search } = useLocation()                             
+      38    const user = fixtureUsers.find((candidate) => candidate.id ==
+          = userId)
+      39    const [localPosts, setLocalPosts] = useState<Post[]>([])
+      40  
+     ...
+      68            title="We couldn’t find that user"
+      69            action={
+      70              <Link
+      70 -              to="/"                                           
+      71 +              to={{ pathname: '/', search }}                   
+      72                className={cx(button.button, button['button--seco
+          ndary'])}
+      73              >
+      74                Back to all users
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Gate passes. Now let me verify the six rules with a real test (MSW + memory
+  router), since that's the most reliable check of the URL behaviour.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Write(src/users/UsersPanel.test.tsx)
+  ⎿  Wrote 98 lines to src/users/UsersPanel.test.tsx
+       1 import { QueryClientProvider } from '@tanstack/react-query'
+       2 import { act, render, screen, within } from '@testing-library/re
+         act'
+       3 import userEvent from '@testing-library/user-event'
+       4 import { createMemoryRouter, RouterProvider } from 'react-router
+         '
+       5 import { describe, expect, it } from 'vitest'
+       6 import { createQueryClient } from '../api/queries'
+       7 import { fixtureUsers } from '../fixtures/data'
+       8 import { UsersPanel } from './UsersPanel'
+     … +90 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All 5 pass. Run the gate on the test file, then update PLAN.md.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Bash(python3 - <<'EOF'
+      p='PLAN.md'…)
+  ⎿  Checking formatting...
+     All matched files use Prettier code style!
+  ⎿  Updated PLAN.md (+12 -1)
+      21  - [x] 1. Project setup: scaffold, tooling, `post-agent` gate
+      22  - [x] 2. Layout and UI/UX definition (on fixtures; see decision
+          s 7–10 and DESIGN.md)
+      23  - [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST
+           /posts`)
+      24 -- [ ] 4. Users list with search by name                        
+      24 +- [x] 4. Users list with search by name (synced with `?q=`, see
+         + decision 15)                                                  
+      25  - [ ] 5. User posts + create-post form (validated, required tit
+          le and body)
+      26  - [ ] 6. Loading and error states
+      27  - [ ] 7. Tests (at least 3) and add them to the `post-agent` ga
+          te
+     ...
+       97      TanStack Query hooks. The query client sets `staleTime: In
+           finity` (the data never
+       98      changes) and `retry: 1`, so the error state shows quickly.
+            `src/test/handlers.ts`
+       99      gives MSW a happy-path default for all three endpoints.
+      100 +15. **Search lives in the URL as `?q=`.** It survives reloads,
+          + back/forward and links:                                      
+      101 +    in-app links carry the current query string. The input kee
+          +ps exactly what was                                           
+      102 +    typed; matching trims and lowercases it (partial, case-ins
+          +ensitive), so an empty                                        
+      103 +    or whitespace-only search shows everyone. The URL gets the
+          + trimmed value in the                                         
+      104 +    user's casing, `q` is removed when that is empty, and othe
+          +r parameters stay.                                            
+      105 +    Typing uses `replace` (one history entry per search, not p
+          +er keystroke) and                                             
+      106 +    `preventScrollReset`. One-character searches are allowed (
+          +10 users); `maxLength`                                        
+      107 +    is 60. `UsersPanel` now reads `useUsers()` instead of the 
+          +fixture, so its                                               
+      108 +    loading/error UI is live and "Try again" refetches; the po
+          +sts panel still uses                                          
+      109 +    fixtures until step 5. `src/users/UsersPanel.test.tsx` cov
+          +ers the search rules                                          
+      110 +    (not yet in the `post-agent` gate; step 7).               
+
+● Step 4 is done: search now stays in sync with ?q=, and the users list loads
+  real data. The post-agent gate passes, and I added 5 tests in
+  UsersPanel.test.tsx (src/users/UsersPanel.test.tsx) that pass and cover your
+  six rules. Nothing is committed.
+
+  What changed
+  - searchQuery.ts (src/users/searchQuery.ts) (new): filterByName holds the
+    matching rules, and useSearchQuery() keeps the search in sync with the URL.
+    - Input: the box shows exactly what you type, spaces included. On first load
+      it starts from ?q=.
+    - URL: gets the trimmed value in your casing ( LEAN becomes ?q=LEAN). q is
+      removed when the trimmed value is empty, and other parameters are left
+      alone.
+    - Back/forward: if q changes this way, the input updates to match. Your own
+      typing never rewrites the input, so trailing spaces aren't lost.
+  - UsersPanel.tsx (src/users/UsersPanel.tsx): uses the hook, sets
+    maxLength={60} and allows one-character searches. It now reads useUsers()
+    instead of the fixture, so its loading, error and "Try again" states work
+    with real data.
+  - Links keep the query string: the user badges, the "All users" back link, the
+    "Posts Explorer" title link and the not-found links all carry the current
+    query string, so ?q= survives navigation.
+  - PLAN.md: step 4 is ticked and decision 15 is added.
+
+  Choices I made that you may want to change
+  - History: typing replaces the current history entry rather than adding one
+    per keystroke, and the scroll position stays put. Otherwise Back would undo
+    one letter at a time, and on mobile the list would jump to the top on every
+    keystroke.
+  - Title link keeps the search: I made "Posts Explorer" keep it, for
+    consistency. If you'd rather it reset the search, it's a one-line change in
+    RootLayout.tsx (src/layout/RootLayout.tsx).
+  - Over-long ?q=: a value longer than 60 characters in the URL is cut to 60
+    when read, to match maxLength.
+  - Step 5 overlap: the posts panel still uses fixtures, so ?users=loading still
+    affects it until step 5.
+  - Tests not in the gate yet: the new tests aren't part of post-agent, which is
+    planned for step 7.
