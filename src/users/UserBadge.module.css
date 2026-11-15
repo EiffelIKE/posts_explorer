@@ -1,0 +1,154 @@
+.badge {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-areas:
+    'avatar who'
+    'company company';
+  column-gap: var(--space-3);
+  height: 92px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-badge);
+  background: var(--color-stock);
+  box-shadow: var(--shadow-stock);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    border-color var(--duration-fast) ease-out,
+    background-color var(--duration-fast) ease-out,
+    box-shadow var(--duration-fast) ease-out;
+}
+
+.badge:hover {
+  border-color: var(--color-line-strong);
+  background: var(--color-stock-hover);
+}
+
+.badge:focus-visible {
+  outline-offset: 2px;
+}
+
+.badge__avatar {
+  grid-area: avatar;
+  align-self: center;
+  margin-left: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.badge__who {
+  grid-area: who;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) 0 0;
+}
+
+.badge__name,
+.badge__username,
+.badge__company {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge__name {
+  width: fit-content;
+  max-width: 100%;
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.badge__username {
+  color: var(--color-text-2);
+  font-size: var(--text-md);
+  line-height: 1.4;
+}
+
+/* The badge's lower band, below a perforation. */
+.badge__company {
+  grid-area: company;
+  align-self: end;
+  padding: 5px var(--space-3) 6px;
+  border-top: 1px dashed var(--color-line-strong);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Selected: the badge hangs from the indigo lanyard clip. */
+.badge--selected,
+.badge--selected:hover {
+  border-color: var(--color-accent);
+  background: var(--color-stock);
+  box-shadow:
+    0 0 0 1px var(--color-accent),
+    var(--shadow-selected);
+}
+
+.badge__clip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 40px;
+  height: 5px;
+  margin-left: -20px;
+  border-radius: 0 0 4px 4px;
+  background: var(--color-accent);
+  view-transition-name: badge-clip;
+}
+
+/* Handoff: the clicked badge's monogram and name become the hero's. */
+.badge--handoff .badge__avatar {
+  view-transition-name: hero-avatar;
+}
+
+.badge--handoff .badge__name {
+  view-transition-name: hero-name;
+}
+
+/* Skeleton */
+.badge--skeleton,
+.badge--skeleton:hover {
+  border-color: var(--color-line);
+  background: var(--color-stock);
+}
+
+.bone {
+  display: block;
+  border-radius: 4px;
+  background: var(--color-skeleton);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.bone--round {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+.bone--name {
+  width: 62%;
+  height: 12px;
+  margin: 5px 0 9px;
+}
+
+.bone--username {
+  width: 36%;
+  height: 10px;
+}
+
+.bone--company {
+  width: 44%;
+  height: 9px;
+  margin: 6px 0;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

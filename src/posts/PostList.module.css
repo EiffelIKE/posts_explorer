@@ -1,0 +1,77 @@
+.list {
+  border-top: 1px solid var(--color-line-strong);
+}
+
+.post {
+  padding: var(--space-5) var(--space-1) var(--space-6);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.post__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* JSONPlaceholder titles are lowercase; capitalize the first letter only. */
+.post__title::first-letter {
+  text-transform: uppercase;
+}
+
+.post__local {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: var(--color-avatar);
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.6;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+
+.post__body {
+  max-width: 68ch;
+  margin-top: var(--space-1);
+  color: var(--color-text-2);
+  white-space: normal;
+}
+
+.post__body::first-letter {
+  text-transform: uppercase;
+}
+
+/* Skeleton: same padding and line rhythm as a loaded post. */
+.bone {
+  display: block;
+  border-radius: 4px;
+  background: var(--color-skeleton);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.bone--title {
+  width: 52%;
+  height: 14px;
+  margin: 6px 0 16px;
+}
+
+.bone--line {
+  width: 88%;
+  max-width: 68ch;
+  height: 10px;
+  margin-bottom: 14px;
+}
+
+.bone--short {
+  width: 60%;
+  margin-bottom: 7px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

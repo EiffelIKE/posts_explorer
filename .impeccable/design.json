@@ -1,0 +1,545 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T05:08:50+00:00",
+  "title": "Design System: Posts Explorer",
+  "extensions": {
+    "colorMeta": {
+      "lanyard-indigo": {
+        "role": "primary",
+        "displayName": "Lanyard Indigo",
+        "tonalRamp": [
+          "#3730a3",
+          "#4338ca",
+          "#4f46e5",
+          "#5850ec",
+          "#6a63f0",
+          "#818cf8",
+          "#c7cbfd",
+          "#e6e7fa"
+        ],
+        "darkCounterpart": "dark-lanyard-indigo (strokes) / dark-lanyard-fill (fills)"
+      },
+      "lanyard-indigo-deep": {
+        "role": "primary",
+        "displayName": "Lanyard Indigo Deep",
+        "tonalRamp": [
+          "#3730a3",
+          "#4338ca",
+          "#4f46e5",
+          "#5850ec",
+          "#6a63f0",
+          "#818cf8",
+          "#c7cbfd",
+          "#e6e7fa"
+        ],
+        "darkCounterpart": "dark-lanyard-fill-hover"
+      },
+      "lanyard-soft": {
+        "role": "primary",
+        "displayName": "Lanyard Soft",
+        "tonalRamp": [
+          "#3730a3",
+          "#4338ca",
+          "#4f46e5",
+          "#5850ec",
+          "#6a63f0",
+          "#818cf8",
+          "#c7cbfd",
+          "#e6e7fa"
+        ],
+        "darkCounterpart": "dark-lanyard-soft"
+      },
+      "lanyard-ink": {
+        "role": "primary",
+        "displayName": "Lanyard Ink",
+        "tonalRamp": [
+          "#3730a3",
+          "#4338ca",
+          "#4f46e5",
+          "#5850ec",
+          "#6a63f0",
+          "#818cf8",
+          "#c7cbfd",
+          "#e6e7fa"
+        ],
+        "darkCounterpart": "dark-lanyard-ink"
+      },
+      "on-lanyard": {
+        "role": "primary",
+        "displayName": "On Lanyard",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-ground"
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-rail"
+      },
+      "badge-stock": {
+        "role": "neutral",
+        "displayName": "Badge Stock",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-badge-stock"
+      },
+      "badge-stock-hover": {
+        "role": "neutral",
+        "displayName": "Badge Stock Hover",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-badge-stock-hover"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-hairline"
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-hairline-strong"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-ink"
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Ink Secondary",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-ink-secondary"
+      },
+      "ink-tertiary": {
+        "role": "neutral",
+        "displayName": "Ink Tertiary",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-ink-tertiary"
+      },
+      "monogram-ground": {
+        "role": "neutral",
+        "displayName": "Monogram Ground",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-monogram-ground"
+      },
+      "monogram-ink": {
+        "role": "neutral",
+        "displayName": "Monogram Ink",
+        "tonalRamp": [
+          "#13161e",
+          "#2a2f3c",
+          "#3b3f55",
+          "#555b6b",
+          "#8a90a0",
+          "#cdd2dc",
+          "#eef0f5",
+          "#f6f7fa"
+        ],
+        "darkCounterpart": "dark-monogram-ink"
+      },
+      "danger": {
+        "role": "status",
+        "displayName": "Danger",
+        "tonalRamp": [
+          "#4a1410",
+          "#7a1d14",
+          "#b42318",
+          "#d9483b",
+          "#f07a6e",
+          "#f59a90",
+          "#fbc9c3",
+          "#fdecea"
+        ],
+        "darkCounterpart": "dark-danger"
+      },
+      "danger-soft": {
+        "role": "status",
+        "displayName": "Danger Soft",
+        "tonalRamp": [
+          "#4a1410",
+          "#7a1d14",
+          "#b42318",
+          "#d9483b",
+          "#f07a6e",
+          "#f59a90",
+          "#fbc9c3",
+          "#fdecea"
+        ],
+        "darkCounterpart": "dark-danger-soft"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero badge name only; 24px / 1.2 / -0.015em below 768px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Panel headings (Posts, empty-panel invitation)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Post titles, open composer heading; wordmark at 800."
+      },
+      "badge-name": {
+        "displayName": "Badge Name",
+        "purpose": "Name on a rack badge, single line, ellipsized."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text, post bodies (68ch), input text; tabular numerals global."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons and field labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Counts, hints, theme-switch options, field errors; company band at 500."
+      }
+    },
+    "shadows": [
+      {
+        "name": "stock",
+        "value": "0 1px 2px rgb(22 25 40 / 0.06)",
+        "dark": "0 1px 2px rgb(0 0 0 / 0.3)",
+        "purpose": "Rack badges, collapsed composer bar, checked theme-switch option."
+      },
+      {
+        "name": "raised",
+        "value": "0 1px 2px rgb(22 25 40 / 0.06), 0 12px 32px -16px rgb(22 25 40 / 0.22)",
+        "dark": "0 1px 2px rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.6)",
+        "purpose": "Hero badge and open composer form."
+      },
+      {
+        "name": "selected",
+        "value": "0 0 0 1px var(--color-accent), 0 6px 16px -8px rgb(79 70 229 / 0.45)",
+        "dark": "0 0 0 1px var(--color-accent), 0 6px 18px -8px rgb(88 80 236 / 0.55)",
+        "purpose": "Selected rack badge only."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px var(--color-accent-soft)",
+        "purpose": "Focused search and form fields (danger-soft when invalid)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "View Transition groups and the clip-tab drop."
+      },
+      {
+        "name": "duration-fast",
+        "value": "120ms",
+        "purpose": "Color, border and shadow fades on hover and state change (ease-out)."
+      },
+      {
+        "name": "duration-base",
+        "value": "220ms",
+        "purpose": "Badge handoff View Transition (monogram and name morph into the hero)."
+      },
+      {
+        "name": "root-crossfade",
+        "value": "160ms",
+        "purpose": "Root view-transition old/new crossfade."
+      },
+      {
+        "name": "clip-drop",
+        "value": "260ms translateY(-100%) to 0, ease-out",
+        "purpose": "Hero clip tab drops in once per selection."
+      },
+      {
+        "name": "skeleton-pulse",
+        "value": "1.6s ease-in-out infinite, opacity 1 to 0.55",
+        "purpose": "Skeleton bones while loading."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animations and transitions cut",
+        "purpose": "prefers-reduced-motion: reduce disables view-transition animation and shortens all others to 0.01ms."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px",
+        "note": "composer stacks, theme switch goes icon-only below"
+      },
+      {
+        "name": "md",
+        "value": "768px",
+        "note": "single-pane routing below"
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "note": "rack is clamp(340px, 28vw, 400px); 340px fixed below"
+      }
+    ],
+    "layout": {
+      "topbarHeight": "56px",
+      "rackWidth": "clamp(340px, 28vw, 400px)",
+      "measure": "820px",
+      "postBodyMeasure": "68ch",
+      "badgeHeight": "92px",
+      "badgeGap": "8px"
+    },
+    "source": {
+      "tokens": "src/styles/tokens.css",
+      "globals": "src/index.css",
+      "themeAttribute": "html[data-theme='light'|'dark']; absent = System"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per view (New post, Publish post).",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg> New post</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2,8px); min-height:40px; padding:0 var(--space-4,16px); border:1px solid transparent; border-radius:var(--radius-control,8px); font-family:var(--font-sans); font-size:var(--text-md,0.875rem); font-weight:600; line-height:1; cursor:pointer; transition:background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out; } .ds-btn:focus-visible { outline:2px solid var(--color-accent,#4f46e5); outline-offset:2px; } .ds-btn-primary { background:var(--color-accent-fill,#4f46e5); color:var(--color-on-accent,#fff); } .ds-btn-primary:hover { background:var(--color-accent-fill-hover,#4338ca); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral action on badge stock.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">Try again</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2,8px); min-height:40px; padding:0 var(--space-4,16px); border:1px solid transparent; border-radius:var(--radius-control,8px); font-family:var(--font-sans); font-size:var(--text-md,0.875rem); font-weight:600; line-height:1; cursor:pointer; transition:background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out; } .ds-btn:focus-visible { outline:2px solid var(--color-accent,#4f46e5); outline-offset:2px; } .ds-btn-secondary { background:var(--color-stock,#fff); border-color:var(--color-line-strong,#cdd2dc); color:var(--color-text,#1a1d26); } .ds-btn-secondary:hover { background:var(--color-stock-hover,#fafbfd); border-color:var(--color-text-3,#646a7a); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-emphasis action such as Cancel.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Cancel</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2,8px); min-height:40px; padding:0 var(--space-4,16px); border:1px solid transparent; border-radius:var(--radius-control,8px); font-family:var(--font-sans); font-size:var(--text-md,0.875rem); font-weight:600; line-height:1; cursor:pointer; transition:background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out; } .ds-btn:focus-visible { outline:2px solid var(--color-accent,#4f46e5); outline-offset:2px; } .ds-btn-ghost { background:transparent; color:var(--color-text-2,#555b6b); } .ds-btn-ghost:hover { background:var(--color-line,#e3e6ed); color:var(--color-text,#1a1d26); }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Sticky rack search with leading icon; indigo border and soft halo on focus.",
+      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input type=\"search\" placeholder=\"Search by name\"></label>",
+      "css": ".ds-search { position:relative; display:flex; align-items:center; width:320px; } .ds-search svg { position:absolute; left:13px; width:17px; height:17px; color:var(--color-text-3,#646a7a); pointer-events:none; } .ds-search input { width:100%; height:44px; padding:0 44px 0 40px; border:1px solid var(--color-line-strong,#cdd2dc); border-radius:var(--radius-badge,10px); background:var(--color-stock,#fff); color:var(--color-text,#1a1d26); font-family:var(--font-sans); font-size:var(--text-base,0.9375rem); transition:border-color 120ms ease-out, box-shadow 120ms ease-out; } .ds-search input::placeholder { color:var(--color-text-3,#646a7a); } .ds-search input:hover { border-color:var(--color-text-3,#646a7a); } .ds-search input:focus-visible { outline:none; border-color:var(--color-accent,#4f46e5); box-shadow:0 0 0 3px var(--color-accent-soft,#e6e7fa); }"
+    },
+    {
+      "name": "Form Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Labelled composer field; danger border and halo when invalid.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-t\">Title</label><input id=\"ds-t\" placeholder=\"Give your post a title\"></div>",
+      "css": ".ds-field { width:320px; font-family:var(--font-sans); } .ds-field label { display:block; margin-bottom:6px; font-size:var(--text-md,0.875rem); font-weight:600; color:var(--color-text,#1a1d26); } .ds-field input { display:block; width:100%; min-height:44px; padding:10px 12px; border:1px solid var(--color-line-strong,#cdd2dc); border-radius:var(--radius-control,8px); background:var(--color-stock,#fff); color:var(--color-text,#1a1d26); font:inherit; font-size:var(--text-base,0.9375rem); line-height:1.5; transition:border-color 120ms ease-out, box-shadow 120ms ease-out; } .ds-field input:hover { border-color:var(--color-text-3,#646a7a); } .ds-field input:focus-visible { outline:none; border-color:var(--color-accent,#4f46e5); box-shadow:0 0 0 3px var(--color-accent-soft,#e6e7fa); }"
+    },
+    {
+      "name": "User Badge",
+      "kind": "card",
+      "refersTo": "user-badge",
+      "description": "A person in the rack: monogram, name, @username, company on a perforated band. Second badge shows the selected state with clip tab.",
+      "html": "<div class=\"ds-badges\"><a href=\"#\" class=\"ds-badge\"><span class=\"ds-mono\">EH</span><span class=\"ds-who\"><span class=\"ds-name\">Ervin Howell</span><span class=\"ds-user\">@Antonette</span></span><span class=\"ds-co\">Deckow-Crist</span></a><a href=\"#\" class=\"ds-badge ds-badge--selected\"><span class=\"ds-clip\"></span><span class=\"ds-mono\">LG</span><span class=\"ds-who\"><span class=\"ds-name\">Leanne Graham</span><span class=\"ds-user\">@Bret</span></span><span class=\"ds-co\">Romaguera-Crona</span></a></div>",
+      "css": ".ds-badges { display:grid; gap:8px; width:340px; font-family:var(--font-sans); } .ds-badge { position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); grid-template-areas:'avatar who' 'company company'; column-gap:12px; height:92px; border:1px solid var(--color-line,#e3e6ed); border-radius:var(--radius-badge,10px); background:var(--color-stock,#fff); box-shadow:var(--shadow-stock,0 1px 2px rgb(22 25 40 / .06)); color:var(--color-text,#1a1d26); text-decoration:none; overflow:hidden; transition:border-color 120ms ease-out, background-color 120ms ease-out, box-shadow 120ms ease-out; } .ds-badge:hover { border-color:var(--color-line-strong,#cdd2dc); background:var(--color-stock-hover,#fafbfd); } .ds-badge:focus-visible { outline:2px solid var(--color-accent,#4f46e5); outline-offset:2px; } .ds-mono { grid-area:avatar; align-self:center; margin:4px 0 0 12px; display:inline-grid; place-items:center; width:44px; height:44px; border-radius:50%; background:var(--color-avatar,#e9eaf3); color:var(--color-avatar-ink,#3b3f55); font-weight:700; letter-spacing:.02em; line-height:1; } .ds-who { grid-area:who; display:flex; flex-direction:column; justify-content:center; min-width:0; padding:8px 12px 0 0; } .ds-name { font-size:var(--text-base,.9375rem); font-weight:700; line-height:1.4; } .ds-user { color:var(--color-text-2,#555b6b); font-size:var(--text-md,.875rem); line-height:1.4; } .ds-co { grid-area:company; align-self:end; padding:5px 12px 6px; border-top:1px dashed var(--color-line-strong,#cdd2dc); color:var(--color-text-2,#555b6b); font-size:var(--text-sm,.8125rem); font-weight:500; line-height:1.5; } .ds-badge--selected, .ds-badge--selected:hover { border-color:var(--color-accent,#4f46e5); background:var(--color-stock,#fff); box-shadow:0 0 0 1px var(--color-accent,#4f46e5), var(--shadow-selected,0 6px 16px -8px rgb(79 70 229 / .45)); } .ds-badge--selected .ds-mono { background:var(--color-accent-fill,#4f46e5); color:var(--color-on-accent,#fff); } .ds-clip { position:absolute; top:0; left:50%; width:40px; height:5px; margin-left:-20px; border-radius:0 0 4px 4px; background:var(--color-accent,#4f46e5); }"
+    },
+    {
+      "name": "Hero Badge",
+      "kind": "custom",
+      "refersTo": "hero-badge",
+      "description": "The selected person clipped to the top of the reading panel.",
+      "html": "<header class=\"ds-hero\"><span class=\"ds-hero-clip\"></span><div class=\"ds-hero-main\"><span class=\"ds-hero-mono\">LG</span><div><h1 class=\"ds-hero-name\">Leanne Graham</h1><p class=\"ds-hero-meta\">@Bret <span>·</span> Sincere@april.biz</p></div></div><p class=\"ds-hero-co\">Romaguera-Crona</p></header>",
+      "css": ".ds-hero { position:relative; width:560px; border:1px solid var(--color-line,#e3e6ed); border-radius:var(--radius-hero,14px); background:var(--color-stock,#fff); box-shadow:var(--shadow-raised,0 1px 2px rgb(22 25 40 / .06), 0 12px 32px -16px rgb(22 25 40 / .22)); overflow:hidden; font-family:var(--font-sans); color:var(--color-text,#1a1d26); } .ds-hero-clip { position:absolute; top:0; left:50%; width:64px; height:7px; margin-left:-32px; border-radius:0 0 5px 5px; background:var(--color-accent,#4f46e5); } .ds-hero-main { display:flex; align-items:center; gap:24px; padding:32px 32px 24px; } .ds-hero-mono { display:inline-grid; place-items:center; flex:none; width:88px; height:88px; border-radius:50%; background:var(--color-accent-fill,#4f46e5); color:var(--color-on-accent,#fff); font-size:1.875rem; font-weight:700; letter-spacing:.01em; } .ds-hero-name { margin:0; font-size:var(--text-3xl,2.125rem); font-weight:800; line-height:1.15; letter-spacing:-.02em; } .ds-hero-meta { margin:4px 0 0; color:var(--color-text-2,#555b6b); font-size:var(--text-base,.9375rem); } .ds-hero-meta span { color:var(--color-text-3,#646a7a); } .ds-hero-co { margin:0; padding:12px 32px; border-top:1px dashed var(--color-line-strong,#cdd2dc); color:var(--color-text-2,#555b6b); font-size:var(--text-md,.875rem); font-weight:600; }"
+    },
+    {
+      "name": "Theme Switch",
+      "kind": "nav",
+      "refersTo": "theme-switch",
+      "description": "System / Light / Dark segmented control in the top bar.",
+      "html": "<div class=\"ds-switch\" role=\"radiogroup\"><label class=\"ds-opt ds-opt--on\"><input type=\"radio\" name=\"ds-th\" checked>System</label><label class=\"ds-opt\"><input type=\"radio\" name=\"ds-th\">Light</label><label class=\"ds-opt\"><input type=\"radio\" name=\"ds-th\">Dark</label></div>",
+      "css": ".ds-switch { display:inline-flex; gap:2px; padding:3px; border-radius:var(--radius-control,8px); background:var(--color-ground,#eef0f5); border:1px solid var(--color-line,#e3e6ed); font-family:var(--font-sans); } .ds-opt { position:relative; display:inline-flex; align-items:center; min-height:30px; padding:0 12px; border-radius:6px; color:var(--color-text-2,#555b6b); font-size:var(--text-sm,.8125rem); font-weight:600; cursor:pointer; transition:background-color 120ms ease-out, color 120ms ease-out; } .ds-opt:hover { color:var(--color-text,#1a1d26); } .ds-opt input { position:absolute; inset:0; margin:0; opacity:0; cursor:pointer; } .ds-opt:has(input:checked) { background:var(--color-stock,#fff); color:var(--color-text,#1a1d26); box-shadow:var(--shadow-stock,0 1px 2px rgb(22 25 40 / .06)); } .ds-opt:has(input:focus-visible) { outline:2px solid var(--color-accent,#4f46e5); outline-offset:1px; }"
+    },
+    {
+      "name": "State Message",
+      "kind": "card",
+      "refersTo": "state-message",
+      "description": "Shared block for loading, error and empty states.",
+      "html": "<div class=\"ds-state ds-state--error\"><span class=\"ds-state-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/></svg></span><div><p class=\"ds-state-title\">Could not load users</p><p class=\"ds-state-text\">Check your connection and try again.</p></div></div>",
+      "css": ".ds-state { display:grid; grid-template-columns:40px minmax(0,1fr); gap:16px; align-items:start; width:340px; padding:20px; border:1px solid var(--color-line,#e3e6ed); border-radius:var(--radius-badge,10px); background:var(--color-stock,#fff); font-family:var(--font-sans); } .ds-state-icon { display:grid; place-items:center; width:40px; height:40px; border-radius:50%; background:var(--color-avatar,#e9eaf3); color:var(--color-text-2,#555b6b); } .ds-state-icon svg { width:20px; height:20px; } .ds-state--error .ds-state-icon { background:var(--color-danger-soft,#fdecea); color:var(--color-danger,#b42318); } .ds-state-title { margin:2px 0 0; font-size:var(--text-base,.9375rem); font-weight:700; line-height:1.45; color:var(--color-text,#1a1d26); } .ds-state-text { margin:4px 0 0; color:var(--color-text-2,#555b6b); font-size:var(--text-md,.875rem); line-height:1.55; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Name Badge Directory",
+    "overview": "Every person in the directory is a conference name badge: an initials monogram, a bold name, a quiet @username, and the company printed on a lower band below a perforation. The rack of badges sits on a cool-gray rail; picking one clips it to the top of the reading panel, where it reappears as a larger hero badge hanging from an indigo clip tab. Indigo is the lanyard. It marks what is held (the selected badge, its monogram), where the keyboard is (focus), and the one thing to do next (the primary action). Everything else is cool gray.\n\nThe system is compact and quiet. Density comes from a strict 4px rhythm, one sans family in five weights, and flat surfaces separated by hairlines rather than heavy containers. Posts are not cards: they are flat entries ruled by hairlines at one reading measure, so the badges stay the only objects on the page. Light and dark are equal themes, with System as the default; dark is graphite ground under raised slate stock, not an inversion.\n\nMotion is authored once. The badge handoff morphs the clicked badge's monogram and name into the hero badge through a View Transition, and the hero's clip tab drops in once per selection. Nothing else moves on its own; state changes are short color and border fades.",
+    "keyCharacteristics": [
+      "Conference badge as the one object: monogram, name, @username, perforated company band.",
+      "Indigo only for selection, focus, and the primary action.",
+      "One cool-gray ramp feeds every neutral, in both themes.",
+      "Figtree throughout, tabular numerals globally.",
+      "Posts as hairline-ruled entries, never cards.",
+      "Skeletons hold the loaded geometry exactly; every badge is the same height.",
+      "One authored motion (the badge handoff), cut to an instant change under reduced motion."
+    ],
+    "rules": [
+      {
+        "name": "The Lanyard Rule",
+        "body": "Indigo appears only on the selected badge (clip tab, border, monogram), on focus, and on the primary action. If a new element wants indigo and is none of those three, it gets gray.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Indigos Rule",
+        "body": "In dark, strokes and marks (clip tab, selected border, focus outline) use dark-lanyard-indigo, while filled surfaces carrying white text (primary button, selected monogram) use dark-lanyard-fill. Never put white text on the light stroke indigo.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Ramp Rule",
+        "body": "Every neutral derives from the single cool-gray ramp (white through #0f1117). No warm grays, no pure black text.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Figtree is the only face. Hierarchy is weight and size, never a second family.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Labels and headings are sentence case at normal tracking. No uppercase letterspaced labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Same Height Rule",
+        "body": "Every rack badge is exactly 92px tall, and every skeleton holds its loaded counterpart's exact geometry (badge, hero, composer bar, post lines) so nothing shifts when data lands.",
+        "section": "layout"
+      },
+      {
+        "name": "The Stock-and-Lift Rule",
+        "body": "Badge stock rests on the Stock shadow. Only what the visitor is holding (the hero, the open form) is Raised, and only the selected badge glows indigo.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Perforation Rule",
+        "body": "A dashed rule means \"this is a badge\". It belongs above the company band, and as a 1.5px dashed outline it draws the unclaimed badge slot in the empty panel. Do not use dashed lines for anything else.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** keep indigo to the selected badge, focus, and the single primary action per view (the Lanyard Rule).",
+      "**Do** use dark-lanyard-fill, not dark-lanyard-indigo, under white text in dark (the Two Indigos Rule).",
+      "**Do** keep every rack badge 92px tall and make every skeleton match its loaded geometry to the pixel.",
+      "**Do** draw posts as hairline-ruled entries at the 820px measure with bodies capped at 68ch.",
+      "**Do** give every interactive surface the global 2px indigo focus outline, or the indigo border plus Lanyard Soft halo on fields.",
+      "**Do** keep state transitions to 120ms ease-out color and border fades, and reserve the 220ms ease-out View Transition for the badge handoff.",
+      "**Do** design both themes together; System is the default."
+    ],
+    "donts": [
+      "**Don't** put posts in rounded cards; the badges are the only objects.",
+      "**Don't** use indigo for decoration, category color, or emphasis.",
+      "**Don't** add a second typeface or uppercase letterspaced labels.",
+      "**Don't** use dashed lines anywhere except the badge perforation and the unclaimed badge slot.",
+      "**Don't** add ambient or looping motion; under reduced motion, transitions and animations are cut."
+    ]
+  }
+}
