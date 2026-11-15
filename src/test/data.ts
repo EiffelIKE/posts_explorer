@@ -1,6 +1,6 @@
-// TEMPORARY fixture data for the design step (PLAN step 2). Copied from
-// JSONPlaceholder so the UI renders real content; replaced by the API layer
-// in step 3.
+// JSONPlaceholder-shaped data served by the MSW handlers in tests. Started as
+// the design step's fixtures (PLAN decision 10); the app itself now reads the
+// real API.
 import type { Post, User } from '../types'
 
 export const fixtureUsers: User[] = [

@@ -1,25 +1,35 @@
-import { useState } from 'react'
+import type { ReactNode } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
-import { fixturePostsFor, fixtureUsers } from '../../fixtures/data'
-import { useFixtureState } from '../../fixtures/useFixtureState'
+import {
+  useCreatePost,
+  useLocalPosts,
+  useUser,
+  useUserPosts,
+} from '../../api/queries'
 import { getFirstName } from '../../lib/names'
 import { cx } from '../../lib/cx'
-import type { NewPost, Post } from '../../types'
+import type { NewPost } from '../../types'
 import { StateMessage } from '../../ui/StateMessage/StateMessage'
 import button from '../../ui/button.module.css'
 import { Composer } from '../Composer/Composer'
 import { HeroBadge, HeroBadgeSkeleton } from '../HeroBadge/HeroBadge'
-import { nextLocalPostId } from '../../api/localIds'
 import { PostList, PostListSkeleton } from '../PostList/PostList'
 import styles from './UserPostsPanel.module.css'
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+/** JSONPlaceholder IDs are positive integers; anything else can't exist. */
+function parseUserId(param: string | undefined): number | null {
+  if (!param || !/^\d+$/.test(param)) return null
+  const id = Number(param)
+  return id > 0 ? id : null
+}
 
 /** Route element for /users/:userId; remounts per user so drafts don't leak. */
 export function UserPostsRoute() {
-  const { userId } = useParams()
-  return <UserPostsPanel key={userId} userId={Number(userId)} />
+  const { userId: param } = useParams()
+  const userId = parseUserId(param)
+  if (userId === null) return <UserNotFound />
+  return <UserPostsPanel key={userId} userId={userId} />
 }
 
 function BackLink() {
@@ -32,16 +42,47 @@ function BackLink() {
   )
 }
 
-function UserPostsPanel({ userId }: { userId: number }) {
-  const fixture = useFixtureState()
-  const { search } = useLocation()
-  const user = fixtureUsers.find((candidate) => candidate.id === userId)
-  const [localPosts, setLocalPosts] = useState<Post[]>([])
+function Panel({ children }: { children: ReactNode }) {
+  return (
+    <div className={styles.panel}>
+      <BackLink />
+      {children}
+    </div>
+  )
+}
 
-  if (fixture.users === 'loading') {
+function UserNotFound() {
+  const { search } = useLocation()
+  return (
+    <Panel>
+      <StateMessage
+        kind="not-found"
+        title="We couldn’t find that user"
+        action={
+          <Link
+            to={{ pathname: '/', search }}
+            className={cx(button.button, button['button--secondary'])}
+          >
+            Back to all users
+          </Link>
+        }
+      >
+        The link may be wrong, or the user no longer exists.
+      </StateMessage>
+    </Panel>
+  )
+}
+
+function UserPostsPanel({ userId }: { userId: number }) {
+  // Posts load in parallel with the user list, not after it.
+  const userQuery = useUser(userId)
+  const postsQuery = useUserPosts(userId)
+  const localPosts = useLocalPosts(userId)
+  const createPost = useCreatePost(userId)
+
+  if (userQuery.isPending) {
     return (
-      <div className={styles.panel}>
-        <BackLink />
+      <Panel>
         <HeroBadgeSkeleton />
         {/* Same geometry as the loaded panel: composer bar, heading, posts. */}
         <div className={styles.composerBone} aria-hidden="true" />
@@ -55,48 +96,45 @@ function UserPostsPanel({ userId }: { userId: number }) {
           </div>
           <PostListSkeleton />
         </section>
-      </div>
+      </Panel>
     )
   }
 
-  if (!user) {
+  if (userQuery.isError && !userQuery.data) {
     return (
-      <div className={styles.panel}>
-        <BackLink />
+      <Panel>
         <StateMessage
-          kind="not-found"
-          title="We couldn’t find that user"
+          kind="error"
+          title="Couldn’t load this user"
           action={
-            <Link
-              to={{ pathname: '/', search }}
+            <button
+              type="button"
               className={cx(button.button, button['button--secondary'])}
+              onClick={() => void userQuery.refetch()}
             >
-              Back to all users
-            </Link>
+              Try again
+            </button>
           }
         >
-          The link may be wrong, or the user no longer exists.
+          Check your connection, then try again.
         </StateMessage>
-      </div>
+      </Panel>
     )
   }
 
+  const user = userQuery.data
+  if (!user) return <UserNotFound />
+
   const firstName = getFirstName(user.name)
-  const serverPosts = fixture.posts === 'empty' ? [] : fixturePostsFor(user.id)
-  const posts = [...localPosts, ...serverPosts]
+  const serverPosts = postsQuery.data
+  const posts = [...localPosts, ...(serverPosts ?? [])]
 
   async function publish(values: NewPost) {
-    await wait(600)
-    if (fixture.publishFails) throw new Error('Publish failed')
-    setLocalPosts((current) => [
-      { id: nextLocalPostId(), userId, ...values },
-      ...current,
-    ])
+    await createPost.mutateAsync(values)
   }
 
   return (
-    <div className={styles.panel}>
-      <BackLink />
+    <Panel>
       <HeroBadge user={user} />
       <Composer authorFirstName={firstName} onPublish={publish} />
 
@@ -105,33 +143,13 @@ function UserPostsPanel({ userId }: { userId: number }) {
           <h2 id="posts-heading" className={styles.posts__title}>
             Posts
           </h2>
-          {fixture.posts !== 'loading' && fixture.posts !== 'error' && (
+          {serverPosts && (
             <span className={styles.posts__count}>{posts.length}</span>
           )}
         </div>
 
-        {fixture.posts === 'loading' && <PostListSkeleton />}
-
-        {fixture.posts === 'error' && (
-          <StateMessage
-            kind="error"
-            title={`Couldn’t load ${firstName}’s posts`}
-            action={
-              <button
-                type="button"
-                className={cx(button.button, button['button--secondary'])}
-              >
-                Try again
-              </button>
-            }
-          >
-            Check your connection, then try again. You can still write a new
-            post.
-          </StateMessage>
-        )}
-
-        {(fixture.posts === 'ready' || fixture.posts === 'empty') &&
-          (posts.length === 0 ? (
+        {serverPosts ? (
+          posts.length === 0 ? (
             <StateMessage
               kind="no-posts"
               title={`${firstName} hasn’t posted yet`}
@@ -140,8 +158,35 @@ function UserPostsPanel({ userId }: { userId: number }) {
             </StateMessage>
           ) : (
             <PostList posts={posts} />
-          ))}
+          )
+        ) : (
+          <>
+            {/* Posts created while the list loads or after it failed (PLAN decision 12). */}
+            {localPosts.length > 0 && <PostList posts={localPosts} />}
+
+            {postsQuery.isPending && <PostListSkeleton />}
+
+            {postsQuery.isError && (
+              <StateMessage
+                kind="error"
+                title={`Couldn’t load ${firstName}’s posts`}
+                action={
+                  <button
+                    type="button"
+                    className={cx(button.button, button['button--secondary'])}
+                    onClick={() => void postsQuery.refetch()}
+                  >
+                    Try again
+                  </button>
+                }
+              >
+                Check your connection, then try again. You can still write a new
+                post.
+              </StateMessage>
+            )}
+          </>
+        )}
       </section>
-    </div>
+    </Panel>
   )
 }

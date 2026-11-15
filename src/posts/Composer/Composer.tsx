@@ -1,33 +1,14 @@
 import { useId, useRef, useState, type FormEvent } from 'react'
 import { CircleAlert, LoaderCircle, PenLine, Plus } from 'lucide-react'
-import { z } from 'zod'
 import type { NewPost } from '../../types'
 import { cx } from '../../lib/cx'
 import button from '../../ui/button.module.css'
+import {
+  validateNewPost,
+  type NewPostErrors,
+  type NewPostField,
+} from './newPostSchema'
 import styles from './Composer.module.css'
-
-const postSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1, 'Add a title.')
-    .max(120, 'Keep the title under 120 characters.'),
-  body: z.string().trim().min(1, 'Write something in the body.'),
-})
-
-type Field = keyof NewPost
-type FieldErrors = Partial<Record<Field, string>>
-
-function validate(values: NewPost): FieldErrors {
-  const result = postSchema.safeParse(values)
-  if (result.success) return {}
-  const errors: FieldErrors = {}
-  for (const issue of result.error.issues) {
-    const field = issue.path[0] as Field
-    errors[field] ??= issue.message
-  }
-  return errors
-}
 
 const emptyDraft: NewPost = { title: '', body: '' }
 
@@ -40,7 +21,7 @@ interface ComposerProps {
 export function Composer({ authorFirstName, onPublish }: ComposerProps) {
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState<NewPost>(emptyDraft)
-  const [errors, setErrors] = useState<FieldErrors>({})
+  const [errors, setErrors] = useState<NewPostErrors>({})
   const [submitted, setSubmitted] = useState(false)
   const [status, setStatus] = useState<
     'idle' | 'publishing' | 'failed' | 'published'
@@ -73,18 +54,18 @@ export function Composer({ authorFirstName, onPublish }: ComposerProps) {
     requestAnimationFrame(() => barRef.current?.focus())
   }
 
-  function update(field: Field, value: string) {
+  function update(field: NewPostField, value: string) {
     const next = { ...draft, [field]: value }
     setDraft(next)
     // Live revalidation only after the first submit attempt.
-    if (submitted) setErrors(validate(next))
+    if (submitted) setErrors(validateNewPost(next))
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (isPublishing) return
     setSubmitted(true)
-    const nextErrors = validate(draft)
+    const nextErrors = validateNewPost(draft)
     setErrors(nextErrors)
     if (nextErrors.title) return titleRef.current?.focus()
     if (nextErrors.body) return bodyRef.current?.focus()

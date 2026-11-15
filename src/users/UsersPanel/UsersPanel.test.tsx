@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { createQueryClient } from '../../api/queries'
-import { fixtureUsers } from '../../fixtures/data'
+import { fixtureUsers } from '../../test/data'
 import { UsersPanel } from './UsersPanel'
 
 function renderPanel(url = '/') {

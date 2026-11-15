@@ -22,9 +22,12 @@ Working plan and decision log. Product scope lives in [PRODUCT.md](PRODUCT.md).
 - [x] 2. Layout and UI/UX definition (on fixtures; see decisions 7–10 and DESIGN.md)
 - [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST /posts`)
 - [x] 4. Users list with search by name (synced with `?q=`, see decision 15)
-- [ ] 5. User posts + create-post form (validated, required title and body)
+- [x] 5. User posts + create-post form (validated, required title and body; see decision 16)
 - [ ] 6. Loading and error states
-- [ ] 7. Tests (at least 3) and add them to the `post-agent` gate
+- [ ] 7. Tests (at least 3) and add them to the `post-agent` gate. Must cover the
+      user-switch cases in decision 17: a delayed publish never lands on the user
+      switched to, and a created post shows again only for its author when coming
+      back, and only for this session
 - [ ] 8. README (run, decisions, next steps, AI usage)
 
 ## Agent workflow
@@ -74,10 +77,12 @@ Test gates get appended once tests exist (step 7).
    Figtree is self-hosted via `@fontsource-variable/figtree`; icons come from
    `lucide-react`. Mobile navigation uses a View Transition (the badge's monogram morphs
    into the header), disabled under `prefers-reduced-motion`.
-10. **Design step runs on fixtures.** `src/fixtures/` holds JSONPlaceholder-shaped data,
-    and `useFixtureState` forces every UI state from the URL (`?users=loading|error`,
+10. **Design step runs on fixtures.** `src/fixtures/` held JSONPlaceholder-shaped data,
+    and `useFixtureState` forced every UI state from the URL (`?users=loading|error`,
     `?posts=loading|error|empty`, `?publish=error`). Steps 3–6 replace both with
     TanStack Query; components take data and callbacks, so no restyling is needed.
+    Since step 5 the app reads only the real API: `useFixtureState` is gone and the
+    data moved to `src/test/data.ts`, where it backs the MSW handlers.
 11. **Agent tooling is out of lint/format scope.** `.claude`, `.agents`, `.codex` and
     `.impeccable` are in ESLint's `globalIgnores` and `.prettierignore`; the vendored skill
     scripts were failing `post-agent`.
@@ -108,3 +113,25 @@ Test gates get appended once tests exist (step 7).
     loading/error UI is live and "Try again" refetches; the posts panel still uses
     fixtures until step 5. `src/users/UsersPanel/UsersPanel.test.tsx` covers the search rules
     (not yet in the `post-agent` gate; step 7).
+16. **Posts panel on live data; create-post rules.** `UserPostsPanel` reads `useUser`,
+    `useUserPosts`, `useLocalPosts` and `useCreatePost`. The posts request starts
+    alongside the users request instead of waiting for it. A `:userId` that isn't a
+    positive integer shows "not found" without any request; an ID missing from the
+    list shows it once users load. Posts created while the list is loading or failed
+    show above the skeleton or error. Form rules: title and body are required after
+    `trim()`, and the title needs at least 2 characters (a product decision: a
+    one-character title isn't a real title). There is no maximum length.
+    The rules live in `src/posts/Composer/newPostSchema.ts`, so step 7 can test them
+    directly. Errors show after the first submit attempt, then update live, and the
+    trimmed values are what gets published.
+17. **Created posts stay with their author when switching users.** Verified with a
+    throwaway test before step 7. `useCreatePost(userId)` sets `onSuccess` in the
+    `useMutation` options. TanStack attaches those options to the mutation itself, so
+    they still run after the panel unmounts, and the `userId` they hold is the author's.
+    The panel is keyed by `userId`, so the user you switch to gets a fresh composer and
+    reads only its own `['local-posts', id]`. A late response therefore never changes
+    that user's UI: no post, no "Published" notice. The post goes into the author's
+    entry, which never expires (`gcTime: Infinity`, decision 12), so it shows when you
+    go back to them. It lives only in memory, so a reload clears it.
+    Known limit: if that late request fails, nobody sees the error, because the composer
+    that would show it has unmounted and its draft is gone.

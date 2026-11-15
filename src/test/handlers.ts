@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { API_BASE_URL } from '../api/client'
 import type { NewPost } from '../api/schemas'
-import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
+import { fixturePostsFor, fixtureUsers } from './data'
 
 /** Happy-path API; tests override single endpoints with `server.use(...)`. */
 export const handlers = [
