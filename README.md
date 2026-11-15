@@ -41,7 +41,9 @@ npm run dev        # http://localhost:5173
 | `npm run post-agent` | Full gate: Prettier → ESLint `--fix` → `tsc -b` → `vitest run` |
 
 The tests never touch the real API: MSW mocks every request and fails on any request
-without a handler. [vercel.json](vercel.json) holds the Vercel deploy config.
+without a handler. [vercel.json](vercel.json) holds the Vercel deploy config,
+including the rewrite to `index.html` that lets deep links like `/users/3` survive a
+reload.
 
 ## Stack
 
