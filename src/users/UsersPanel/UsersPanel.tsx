@@ -1,6 +1,9 @@
 import { useId, useMemo } from 'react'
 import { Search, X } from 'lucide-react'
+import { errorMessage } from '../../api/errors'
+import { useStickyError } from '../../api/stickyError'
 import { useUsers } from '../../api/queries'
+import { RetryButton } from '../../ui/RetryButton/RetryButton'
 import { StateMessage } from '../../ui/StateMessage/StateMessage'
 import button from '../../ui/button.module.css'
 import { cx } from '../../lib/cx'
@@ -10,7 +13,9 @@ import styles from './UsersPanel.module.css'
 
 /** The badge rack: search on top, the directory of users below. */
 export function UsersPanel() {
-  const { data: users, isPending, isError, refetch } = useUsers()
+  const usersQuery = useUsers()
+  const { data: users, isPending, isPaused, refetch } = usersQuery
+  const { error, retrying } = useStickyError(usersQuery)
   const [query, setQuery] = useSearchQuery()
   const searchId = useId()
   const visible = useMemo(
@@ -80,7 +85,14 @@ export function UsersPanel() {
       </div>
 
       <div className={styles.panel__body}>
-        {isPending && (
+        {/* Offline, TanStack pauses the request until the connection returns. */}
+        {!users && isPaused && (
+          <StateMessage kind="offline" title="You’re offline">
+            Users will load when your connection comes back.
+          </StateMessage>
+        )}
+
+        {isPending && !isPaused && !error && (
           <div aria-busy="true">
             <p className="visually-hidden" role="status">
               Loading users…
@@ -95,21 +107,15 @@ export function UsersPanel() {
           </div>
         )}
 
-        {isError && !users && (
+        {error && !users && !isPaused && (
           <StateMessage
             kind="error"
-            title="Couldn't load users"
+            title="Couldn’t load users"
             action={
-              <button
-                type="button"
-                className={cx(button.button, button['button--secondary'])}
-                onClick={() => void refetch()}
-              >
-                Try again
-              </button>
+              <RetryButton retrying={retrying} onRetry={() => void refetch()} />
             }
           >
-            Check your connection, then try again.
+            {errorMessage(error)}
           </StateMessage>
         )}
 

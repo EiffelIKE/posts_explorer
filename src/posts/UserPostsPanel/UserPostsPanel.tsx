@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
+import { errorMessage } from '../../api/errors'
+import { useStickyError } from '../../api/stickyError'
 import {
   useCreatePost,
   useLocalPosts,
+  useUnsentPosts,
   useUser,
   useUserPosts,
 } from '../../api/queries'
@@ -12,6 +15,7 @@ import { cx } from '../../lib/cx'
 import type { NewPost } from '../../types'
 import { StateMessage } from '../../ui/StateMessage/StateMessage'
 import button from '../../ui/button.module.css'
+import { RetryButton } from '../../ui/RetryButton/RetryButton'
 import { Composer } from '../Composer/Composer'
 import { HeroBadge, HeroBadgeSkeleton } from '../HeroBadge/HeroBadge'
 import { PostList, PostListSkeleton } from '../PostList/PostList'
@@ -79,8 +83,22 @@ function UserPostsPanel({ userId }: { userId: number }) {
   const postsQuery = useUserPosts(userId)
   const localPosts = useLocalPosts(userId)
   const createPost = useCreatePost(userId)
+  const { unsent, remove: dropUnsent } = useUnsentPosts(userId)
+  const userError = useStickyError(userQuery)
+  const postsError = useStickyError(postsQuery)
 
-  if (userQuery.isPending) {
+  // Offline, TanStack pauses the request until the connection returns.
+  if (!userQuery.data && userQuery.isPaused) {
+    return (
+      <Panel>
+        <StateMessage kind="offline" title="You’re offline">
+          This user will load when your connection comes back.
+        </StateMessage>
+      </Panel>
+    )
+  }
+
+  if (userQuery.isPending && !userError.error) {
     return (
       <Panel>
         <HeroBadgeSkeleton />
@@ -100,23 +118,20 @@ function UserPostsPanel({ userId }: { userId: number }) {
     )
   }
 
-  if (userQuery.isError && !userQuery.data) {
+  if (userError.error && !userQuery.data) {
     return (
       <Panel>
         <StateMessage
           kind="error"
           title="Couldn’t load this user"
           action={
-            <button
-              type="button"
-              className={cx(button.button, button['button--secondary'])}
-              onClick={() => void userQuery.refetch()}
-            >
-              Try again
-            </button>
+            <RetryButton
+              retrying={userError.retrying}
+              onRetry={() => void userQuery.refetch()}
+            />
           }
         >
-          Check your connection, then try again.
+          {errorMessage(userError.error)}
         </StateMessage>
       </Panel>
     )
@@ -136,7 +151,12 @@ function UserPostsPanel({ userId }: { userId: number }) {
   return (
     <Panel>
       <HeroBadge user={user} />
-      <Composer authorFirstName={firstName} onPublish={publish} />
+      <Composer
+        authorFirstName={firstName}
+        onPublish={publish}
+        unsent={unsent}
+        onDropUnsent={dropUnsent}
+      />
 
       <section className={styles.posts} aria-labelledby="posts-heading">
         <div className={styles.posts__heading}>
@@ -164,24 +184,24 @@ function UserPostsPanel({ userId }: { userId: number }) {
             {/* Posts created while the list loads or after it failed (PLAN decision 12). */}
             {localPosts.length > 0 && <PostList posts={localPosts} />}
 
-            {postsQuery.isPending && <PostListSkeleton />}
-
-            {postsQuery.isError && (
+            {postsQuery.isPaused ? (
+              <StateMessage kind="offline" title="You’re offline">
+                {firstName}’s posts will load when your connection comes back.
+              </StateMessage>
+            ) : !postsError.error ? (
+              <PostListSkeleton />
+            ) : (
               <StateMessage
                 kind="error"
                 title={`Couldn’t load ${firstName}’s posts`}
                 action={
-                  <button
-                    type="button"
-                    className={cx(button.button, button['button--secondary'])}
-                    onClick={() => void postsQuery.refetch()}
-                  >
-                    Try again
-                  </button>
+                  <RetryButton
+                    retrying={postsError.retrying}
+                    onRetry={() => void postsQuery.refetch()}
+                  />
                 }
               >
-                Check your connection, then try again. You can still write a new
-                post.
+                {errorMessage(postsError.error)} You can still write a new post.
               </StateMessage>
             )}
           </>

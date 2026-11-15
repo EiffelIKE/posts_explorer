@@ -199,3 +199,10 @@
     flex: 1;
   }
 }
+
+/* Unsent posts from a publish that failed after the panel was left. */
+.unsent {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}

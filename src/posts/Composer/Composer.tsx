@@ -1,8 +1,11 @@
 import { useId, useRef, useState, type FormEvent } from 'react'
 import { CircleAlert, LoaderCircle, PenLine, Plus } from 'lucide-react'
+import { errorMessage } from '../../api/errors'
+import type { UnsentPost } from '../../api/queries'
 import type { NewPost } from '../../types'
 import { cx } from '../../lib/cx'
 import button from '../../ui/button.module.css'
+import { StateMessage } from '../../ui/StateMessage/StateMessage'
 import {
   validateNewPost,
   type NewPostErrors,
@@ -15,10 +18,18 @@ const emptyDraft: NewPost = { title: '', body: '' }
 interface ComposerProps {
   authorFirstName: string
   onPublish: (post: NewPost) => Promise<void>
+  /** Publishes that failed after this author's panel was left (decision 18). */
+  unsent?: UnsentPost[]
+  onDropUnsent?: (id: number) => void
 }
 
 /** Collapsed "New post" bar that opens into the validated form in place. */
-export function Composer({ authorFirstName, onPublish }: ComposerProps) {
+export function Composer({
+  authorFirstName,
+  onPublish,
+  unsent = [],
+  onDropUnsent,
+}: ComposerProps) {
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState<NewPost>(emptyDraft)
   const [errors, setErrors] = useState<NewPostErrors>({})
@@ -26,6 +37,7 @@ export function Composer({ authorFirstName, onPublish }: ComposerProps) {
   const [status, setStatus] = useState<
     'idle' | 'publishing' | 'failed' | 'published'
   >('idle')
+  const [failReason, setFailReason] = useState('')
 
   const formId = useId()
   const titleId = useId()
@@ -78,9 +90,23 @@ export function Composer({ authorFirstName, onPublish }: ComposerProps) {
       setOpen(false)
       setStatus('published')
       requestAnimationFrame(() => barRef.current?.focus())
-    } catch {
+    } catch (error) {
+      setFailReason(errorMessage(error))
       setStatus('failed')
     }
+  }
+
+  function restore(post: UnsentPost) {
+    setDraft({ title: post.title, body: post.body })
+    setErrors({})
+    setSubmitted(false)
+    onDropUnsent?.(post.id)
+    openForm()
+  }
+
+  function discard(post: UnsentPost) {
+    onDropUnsent?.(post.id)
+    requestAnimationFrame(() => barRef.current?.focus())
   }
 
   if (!open) {
@@ -112,9 +138,41 @@ export function Composer({ authorFirstName, onPublish }: ComposerProps) {
           </span>
         </button>
         <p role="status" className={styles.notice}>
-          {status === 'published' &&
-            'Published. JSONPlaceholder doesn’t store posts, so this one lives in this tab and disappears when you reload.'}
+          {status === 'published' && 'Published'}
         </p>
+        {/* One draft at a time: unsent posts wait while another draft is open. */}
+        {!hasDraft && unsent.length > 0 && (
+          <div className={styles.unsent}>
+            {unsent.map((post) => (
+              <StateMessage
+                key={post.id}
+                kind="error"
+                title={`“${post.title}” wasn’t published`}
+                action={
+                  <>
+                    <button
+                      type="button"
+                      className={cx(button.button, button['button--secondary'])}
+                      onClick={() => restore(post)}
+                    >
+                      Restore draft
+                    </button>
+                    <button
+                      type="button"
+                      className={cx(button.button, button['button--ghost'])}
+                      onClick={() => discard(post)}
+                    >
+                      Discard
+                    </button>
+                  </>
+                }
+              >
+                {post.reason} The draft is kept in this tab until you restore or
+                discard it.
+              </StateMessage>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
@@ -193,7 +251,7 @@ export function Composer({ authorFirstName, onPublish }: ComposerProps) {
       {status === 'failed' && (
         <p role="alert" className={styles.failure}>
           <CircleAlert aria-hidden="true" />
-          Couldn’t publish your post. Check your connection and try again.
+          Couldn’t publish your post. {failReason}
         </p>
       )}
 

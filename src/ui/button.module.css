@@ -23,6 +23,11 @@
   cursor: not-allowed;
 }
 
+/* Busy, not unavailable: keeps focus, ignores clicks (see RetryButton). */
+.button[aria-disabled='true'] {
+  cursor: progress;
+}
+
 .button svg {
   width: 16px;
   height: 16px;
@@ -51,6 +56,13 @@
 .button--secondary:hover:not(:disabled) {
   background: var(--color-stock-hover);
   border-color: var(--color-text-3);
+}
+
+.button--secondary[aria-disabled='true'],
+.button--secondary[aria-disabled='true']:hover {
+  background: var(--color-stock);
+  border-color: var(--color-line-strong);
+  color: var(--color-text-2);
 }
 
 .button--ghost {

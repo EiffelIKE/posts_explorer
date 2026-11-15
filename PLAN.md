@@ -23,7 +23,7 @@ Working plan and decision log. Product scope lives in [PRODUCT.md](PRODUCT.md).
 - [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST /posts`)
 - [x] 4. Users list with search by name (synced with `?q=`, see decision 15)
 - [x] 5. User posts + create-post form (validated, required title and body; see decision 16)
-- [ ] 6. Loading and error states
+- [x] 6. Loading and error states (see decision 18)
 - [ ] 7. Tests (at least 3) and add them to the `post-agent` gate. Must cover the
       user-switch cases in decision 17: a delayed publish never lands on the user
       switched to, and a created post shows again only for its author when coming
@@ -133,5 +133,34 @@ Test gates get appended once tests exist (step 7).
     that user's UI: no post, no "Published" notice. The post goes into the author's
     entry, which never expires (`gcTime: Infinity`, decision 12), so it shows when you
     go back to them. It lives only in memory, so a reload clears it.
-    Known limit: if that late request fails, nobody sees the error, because the composer
-    that would show it has unmounted and its draft is gone.
+    If that late request fails, the author's panel shows it when you go back to them
+    (decision 18).
+18. **Loading and error states (step 6).** Steps 4–5 already had skeletons, error
+    messages with retry, empty states and the composer's failure banner. Step 6 closed
+    these gaps:
+    - **Late publish failures reach the author.** `useCreatePost` tracks whether its panel
+      is still mounted. A failure after the panel unmounted is saved to
+      `['unsent-posts', id]` (session-only, `gcTime: Infinity`, like decision 12). The
+      author's composer then lists each one, with "Restore draft" (reopens the form
+      filled in) and "Discard". They show only while no other draft is open, so a
+      restore never overwrites what you're typing. A failure while the panel is open
+      still shows only in the composer.
+    - **Retry keeps its place.** On refetch, TanStack resets a query with no data to
+      `pending` with `error: null`, which swapped the error block for a skeleton.
+      Keyboard focus fell to the page, and the reason for the failure disappeared.
+      `useStickyError` keeps the last error through the retry, and `RetryButton` shows
+      "Retrying…" (`aria-disabled`, so it keeps focus) until the retry settles.
+    - **Offline.** TanStack pauses requests while offline, which left skeletons running
+      forever. A paused request with no data now shows "You're offline… will load when
+      your connection comes back", and loads on reconnect. Publishing uses
+      `networkMode: 'always'`, so offline it fails at once with the composer's error
+      instead of "Publishing…" forever.
+    - **Error copy by cause.** `src/api/errors.ts` sorts errors into network
+      (`TypeError`; separate copy when `navigator.onLine` is false), server (5xx),
+      client (4xx), invalid response (`ZodError`/`SyntaxError`), and unknown. Every
+      error state and the publish failure use it.
+    - **Crash fallback.** Route `errorElement`s: a crash in the detail panel stays in
+      the panel, and the user list keeps working. Navigating clears it, and its main
+      action is "Back to all users" rather than reload, since reloading would drop this
+      tab's posts. A crash in the layout replaces the page and offers a reload.
+      `router.tsx` exports `routes` so tests can mount the real tree in a memory router.

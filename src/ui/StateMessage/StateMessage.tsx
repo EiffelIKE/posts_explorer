@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
-import { CircleAlert, SearchX, FileText, UserX } from 'lucide-react'
+import { CircleAlert, SearchX, FileText, UserX, WifiOff } from 'lucide-react'
 import { cx } from '../../lib/cx'
 import styles from './StateMessage.module.css'
 
 const icons = {
   error: CircleAlert,
+  offline: WifiOff,
   'no-results': SearchX,
   'no-posts': FileText,
   'not-found': UserX,
@@ -18,7 +19,7 @@ interface StateMessageProps {
   className?: string
 }
 
-/** Inline panel state: errors, empty results, missing records. */
+/** Inline panel state: errors, offline waits, empty results, missing records. */
 export function StateMessage({
   kind,
   title,
