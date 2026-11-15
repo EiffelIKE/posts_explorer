@@ -1,0 +1,591 @@
+
+❯ <ide_opened_file>The user opened the file
+  /home/eiffelike/work/users_post/PRODUCT.md in the IDE. This may or may not be
+  related to the current task.</ide_opened_file>
+
+❯ Lets start working on a small test app, I'm gonna pass you what we need to
+  build, I already created a PRODUCT.md with the main goals/features,  the
+  description is in spanish but we are going to strictly use english, once you
+  have everything in context, I'll tell you about my approach and technologies
+  we will use, dont do anything yet; 'Haz una pequeña app con React y
+  TypeScript que use la API pública https://jsonplaceholder.typicode.com
+
+  1. Lista de usuarios con búsqueda por nombre.
+  2. Al elegir un usuario, ver sus publicaciones y crear una nueva con un
+  formulario validado (título y texto obligatorios). La API no guarda los datos
+  de verdad, así que basta con que la nueva publicación aparezca en la lista.
+  3. Estados de carga y de error visibles.
+  4. Al menos 3 tests con Vitest o Jest y Testing Library.
+  5. Un README con cómo ejecutarlo, las decisiones que tomaste, qué harías con
+  más tiempo y cómo usaste la IA (qué le pediste, qué aceptaste y qué
+  corregiste)'
+
+● I'll read the PRODUCT.md and check what's in the directory so I have the full
+  context.
+
+  Listed 1 directory (ctrl+o to expand)
+
+● I've read PRODUCT.md. The folder holds only that file and an empty .git. I
+  haven't done anything else and I'm waiting for your approach and stack.
+
+  Here's how I understand the brief. Everything we write, including code, UI
+  text, docs and commits, will be in English.
+
+  App: a React + TypeScript SPA that uses https://jsonplaceholder.typicode.com.
+
+  Features (from PRODUCT.md):
+  1. A list of users that you can search by name.
+  2. Selecting a user shows their posts. A form lets you create a new post, and
+     both title and body are required. The API doesn't actually save anything,
+     so the new post only needs to show up in the list.
+  3. Loading and error states the user can see.
+
+  Also in the brief but not in PRODUCT.md:
+  4. At least 3 tests, using Vitest or Jest with Testing Library.
+  5. A README covering how to run the app, the decisions we made, what we'd do
+  with more time, and how we used AI: what we asked for, what we accepted and
+  what we corrected.
+
+  Two API details that will affect the design:
+  - The endpoints are GET /users, GET /users/:id/posts (or /posts?userId=:id)
+    and POST /posts.
+  - POST /posts returns id: 101 for every new post. If someone creates more than
+    one, we'll need our own IDs so React list keys don't collide. Created posts
+    also won't come back from the API, so we'll keep them in local state. That
+    means they're lost when the page reloads, unless we decide to store them.
+
+  Since we'll document AI usage in the README, it would help to log the prompts
+  and corrections as we go. Tell me your approach and technologies when you're
+  ready.
+
+❯ <ide_opened_file>The user opened the file
+  /home/eiffelike/work/users_post/mise.toml in the IDE. This may or may not be
+  related to the current task.</ide_opened_file>
+
+❯ Lets start with the technologies, due to the simplicity of this stage, I
+  think we could only use the followings: Vite + React + Ts, lets also add
+  TanStack Query I think is strong enough for cache, loading and error states
+  and to add the POST with setQueryData. Styles: plain CSS, with CSS modules
+  maybe and simple BEM classes. For validation: manual validation can be enough
+  in this case, but we can try zod. Validations: Vitest + Testing Lib and MSW
+  to mock network. No global state management on this stage.Regarding the IA
+  usage, my first thought was using SDD mainly to show my daily workflows, but
+  since this is a very tiny app it may be an overkill and actually a bad prod
+  decision, so lets only create a SPEC.md or PLAN.md to record the steps and
+  decisions. I'll also log/export the chats to have solid evidence of coding
+  agents usage. Now for the API details, I think we mainly have to options and
+  I think we can go with the 2nd one: 1-  Simply use crypto.randomUUID() (this
+  may add problems on testing) 2-Negative counter, this way the post.id still
+  is number and there's no collision, of course this is only a testing product.
+  I'm still thinking about the layout and UI/UX. Also install prettier and
+  eslint, and lets add an "post-agent" script for agents to run after finishing
+  a coding work, mainly for prettier --writte and eslint, after writting the
+  test it will contain the test gates also. I already added nodev24 to the mise
+  working-space
+
+● I'll check the mise setup and toolchain before scaffolding.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Node 24.11.0 and npm 11 are ready. The folder isn't empty, so I'll scaffold
+  Vite in a temporary subfolder and move the files up.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The new Vite template ships with oxlint instead of ESLint. I'll look at what
+  it generated.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The template ships TypeScript 7 and oxlint, so I'm swapping oxlint for ESLint
+  and checking typescript-eslint compatibility with TS 7. I'll move the scaffold
+  into the project root next, leaving out its boilerplate README. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now I'll set the package name, remove oxlint and install the stack.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● As I suspected, typescript-eslint 8.72 only supports TypeScript up to <6.1.0.
+  I'll check whether a newer typescript-eslint supports TS 7 before choosing
+  between the two.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● typescript-eslint's canary doesn't support TypeScript 7 yet, so I'm pinning
+  TypeScript to ~6.0.3 instead of force-installing, since TS 7's different
+  compiler API would likely break type-aware linting. I'll note this in PLAN.md.
+  · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Everything installed. I'll check what the 7 moderate audit warnings are.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All 7 warnings trace to a dev-only minimatch ReDoS inside typescript-eslint
+  that never ships, and the only fix (--force) would downgrade packages, so I'm
+  leaving it. Next I'm checking the newer plugins' exported config shapes rather
+  than writing the ESLint config from memory. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The plugin APIs look as expected. One more check: the jest-dom v7 and Vitest 5
+  entry points for the test setup.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Both entry points exist. I'll look at the demo src files before changing
+  anything.
+
+  Listed 1 directory (ctrl+o to expand)
+
+● I'll remove the Vite demo (counter, logos, demo CSS) and replace it with a
+  placeholder App wrapped in QueryClientProvider. Next come the tooling configs.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Those references are all in App.tsx, which I'm replacing now.
+
+● Write(src/App.tsx)
+  ⎿  Added 3 lines, removed 116 lines
+        1 -import { useState } from 'react'                              
+        2 -import heroImg from './assets/hero.png'                       
+        3 -import reactLogo from './assets/react.svg'                    
+        4 -import viteLogo from './assets/vite.svg'                      
+        5 -import './App.css'                                            
+        6 -                                                              
+        1  function App() {
+        8 -  const [count, setCount] = useState(0)                       
+        9 -                                                              
+        2    return (
+       11 -    <>                                                        
+       12 -      <section id="center">                                   
+       13 -        <div className="hero">                                
+       14 -          <img src={heroImg} className="base" width="170" heig
+          -ht="179" alt="" />                                            
+       15 -          <img src={reactLogo} className="framework" alt="Reac
+          -t logo" />                                                    
+       16 -          <img src={viteLogo} className="vite" alt="Vite logo"
+          - />                                                           
+       17 -        </div>                                                
+       18 -        <div>                                                 
+       19 -          <h1>Get started</h1>                                
+       20 -          <p>                                                 
+       21 -            Edit <code>src/App.tsx</code> and save to test <co
+          -de>HMR</code>                                                 
+       22 -          </p>                                                
+       23 -        </div>                                                
+       24 -        <button                                               
+       25 -          type="button"                                       
+       26 -          className="counter"                                 
+       27 -          onClick={() => setCount((count) => count + 1)}      
+       28 -        >                                                     
+       29 -          Count is {count}                                    
+       30 -        </button>                                             
+       31 -      </section>                                              
+       32 -                                                              
+       33 -      <div className="ticks"></div>                           
+       34 -                                                              
+       35 -      <section id="next-steps">                               
+       36 -        <div id="docs">                                       
+       37 -          <svg className="icon" role="presentation" aria-hidde
+          -n="true">                                                     
+       38 -            <use href="/icons.svg#documentation-icon"></use>  
+       39 -          </svg>                                              
+       40 -          <h2>Documentation</h2>                              
+       41 -          <p>Your questions, answered</p>                     
+       42 -          <ul>                                                
+       43 -            <li>                                              
+       44 -              <a href="https://vite.dev/" target="_blank">    
+       45 -                <img className="logo" src={viteLogo} alt="" />
+       46 -                Explore Vite                                  
+       47 -              </a>                                            
+       48 -            </li>                                             
+       49 -            <li>                                              
+       50 -              <a href="https://react.dev/" target="_blank">   
+       51 -                <img className="button-icon" src={reactLogo} a
+          -lt="" />                                                      
+       52 -                Learn more                                    
+       53 -              </a>                                            
+       54 -            </li>                                             
+       55 -          </ul>                                               
+       56 -        </div>                                                
+       57 -        <div id="social">                                     
+       58 -          <svg className="icon" role="presentation" aria-hidde
+          -n="true">                                                     
+       59 -            <use href="/icons.svg#social-icon"></use>         
+       60 -          </svg>                                              
+       61 -          <h2>Connect with us</h2>                            
+       62 -          <p>Join the Vite community</p>                      
+       63 -          <ul>                                                
+       64 -            <li>                                              
+       65 -              <a href="https://github.com/vitejs/vite" target=
+          -"_blank">                                                     
+       66 -                <svg                                          
+       67 -                  className="button-icon"                     
+       68 -                  role="presentation"                         
+       69 -                  aria-hidden="true"                          
+       70 -                >                                             
+       71 -                  <use href="/icons.svg#github-icon"></use>   
+       72 -                </svg>                                        
+       73 -                GitHub                                        
+       74 -              </a>                                            
+       75 -            </li>                                             
+       76 -            <li>                                              
+       77 -              <a href="https://chat.vite.dev/" target="_blank"
+          ->                                                             
+       78 -                <svg                                          
+       79 -                  className="button-icon"                     
+       80 -                  role="presentation"                         
+       81 -                  aria-hidden="true"                          
+       82 -                >                                             
+       83 -                  <use href="/icons.svg#discord-icon"></use>  
+       84 -                </svg>                                        
+       85 -                Discord                                       
+       86 -              </a>                                            
+       87 -            </li>                                             
+       88 -            <li>                                              
+       89 -              <a href="https://x.com/vite_js" target="_blank">
+       90 -                <svg                                          
+       91 -                  className="button-icon"                     
+       92 -                  role="presentation"                         
+       93 -                  aria-hidden="true"                          
+       94 -                >                                             
+       95 -                  <use href="/icons.svg#x-icon"></use>        
+       96 -                </svg>                                        
+       97 -                X.com                                         
+       98 -              </a>                                            
+       99 -            </li>                                             
+      100 -            <li>                                              
+      101 -              <a href="https://bsky.app/profile/vite.dev" targ
+          -et="_blank">                                                  
+      102 -                <svg                                          
+      103 -                  className="button-icon"                     
+      104 -                  role="presentation"                         
+      105 -                  aria-hidden="true"                          
+      106 -                >                                             
+      107 -                  <use href="/icons.svg#bluesky-icon"></use>  
+      108 -                </svg>                                        
+      109 -                Bluesky                                       
+      110 -              </a>                                            
+      111 -            </li>                                             
+      112 -          </ul>                                               
+      113 -        </div>                                                
+      114 -      </section>                                              
+      115 -                                                              
+      116 -      <div className="ticks"></div>                           
+      117 -      <section id="spacer"></section>                         
+      118 -    </>                                                       
+        3 +    <main>                                                    
+        4 +      <h1>Posts Explorer</h1>                                 
+        5 +    </main>                                                   
+        6    )
+        7  }
+        8  
+
+● Write(src/main.tsx)
+  ⎿  Added 8 lines, removed 1 line
+       1  import { StrictMode } from 'react'
+       2  import { createRoot } from 'react-dom/client'
+       3 +import { QueryClient, QueryClientProvider } from '@tanstack/rea
+         +ct-query'                                                      
+       4 +import { ReactQueryDevtools } from '@tanstack/react-query-devto
+         +ols'                                                           
+       5  import './index.css'
+       6  import App from './App.tsx'
+       7  
+       8 +const queryClient = new QueryClient()                          
+       9 +                                                               
+      10  createRoot(document.getElementById('root')!).render(
+      11    <StrictMode>
+       8 -    <App />                                                    
+      12 +    <QueryClientProvider client={queryClient}>                 
+      13 +      <App />                                                  
+      14 +      <ReactQueryDevtools initialIsOpen={false} />             
+      15 +    </QueryClientProvider>                                     
+      16    </StrictMode>,
+      17  )
+
+● Write(src/index.css)
+  ⎿  Added 5 lines, removed 105 lines
+        1 -:root {                                                       
+        2 -  --text: #6b6375;                                            
+        3 -  --text-h: #08060d;                                          
+        4 -  --bg: #fff;                                                 
+        5 -  --border: #e5e4e7;                                          
+        6 -  --code-bg: #f4f3ec;                                         
+        7 -  --accent: #aa3bff;                                          
+        8 -  --accent-bg: rgba(170, 59, 255, 0.1);                       
+        9 -  --accent-border: rgba(170, 59, 255, 0.5);                   
+       10 -  --social-bg: rgba(244, 243, 236, 0.5);                      
+       11 -  --shadow:                                                   
+       12 -    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0
+          - 4px 6px -2px;                                                
+       13 -                                                              
+       14 -  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;          
+       15 -  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;       
+       16 -  --mono: ui-monospace, Consolas, monospace;                  
+       17 -                                                              
+       18 -  font: 18px/145% var(--sans);                                
+       19 -  letter-spacing: 0.18px;                                     
+       20 -  color-scheme: light dark;                                   
+       21 -  color: var(--text);                                         
+       22 -  background: var(--bg);                                      
+       23 -  font-synthesis: none;                                       
+       24 -  text-rendering: optimizeLegibility;                         
+       25 -  -webkit-font-smoothing: antialiased;                        
+       26 -  -moz-osx-font-smoothing: grayscale;                         
+       27 -                                                              
+       28 -  @media (max-width: 1024px) {                                
+       29 -    font-size: 16px;                                          
+       30 -  }                                                           
+       31 -}                                                             
+       32 -                                                              
+       33 -@media (prefers-color-scheme: dark) {                         
+       34 -  :root {                                                     
+       35 -    --text: #9ca3af;                                          
+       36 -    --text-h: #f3f4f6;                                        
+       37 -    --bg: #16171d;                                            
+       38 -    --border: #2e303a;                                        
+       39 -    --code-bg: #1f2028;                                       
+       40 -    --accent: #c084fc;                                        
+       41 -    --accent-bg: rgba(192, 132, 252, 0.15);                   
+       42 -    --accent-border: rgba(192, 132, 252, 0.5);                
+       43 -    --social-bg: rgba(47, 48, 58, 0.5);                       
+       44 -    --shadow:                                                 
+       45 -      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25)
+          - 0 4px 6px -2px;                                              
+       46 -  }                                                           
+       47 -                                                              
+       48 -  #social .button-icon {                                      
+       49 -    filter: invert(1) brightness(2);                          
+       50 -  }                                                           
+       51 -}                                                             
+       52 -                                                              
+       53 -#root {                                                       
+       54 -  width: 1126px;                                              
+       55 -  max-width: 100%;                                            
+       56 -  margin: 0 auto;                                             
+       57 -  text-align: center;                                         
+       58 -  border-inline: 1px solid var(--border);                     
+       59 -  min-height: 100svh;                                         
+       60 -  display: flex;                                              
+       61 -  flex-direction: column;                                     
+        1 +*,                                                            
+        2 +*::before,                                                    
+        3 +*::after {                                                    
+        4    box-sizing: border-box;
+        5  }
+        6  
+        7  body {
+        8    margin: 0;
+        9 +  font-family: system-ui, sans-serif;                         
+       10 +  line-height: 1.5;                                           
+       11  }
+       68 -                                                              
+       69 -h1,                                                           
+       70 -h2 {                                                          
+       71 -  font-family: var(--heading);                                
+       72 -  font-weight: 500;                                           
+       73 -  color: var(--text-h);                                       
+       74 -}                                                             
+       75 -                                                              
+       76 -h1 {                                                          
+       77 -  font-size: 56px;                                            
+       78 -  letter-spacing: -1.68px;                                    
+       79 -  margin: 32px 0;                                             
+       80 -  @media (max-width: 1024px) {                                
+       81 -    font-size: 36px;                                          
+       82 -    margin: 20px 0;                                           
+       83 -  }                                                           
+       84 -}                                                             
+       85 -h2 {                                                          
+       86 -  font-size: 24px;                                            
+       87 -  line-height: 118%;                                          
+       88 -  letter-spacing: -0.24px;                                    
+       89 -  margin: 0 0 8px;                                            
+       90 -  @media (max-width: 1024px) {                                
+       91 -    font-size: 20px;                                          
+       92 -  }                                                           
+       93 -}                                                             
+       94 -p {                                                           
+       95 -  margin: 0;                                                  
+       96 -}                                                             
+       97 -                                                              
+       98 -code,                                                         
+       99 -.counter {                                                    
+      100 -  font-family: var(--mono);                                   
+      101 -  display: inline-flex;                                       
+      102 -  border-radius: 4px;                                         
+      103 -  color: var(--text-h);                                       
+      104 -}                                                             
+      105 -                                                              
+      106 -code {                                                        
+      107 -  font-size: 15px;                                            
+      108 -  line-height: 135%;                                          
+      109 -  padding: 4px 8px;                                           
+      110 -  background: var(--code-bg);                                 
+      111 -}                                                             
+● Write(vite.config.ts)
+  ⎿  Added 5 lines, removed 1 line
+       1  import react from '@vitejs/plugin-react'
+       2 -import { defineConfig } from 'vite'                            
+       2 +import { defineConfig } from 'vitest/config'                   
+       3  
+       4  // https://vite.dev/config/
+       5  export default defineConfig({
+       6    plugins: [react()],
+       7 +  test: {                                                      
+       8 +    environment: 'jsdom',                                      
+       9 +    setupFiles: ['./src/test/setup.ts'],                       
+      10 +  },                                                           
+      11  })
+
+● Write(src/test/setup.ts)
+  ⎿  Wrote 12 lines to src/test/setup.ts
+       1 import '@testing-library/jest-dom/vitest'
+       2 import { cleanup } from '@testing-library/react'
+       3 import { afterAll, afterEach, beforeAll } from 'vitest'
+       4 import { server } from './server'
+       5
+       6 // Fail loudly on any request without a handler so tests never h
+         it the real API.
+       7 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+       8 afterEach(() => {
+       9   cleanup()
+     … +3 lines (ctrl+o to expand)
+
+● Write(src/test/server.ts)
+  ⎿  Wrote 5 lines to src/test/server.ts
+      1 import { setupServer } from 'msw/node'
+      2
+      3 // Default handlers get added here once the API layer exists;
+      4 // individual tests override them with `server.use(...)`.
+      5 export const server = setupServer()
+
+● Write(eslint.config.js)
+  ⎿  Wrote 35 lines to eslint.config.js
+       1 import js from '@eslint/js'
+       2 import { defineConfig, globalIgnores } from 'eslint/config'
+       3 import prettier from 'eslint-config-prettier'
+       4 import reactHooks from 'eslint-plugin-react-hooks'
+       5 import reactRefresh from 'eslint-plugin-react-refresh'
+       6 import globals from 'globals'
+       7 import tseslint from 'typescript-eslint'
+       8
+       9 export default defineConfig([
+      10   globalIgnores(['dist', 'coverage']),
+     … +25 lines (ctrl+o to expand)
+
+● Write(.prettierrc.json)
+  ⎿  Wrote 4 lines to .prettierrc.json
+      1 {
+      2   "semi": false,
+      3   "singleQuote": true
+      4 }
+
+● Write(.prettierignore)
+  ⎿  Wrote 3 lines to .prettierignore
+      1 dist
+      2 coverage
+      3 package-lock.json
+
+● Now the npm scripts. post-agent runs format, lint with autofix and zero
+  warnings allowed, then a typecheck. Tests get added to it once they exist.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I'll run post-agent and a production build to confirm everything works
+  together.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The typecheck caught a real API change: MSW v3 no longer accepts
+  onUnhandledRequest in listen(). I'll look at the v3 type definitions to see
+  what replaced it.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● In v3 the option was renamed to onUnhandledFrame, which also covers WebSocket
+  frames. I'll update the setup.
+
+● Update(src/test/setup.ts)
+  ⎿  Added 1 line, removed 1 line
+       4  import { server } from './server'
+       5  
+       6  // Fail loudly on any request without a handler so tests never 
+          hit the real API.
+       7 -beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+       7 +beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))  
+       8  afterEach(() => {
+       9    cleanup()
+      10    server.resetHandlers()
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Build and gates pass, so I'm checking that ESLint catches issues and that
+  Vitest, jsdom, jest-dom and MSW work together with a temporary smoke test I'll
+  remove afterwards. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Tests run in jsdom with MSW and ESLint is flagging a hooks violation and a
+  floating promise. I'm writing PLAN.md next to record the steps and decisions.
+  · summary
+
+● Write(PLAN.md)
+  ⎿  Wrote 58 lines to PLAN.md
+       1 # Posts Explorer — Plan
+       2
+       3 Working plan and decision log. Product scope lives in [PRODUCT.m
+         d](PRODUCT.md).
+       4
+       5 ## Stack
+       6
+       7 | Concern           | Choice
+                          |
+       8 | ----------------- | ------------------------------------------
+     … +51 lines (~3 KB) (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The project is set up and passes every check: npm run post-agent, npm run
+  build and a temporary smoke test (since deleted). I haven't built any features
+  or started on the layout, and nothing is committed.
+
+  What's in place
+  - Stack: Vite + React 19 + TypeScript, TanStack Query (with devtools), Zod,
+    Vitest + Testing Library + MSW, ESLint and Prettier. The Vite demo is gone;
+    App is a placeholder heading inside QueryClientProvider.
+  - Tests: they run in jsdom. MSW is set to fail on any request that has no
+    handler, so tests can never call the real API by accident.
+    src/test/server.ts is ready for the default API handlers.
+  - post-agent: runs prettier --write, then eslint --fix --max-warnings=0, then
+    tsc -b. I added the type check because it's cheap and catches real problems.
+    Tests can't be part of it yet, because vitest run fails when there are no
+    test files; I'll add them in step 7.
+  - PLAN.md: the stack, 8 steps (step 1 checked off) and a log of decisions,
+    including your negative-ID choice.
+
+  Changes from what you'd expect, all recorded in PLAN.md
+  1. TypeScript is pinned to 6.0.3. The current Vite template ships TS 7, but
+     typescript-eslint (both latest and canary) only supports TS below 6.1.
+     Forcing the install would probably break type-aware linting.
+  2. The template uses oxlint by default. I replaced it with ESLint, using the
+     type-aware rules plus react-hooks, react-refresh and the Prettier
+     compatibility config. I checked that it flags a conditional hook and an
+     unawaited promise.
+  3. MSW v3 renamed an option. onUnhandledRequest is now onUnhandledFrame; the
+     type check caught it.
+  4. npm audit shows 7 moderate warnings. They all come from one minimatch issue
+     inside typescript-eslint, which is development-only and never reaches the
+     app bundle. I left it alone.
+
+  Choices I made without asking (easy to change)
+  - npm as the package manager.
+  - Prettier with no semicolons and single quotes, matching the Vite template's
+    style.
+
+  When you've worked out the layout and UI/UX, step 2 is next.
