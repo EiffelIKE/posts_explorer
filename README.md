@@ -4,6 +4,8 @@ A small React + TypeScript app on the public
 [JSONPlaceholder](https://jsonplaceholder.typicode.com) API: browse a directory of
 users, search them by name, read a user's posts, and publish a new one.
 
+**Live demo:** <https://posts-explorer-five.vercel.app/>
+
 - **Users list with search by name.** Partial and case-insensitive, synced to the URL
   as `?q=` so it survives reloads and back/forward.
 - **User posts and a validated create-post form.** Title and body are required
