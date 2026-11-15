@@ -1,0 +1,537 @@
+
+❯ /clear
+
+❯ lets start the 7th step, for the main test I think we must cover: 1-Search
+  and case ignore on search 2-Create a post with also post validations 3-Error
+  states for the GET response, and then lets add the 2 edge cases when
+  switching users
+
+  Listed 1 directory, ran 4 shell commands (ctrl+o to expand)
+
+● Search tests already exist in UsersPanel.test.tsx, so I'm adding schema unit
+  tests and an app-level integration suite, and checking the theme code for
+  jsdom issues first. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Writing a shared test render helper, then the test files.
+
+  Read 1 file (ctrl+o to expand)
+
+● Write(src/test/renderApp.tsx)
+  ⎿  Wrote 49 lines to src/test/renderApp.tsx
+       1 import { QueryClientProvider, type QueryClient } from '@tanstack
+         /react-query'
+       2 import { render, screen, within } from '@testing-library/react'
+       3 import userEvent from '@testing-library/user-event'
+       4 import { createMemoryRouter, RouterProvider } from 'react-router
+         '
+       5 import { createQueryClient } from '../api/queries'
+       6 import { routes } from '../router'
+       7
+       8 /**
+     … +41 lines (ctrl+o to expand)
+
+● Write(src/posts/Composer/newPostSchema.test.ts)
+  ⎿  Wrote 37 lines to src/posts/Composer/newPostSchema.test.ts
+       1 import { describe, expect, it } from 'vitest'
+       2 import { newPostSchema, validateNewPost } from './newPostSchema'
+       3
+       4 describe('new post rules', () => {
+       5   it('requires a title and a body', () => {
+       6     expect(validateNewPost({ title: '', body: '' })).toEqual({
+       7       title: 'Add a title.',
+       8       body: 'Write something in the body.',
+       9     })
+      10   })
+     … +27 lines (ctrl+o to expand)
+
+● Write(src/posts/UserPostsPanel/createPost.test.tsx)
+  ⎿  Wrote 97 lines to src/posts/UserPostsPanel/createPost.test.tsx
+       1 import { screen } from '@testing-library/react'
+       2 import { http, HttpResponse } from 'msw'
+       3 import { describe, expect, it } from 'vitest'
+       4 import { API_BASE_URL } from '../../api/client'
+       5 import { findUserHeader, postsRegion, renderApp } from '../../te
+         st/renderApp'
+       6 import { server } from '../../test/server'
+       7
+       8 const titleBox = () => screen.getByRole('textbox', { name: 'Titl
+         e' })
+     … +89 lines (ctrl+o to expand)
+
+● Update(src/posts/UserPostsPanel/createPost.test.tsx)
+  ⎿  Removed 1 line
+      56  
+      57      await user.click(publishButton())
+      58  
+      59 -    expect(await screen.findByRole('status', { name: '' })).toB
+         -eDefined()                                                     
+      59      expect(await screen.findByText('Published')).toBeInTheDocum
+          ent()
+      60      expect(sent).toEqual([
+      61        { title: 'H ello world', body: 'First post!', userId: 1 }
+          ,
+
+● Write(src/posts/UserPostsPanel/loadErrors.test.tsx)
+  ⎿  Wrote 127 lines to src/posts/UserPostsPanel/loadErrors.test.tsx
+       1 import { screen, within } from '@testing-library/react'
+       2 import { http, HttpResponse } from 'msw'
+       3 import { describe, expect, it } from 'vitest'
+       4 import { API_BASE_URL } from '../../api/client'
+       5 import { fixturePostsFor, fixtureUsers } from '../../test/data'
+       6 import { findUserHeader, postsRegion, renderApp } from '../../te
+         st/renderApp'
+       7 import { server } from '../../test/server'
+       8
+       9 const USERS_URL = `${API_BASE_URL}/users`
+     … +118 lines (ctrl+o to expand)
+
+● Write(src/posts/UserPostsPanel/userSwitch.test.tsx)
+  ⎿  Wrote 96 lines to src/posts/UserPostsPanel/userSwitch.test.tsx
+       1 import { cleanup, screen, waitFor } from '@testing-library/react
+         '
+       2 import { http, HttpResponse } from 'msw'
+       3 import { describe, expect, it } from 'vitest'
+       4 import { API_BASE_URL } from '../../api/client'
+       5 import {
+       6   findUserHeader,
+       7   postsRegion,
+       8   renderApp,
+       9   userLink,
+     … +87 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All 24 pass on the first run. Before trusting them I'll check they fail when
+  the behavior breaks: first stubbing jsdom's scrollTo noise, then breaking the
+  code on purpose.
+
+● Bash(python3 - <<'EOF'
+      p='src/test/setup.ts'…)
+  ⎿  Updated src/test/setup.ts (+4 -1)
+  ⎿  (a git step in this command can move the working tree, so these may be
+     its changes, not edits) (ctrl+o to expand)
+
+● Every deliberate break made the matching tests fail, and the source is
+  restored. Next: adding tests to the post-agent gate and running it.
+
+● Bash(sed -i 's|"post-agent": "prettier --write . \&\& eslint . --fix
+      --max-warnings=0 \&\& tsc -b"|"post-agent": "prettier --write . \&\&
+      eslint . --fix --max-warnin…)
+  ⎿  Updated package.json (+1 -1)
+      14      "typecheck": "tsc -b",
+      15      "test": "vitest",
+      16      "test:run": "vitest run",
+      17 -    "post-agent": "prettier --write . && eslint . --fix --max-w
+         -arnings=0 && tsc -b"                                           
+      17 +    "post-agent": "prettier --write . && eslint . --fix --max-w
+         +arnings=0 && tsc -b && vitest run"                             
+      18    },
+      19    "dependencies": {
+      20      "@fontsource-variable/figtree": "^5.3.0",
+  ⎿  Updated src/posts/UserPostsPanel/loadErrors.test.tsx (+6 -6)
+      52        await user.click(within(alert).getByRole('button', { name
+          : 'Try again' }))
+      53  
+      54        const nav = await screen.findByRole('navigation', { name:
+           'Users' })
+      55 -      expect(within(nav).getAllByRole('link')).toHaveLength(   
+      56 -        fixtureUsers.length,                                   
+      57 -      )                                                        
+      55 +      expect(within(nav).getAllByRole('link')).toHaveLength(fix
+         +tureUsers.length)                                              
+      56        expect(screen.queryByRole('alert')).not.toBeInTheDocument
+          ()
+      57      },
+      58    )
+     ...
+      89  
+      90        await user.click(within(alert).getByRole('button', { name
+          : 'Try again' }))
+      91  
+      94 -      const titles = (await postsRegion().findAllByRole('headin
+         -g', {                                                          
+      95 -        level: 3,                                              
+      96 -      })).map((heading) => heading.textContent)                
+      92 +      const titles = (                                         
+      93 +        await postsRegion().findAllByRole('heading', {         
+      94 +          level: 3,                                            
+      95 +        })                                                     
+      96 +      ).map((heading) => heading.textContent)                  
+      97        expect(titles).toEqual(fixturePostsFor(1).map((post) => p
+          ost.title))
+      98        expect(screen.queryByRole('alert')).not.toBeInTheDocument
+          ()
+      99      },
+
+● Bash(sed -i 's|^window.scrollTo = vi.fn<typeof
+      window.scrollTo>()|vi.spyOn(window,
+      '"'"'scrollTo'"'"').mockImplementation(() => {})|' src/test/setup.ts &&
+      sed -n 5,8…)
+  ⎿  Updated src/test/setup.ts (+1 -1)
+       4  import { server } from './server'
+       5  
+       6  // jsdom has no layout; ScrollRestoration calls scrollTo on eve
+          ry navigation.
+       7 -window.scrollTo = vi.fn<typeof window.scrollTo>()              
+       7 +vi.spyOn(window, 'scrollTo').mockImplementation(() => {})      
+       8  
+       9  // Fail loudly on any request without a handler so tests never 
+          hit the real API.
+      10  beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
+
+● The gate is green with no jsdom noise. Running the suite a few more times to
+  check for flaky tests:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Stable. Updating PLAN.md (step 7 checkbox, agent workflow, decision 19).
+
+● Bash(python3 - <<'EOF'
+      p='PLAN.md'…)
+  ⎿  Updated PLAN.md (+28 -4)
+      24  - [x] 4. Users list with search by name (synced with `?q=`, see
+           decision 15)
+      25  - [x] 5. User posts + create-post form (validated, required tit
+          le and body; see decision 16)
+      26  - [x] 6. Loading and error states (see decision 18)
+      27 -- [ ] 7. Tests (at least 3) and add them to the `post-agent` ga
+         -te. Must cover the                                             
+      27 +- [x] 7. Tests (at least 3) and add them to the `post-agent` ga
+         +te. Must cover the                                             
+      28        user-switch cases in decision 17: a delayed publish never
+           lands on the user
+      29        switched to, and a created post shows again only for its 
+          author when coming
+      30 -      back, and only for this session                          
+      30 +      back, and only for this session (see decision 19)        
+      31  - [ ] 8. README (run, decisions, next steps, AI usage)
+      32  
+      33  ## Agent workflow
+     ...
+      38  npm run post-agent
+      39  ```
+      40  
+      41 -Currently: `prettier --write` → `eslint --fix --max-warnings=0`
+         - → `tsc -b`.                                                   
+      42 -Test gates get appended once tests exist (step 7).             
+      41 +Currently: `prettier --write` → `eslint --fix --max-warnings=0`
+         + → `tsc -b` →                                                  
+      42 +`vitest run`.                                                  
+      43  
+      44  ## Decisions
+      45  
+     ...
+      164        action is "Back to all users" rather than reload, since 
+           reloading would drop this
+      165        tab's posts. A crash in the layout replaces the page and
+            offers a reload.
+      166        `router.tsx` exports `routes` so tests can mount the rea
+           l tree in a memory router.
+      167 +19. **Tests (step 7).** Vitest + Testing Library against MSW; 
+          +`vitest run` is the last                                      
+      168 +    `post-agent` step. Apart from the schema unit test, the su
+          +ites mount the real route                                     
+      169 +    tree (`renderApp()` in `src/test/renderApp.tsx`), so they 
+          +exercise the same wiring                                      
+      170 +    users do. The test query client drops the one automatic re
+          +try (decision 14), so an                                      
+      171 +    error state shows after one failed response instead of a o
+          +ne-second wait.                                               
+      172 +    - **Search** (`UsersPanel.test.tsx`, from step 4): partial
+          + and case-insensitive                                         
+      173 +      matching, trimming, `?q=` sync.                         
+      174 +    - **Create post** (`newPostSchema.test.ts`, `createPost.te
+          +st.tsx`): the decision 16                                     
+      175 +      rules on their own, then through the form: errors after 
+          +the first submit,                                             
+      176 +      live updates, focus on the first invalid field, no reque
+          +st while invalid, the                                         
+      177 +      trimmed body sent to `POST /posts`, the new post first a
+          +nd marked "Local only".                                       
+      178 +      A failed publish keeps the draft and shows the reason.  
+      179 +    - **GET errors** (`loadErrors.test.tsx`): for `/users` and
+          + `/users/:id/posts`, each                                     
+      180 +      cause (5xx, 4xx, network, unexpected shape) shows its co
+          +py and "Try again"                                            
+      181 +      recovers. Opening a user while `/users` fails shows the 
+          +error in both panels.                                         
+     … 9 more lines (ctrl+o to expand)
+
+● Step 7 is finished. There are 24 tests across 5 files, all passing, and vitest
+  run is now the last step of npm run post-agent. The full gate passes, and
+  five repeat runs all passed. Nothing is committed yet.
+
+  What's covered
+
+  1. Search and case-insensitive matching: these tests already existed from step
+     4 in UsersPanel.test.tsx (src/users/UsersPanel/UsersPanel.test.tsx), so I
+     left them as they were.
+  2. Creating a post, with validation:
+     - newPostSchema.test.ts (src/posts/Composer/newPostSchema.test.ts) checks
+       the rules on their own: both fields required, spaces-only counts as
+       empty, at least 2 characters in the title, no maximum length, and the
+       published values are trimmed.
+     - createPost.test.tsx (src/posts/UserPostsPanel/createPost.test.tsx) goes
+       through the form. Errors appear after the first submit and then update as
+       you type, and focus moves to the first invalid field. No request is sent
+       while the form is invalid, and the request carries the trimmed title and
+       body. The new post appears first, marked "Local only".
+     - A failed publish shows the reason and keeps the draft.
+  3. Error states for the GET requests: loadErrors.test.tsx
+     (src/posts/UserPostsPanel/loadErrors.test.tsx) covers /users and
+     /users/:id/posts.
+     - Each cause shows its own message and "Try again" recovers: server error,
+       client error, network failure, and a response the app doesn't recognize.
+     - Opening a user while /users is failing shows the error in both panels.
+     - While a retry runs, the error stays visible and focus stays on the
+       "Retrying…" button.
+  4. The two user-switch cases, in userSwitch.test.tsx
+     (src/posts/UserPostsPanel/userSwitch.test.tsx):
+     - A slow publish: the test holds the publish request, switches to Ervin,
+       then lets it finish. Ervin gets no post and no "Published" notice, and
+       the post shows up on Leanne's panel.
+     - Created posts: a new post comes back only for its author when you return
+       to them. After a simulated reload (a fresh query cache) it's gone.
+
+  Supporting changes
+  - renderApp.tsx (src/test/renderApp.tsx) is a shared helper that mounts the
+    real app routes. It turns off the app's one automatic retry, so error states
+    show right away instead of after about a second.
+  - setup.ts (src/test/setup.ts) stubs window.scrollTo. The test environment
+    doesn't have it, and the router's scroll restoration was filling the output
+    with warnings.
+  - PLAN.md: step 7 is checked off, the agent workflow lists the new test step,
+    and decision 19 records the testing approach.
+
+  To check the tests catch real bugs, I broke the code on purpose five ways and
+  confirmed the matching tests failed each time, then reverted. The five breaks
+  were:
+  - removing the key on the posts panel
+  - letting created posts expire from the cache
+  - making search case-sensitive
+  - skipping the trim on publish
+  - turning off the code that keeps the error visible during a retry
+
+  There's also a third switching case I didn't add, since you asked for two: a
+  slow publish that fails after you've switched away should show up as an unsent
+  draft on the author's panel. Want me to add it before committing?
+
+❯ Yes I think the 3rd switching case is worth to write
+
+  Read 1 file (ctrl+o to expand)
+● I'll pull the held-request setup into a shared helper, since two tests need it
+  now, then add the failure case.
+
+● Update(src/posts/UserPostsPanel/userSwitch.test.tsx)
+  ⎿  Added 21 lines, removed 9 lines
+      28    await postsRegion().findAllByRole('article')
+      29  }
+      30  
+      31 +/**                                                            
+      32 + * Holds `POST /posts` until the returned function is called, t
+         +hen answers                                                    
+      33 + * with `respond` (the API's echo by default).                 
+      34 + */                                                            
+      35 +function holdPublish(                                          
+      36 +  respond: (post: Record<string, unknown>) => Response = (post)
+         + =>                                                            
+      37 +    HttpResponse.json({ ...post, id: 101 }, { status: 201 }),  
+      38 +) {                                                            
+      39 +  let release!: () => void                                     
+      40 +  const gate = new Promise<void>((resolve) => (release = resolv
+         +e))                                                            
+      41 +  server.use(                                                  
+      42 +    http.post(`${API_BASE_URL}/posts`, async ({ request }) => {
+      43 +      const post = (await request.json()) as Record<string, unk
+         +nown>                                                          
+      44 +      await gate                                               
+      45 +      return respond(post)                                     
+      46 +    }),                                                        
+      47 +  )                                                            
+      48 +  return release                                               
+      49 +}                                                              
+      50 +                                                               
+      51  describe('Switching users', () => {
+      52    it('never lands a delayed publish on the user switched to', a
+          sync () => {
+      33 -    let releasePublish!: () => void                            
+      34 -    const publishGate = new Promise<void>((r) => (releasePublis
+         -h = r))                                                        
+      35 -    server.use(                                                
+      36 -      http.post(`${API_BASE_URL}/posts`, async ({ request }) =>
+         - {                                                             
+      37 -        const post = (await request.json()) as Record<string, u
+         -nknown>                                                        
+      38 -        await publishGate                                      
+      39 -        return HttpResponse.json({ ...post, id: 101 }, { status
+         -: 201 })                                                       
+      40 -      }),                                                      
+      41 -    )                                                          
+      53 +    const releasePublish = holdPublish()                       
+      54      const app = renderApp('/users/1')
+      55      await findUserHeader('Leanne Graham')
+      56      await postsRegion().findAllByRole('article')
+
+● Update(src/posts/UserPostsPanel/userSwitch.test.tsx)
+  ⎿  Added 47 lines
+       78      expect(first).toHaveTextContent('Local only')
+       79    })
+       80  
+       81 +  it('keeps a delayed failed publish as an unsent draft for it
+          +s author only', async () => {                                 
+       82 +    const releasePublish = holdPublish(                       
+       83 +      () => new HttpResponse(null, { status: 500 }),          
+       84 +    )                                                         
+       85 +    const app = renderApp('/users/1')                         
+       86 +    await findUserHeader('Leanne Graham')                     
+       87 +    await postsRegion().findAllByRole('article')              
+       88 +                                                              
+       89 +    await writePost(app, 'Slow news', 'Sent by Leanne')       
+       90 +    await openUser(app, 'Ervin Howell')                       
+       91 +    releasePublish()                                          
+       92 +    await waitFor(() => expect(app.queryClient.isMutating()).t
+          +oBe(0))                                                       
+       93 +                                                              
+       94 +    // Ervin sees nothing of it: no failure banner, no unsent 
+          +notice.                                                       
+       95 +    expect(screen.queryByRole('alert')).not.toBeInTheDocument(
+          +)                                                             
+       96 +    expect(screen.queryByText(/Slow news/)).not.toBeInTheDocum
+          +ent()                                                         
+       97 +                                                              
+       98 +    // Back on Leanne, the failure waits with its reason and b
+          +oth actions.                                                  
+       99 +    await openUser(app, 'Leanne Graham')                      
+      100 +    const notice = screen.getByRole('alert')                  
+      101 +    expect(notice).toHaveTextContent('“Slow news” wasn’t publi
+          +shed')                                                        
+      102 +    expect(notice).toHaveTextContent(                         
+      103 +      'The server ran into a problem (error 500).',           
+      104 +    )                                                         
+      105 +    expect(postsRegion().queryByText('Slow news')).not.toBeInT
+          +heDocument()                                                  
+      106 +                                                              
+      107 +    // "Restore draft" reopens the form filled in and clears t
+          +he notice.                                                    
+      108 +    await app.user.click(                                     
+      109 +      within(notice).getByRole('button', { name: 'Restore draf
+          +t' }),                                                        
+      110 +    )                                                         
+      111 +    expect(screen.getByRole('textbox', { name: 'Title' })).toH
+          +aveValue(                                                     
+      112 +      'Slow news',                                            
+      113 +    )                                                         
+      114 +    expect(screen.getByRole('textbox', { name: 'Body' })).toHa
+          +veValue(                                                      
+      115 +      'Sent by Leanne',                                       
+      116 +    )                                                         
+      117 +    expect(screen.queryByText(/wasn’t published/)).not.toBeInT
+          +heDocument()                                                  
+      118 +                                                              
+      119 +    // Restored, it publishes like any draft (the default hand
+          +ler succeeds).                                                
+      120 +    server.resetHandlers()                                    
+      121 +    await app.user.click(screen.getByRole('button', { name: 'P
+          +ublish post' }))                                              
+      122 +    expect(await screen.findByText('Published')).toBeInTheDocu
+          +ment()                                                        
+      123 +    expect(postsRegion().getAllByRole('article')[0]).toHaveTex
+          +tContent(                                                     
+      124 +      'Slow news',                                            
+      125 +    )                                                         
+      126 +  })                                                          
+      127 +                                                              
+      128    it('shows a created post again only for its author, and only
+            this session', async () => {
+      129      const app = renderApp('/users/1')
+      130      await findUserHeader('Leanne Graham')
+
+● Update(src/posts/UserPostsPanel/userSwitch.test.tsx)
+  ⎿  Added 1 line, removed 1 line
+      1 -import { cleanup, screen, waitFor } from '@testing-library/react
+        -'                                                               
+      1 +import { cleanup, screen, waitFor, within } from '@testing-libra
+        +ry/react'                                                       
+      2  import { http, HttpResponse } from 'msw'
+      3  import { describe, expect, it } from 'vitest'
+      4  import { API_BASE_URL } from '../../api/client'
+
+● Update(src/posts/UserPostsPanel/userSwitch.test.tsx)
+  ⎿  Added 1 line, removed 1 line
+      10  } from '../../test/renderApp'
+      11  import { server } from '../../test/server'
+      12  
+      13 -// User-switch rules from PLAN decision 17.                    
+      13 +// User-switch rules from PLAN decisions 17 and 18.            
+      14  
+      15  type AppHandle = ReturnType<typeof renderApp>
+      16  
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The new test passes and fails against both deliberate breaks. Updating PLAN.md
+  and running the full gate.
+
+● Bash(python3 - <<'EOF'
+      p='PLAN.md'…)
+  ⎿  Updated PLAN.md (+6 -3)
+      180        cause (5xx, 4xx, network, unexpected shape) shows its co
+           py and "Try again"
+      181        recovers. Opening a user while `/users` fails shows the 
+           error in both panels.
+      182        During a retry the error and the focused "Retrying…" but
+           ton stay put.
+      183 -    - **User switching** (`userSwitch.test.tsx`, decision 17):
+          - a publish held in flight                                     
+      183 +    - **User switching** (`userSwitch.test.tsx`, decisions 17–
+          +18): a publish held in flight                                 
+      184        while switching users lands only on its author, with no 
+           post or notice for
+      185 -      the other user; a created post shows again only for its 
+          -author, and a fresh                                           
+      185 +      the other user; the same request failing instead becomes
+          + an unsent draft on                                           
+      186 +      the author's panel only (decision 18), and "Restore draf
+          +t" reopens it filled in                                       
+      187 +      and publishes; a created post shows again only for its a
+          +uthor, and a fresh                                            
+      188        query client (a reload) no longer has it.
+      189      Each test was checked against a deliberately broken build 
+           (no `key` on the panel,
+      188 -    `gcTime: 0` for local posts, case-sensitive search, no tri
+          -m, no sticky error)                                           
+      190 +    `gcTime: 0` for local posts, case-sensitive search, no tri
+          +m, no sticky error,                                           
+      191 +    late failures not saved as unsent)                        
+      192      and failed as expected. `setup.ts` stubs `window.scrollTo`
+           , which jsdom lacks and
+      193      `ScrollRestoration` calls on every navigation.
+
+● I added the third switching case to userSwitch.test.tsx
+  (src/posts/UserPostsPanel/userSwitch.test.tsx). The full gate passes with 25
+  tests, and three more runs all passed too.
+
+  What the new test does: it holds Leanne's publish request, switches to Ervin,
+  then lets the request fail with a 500.
+  - On Ervin's panel: nothing shows up, neither the failure banner nor an unsent
+    notice.
+  - Back on Leanne's panel: the notice "“Slow news” wasn’t published" appears
+    with the server-error reason, and the post is not in the list.
+  - Restore draft: clicking it reopens the form with the title and body filled
+    in, and the notice goes away.
+  - Publishing again: with the server answering normally this time, it shows
+    "Published" and the post goes to the top.
+
+  I also broke the code on purpose two ways to make sure the test catches real
+  bugs, and it failed both times:
+  - never saving a late failure as an unsent draft
+  - removing the per-user key on the posts panel, which puts the draft on the
+    wrong user
+
+  To keep it tidy, I moved the "hold the publish request" setup into a small
+  shared helper, holdPublish(), used by both slow-publish tests. Decision 19 in
+  PLAN.md now includes this case.
+
+  Nothing is committed yet. Should I commit step 7?

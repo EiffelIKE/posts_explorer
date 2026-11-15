@@ -24,10 +24,10 @@ Working plan and decision log. Product scope lives in [PRODUCT.md](PRODUCT.md).
 - [x] 4. Users list with search by name (synced with `?q=`, see decision 15)
 - [x] 5. User posts + create-post form (validated, required title and body; see decision 16)
 - [x] 6. Loading and error states (see decision 18)
-- [ ] 7. Tests (at least 3) and add them to the `post-agent` gate. Must cover the
+- [x] 7. Tests (at least 3) and add them to the `post-agent` gate. Must cover the
       user-switch cases in decision 17: a delayed publish never lands on the user
       switched to, and a created post shows again only for its author when coming
-      back, and only for this session
+      back, and only for this session (see decision 19)
 - [ ] 8. README (run, decisions, next steps, AI usage)
 
 ## Agent workflow
@@ -38,8 +38,8 @@ After finishing any coding work, agents run:
 npm run post-agent
 ```
 
-Currently: `prettier --write` → `eslint --fix --max-warnings=0` → `tsc -b`.
-Test gates get appended once tests exist (step 7).
+Currently: `prettier --write` → `eslint --fix --max-warnings=0` → `tsc -b` →
+`vitest run`.
 
 ## Decisions
 
@@ -164,3 +164,30 @@ Test gates get appended once tests exist (step 7).
       action is "Back to all users" rather than reload, since reloading would drop this
       tab's posts. A crash in the layout replaces the page and offers a reload.
       `router.tsx` exports `routes` so tests can mount the real tree in a memory router.
+19. **Tests (step 7).** Vitest + Testing Library against MSW; `vitest run` is the last
+    `post-agent` step. Apart from the schema unit test, the suites mount the real route
+    tree (`renderApp()` in `src/test/renderApp.tsx`), so they exercise the same wiring
+    users do. The test query client drops the one automatic retry (decision 14), so an
+    error state shows after one failed response instead of a one-second wait.
+    - **Search** (`UsersPanel.test.tsx`, from step 4): partial and case-insensitive
+      matching, trimming, `?q=` sync.
+    - **Create post** (`newPostSchema.test.ts`, `createPost.test.tsx`): the decision 16
+      rules on their own, then through the form: errors after the first submit,
+      live updates, focus on the first invalid field, no request while invalid, the
+      trimmed body sent to `POST /posts`, the new post first and marked "Local only".
+      A failed publish keeps the draft and shows the reason.
+    - **GET errors** (`loadErrors.test.tsx`): for `/users` and `/users/:id/posts`, each
+      cause (5xx, 4xx, network, unexpected shape) shows its copy and "Try again"
+      recovers. Opening a user while `/users` fails shows the error in both panels.
+      During a retry the error and the focused "Retrying…" button stay put.
+    - **User switching** (`userSwitch.test.tsx`, decisions 17–18): a publish held in flight
+      while switching users lands only on its author, with no post or notice for
+      the other user; the same request failing instead becomes an unsent draft on
+      the author's panel only (decision 18), and "Restore draft" reopens it filled in
+      and publishes; a created post shows again only for its author, and a fresh
+      query client (a reload) no longer has it.
+    Each test was checked against a deliberately broken build (no `key` on the panel,
+    `gcTime: 0` for local posts, case-sensitive search, no trim, no sticky error,
+    late failures not saved as unsent)
+    and failed as expected. `setup.ts` stubs `window.scrollTo`, which jsdom lacks and
+    `ScrollRestoration` calls on every navigation.
