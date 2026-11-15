@@ -28,7 +28,7 @@ Working plan and decision log. Product scope lives in [PRODUCT.md](PRODUCT.md).
       user-switch cases in decision 17: a delayed publish never lands on the user
       switched to, and a created post shows again only for its author when coming
       back, and only for this session (see decision 19)
-- [ ] 8. README (run, decisions, next steps, AI usage)
+- [x] 8. README (run, decisions, next steps, AI usage)
 
 ## Agent workflow
 
