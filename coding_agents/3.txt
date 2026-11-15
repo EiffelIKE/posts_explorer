@@ -1,0 +1,289 @@
+
+❯ /clear
+
+❯ <ide_opened_file>The user opened the file
+  /home/eiffelike/work/users_post/PLAN.md in the IDE. This may or may not be
+  related to the current task.</ide_opened_file>
+
+❯ Lets start the 3rd step on the PLAN.md, take in note: there's only 10 users,
+  we dont need to use debounce nor querying the server with the search
+
+  Listed 1 directory, ran 3 shell commands (ctrl+o to expand)
+
+● Step 3 is the API layer. I'll build it under src/api/. Search stays
+  client-side: fetchUsers() takes no query parameter, and step 4 filters the
+  cached list with the existing filterByName.
+
+● Write(src/api/schemas.ts)
+  ⎿  Wrote 28 lines to src/api/schemas.ts
+       1 import { z } from 'zod'
+       2
+       3 // Runtime shapes of the JSONPlaceholder resources the app reads
+         . Only the
+       4 // fields the UI uses are declared; Zod strips the rest from eac
+         h response.
+       5
+       6 export const userSchema = z.object({
+       7   id: z.number().int(),
+       8   name: z.string(),
+     … +20 lines (ctrl+o to expand)
+
+● Write(src/types.ts)
+  ⎿  Added 2 lines, removed 24 lines
+       1 -// Shapes of the JSONPlaceholder resources the app reads.      
+       2 -// Only the fields the UI uses are typed; the API returns more.
+       3 -                                                               
+       4 -export interface User {                                        
+       5 -  id: number                                                   
+       6 -  name: string                                                 
+       7 -  username: string                                             
+       8 -  email: string                                                
+       9 -  company: {                                                   
+      10 -    name: string                                               
+      11 -  }                                                            
+      12 -}                                                              
+      13 -                                                               
+      14 -export interface Post {                                        
+      15 -  userId: number                                               
+      16 -  id: number                                                   
+      17 -  title: string                                                
+      18 -  body: string                                                 
+      19 -}                                                              
+      20 -                                                               
+      21 -export interface NewPost {                                     
+      22 -  title: string                                                
+      23 -  body: string                                                 
+      24 -}                                                              
+       1 +// Types are inferred from the Zod schemas that validate API re
+         +sponses.                                                       
+       2 +export type { NewPost, Post, User } from './api/schemas'       
+
+● Write(src/api/client.ts)
+  ⎿  Wrote 32 lines to src/api/client.ts
+       1 import type { z } from 'zod'
+       2
+       3 export const API_BASE_URL = 'https://jsonplaceholder.typicode.co
+         m'
+       4
+       5 /** Non-2xx response from the API. Network failures surface as `
+         TypeError`. */
+       6 export class ApiError extends Error {
+       7   readonly status: number
+       8
+     … +24 lines (ctrl+o to expand)
+
+● Write(src/api/endpoints.ts)
+  ⎿  Wrote 32 lines to src/api/endpoints.ts
+      1 import { request } from './client'
+      2 import {
+      3   postSchema,
+      4   postsSchema,
+      5   usersSchema,
+      6   type NewPost,
+      7   type Post,
+      8   type User,
+      9 } from './schemas'
+     … +23 lines (ctrl+o to expand)
+
+● Next I'll move to the TanStack Query layer, keeping created posts in a
+  separate local cache entry since JSONPlaceholder doesn't persist them.
+  · summary
+
+● Bash(git mv src/posts/localIds.ts src/api/localIds.ts && sed -i "s#from
+      './localIds'#from '../api/localIds'#" src/posts/UserPostsPanel.tsx && grep
+      -n localIds src/po…)
+  ⎿  Deleted src/posts/localIds.ts (+0 -8)
+      1 -// POST /posts always answers id 101, so created posts get decre
+        -menting                                                         
+      2 -// negative IDs instead (PLAN decision 2): still numbers, never 
+        -clash with                                                      
+      3 -// server IDs, deterministic in tests.                          
+      4 -let nextId = -1                                                 
+      5 -                                                                
+      6 -export function nextLocalPostId() {                             
+      7 -  return nextId--                                               
+      8 -}                                                               
+  ⎿  Created src/api/localIds.ts (+8 -0)
+      1 +// POST /posts always answers id 101, so created posts get decre
+        +menting                                                         
+      2 +// negative IDs instead (PLAN decision 2): still numbers, never 
+        +clash with                                                      
+      3 +// server IDs, deterministic in tests.                          
+      4 +let nextId = -1                                                 
+      5 +                                                                
+      6 +export function nextLocalPostId() {                             
+      7 +  return nextId--                                               
+      8 +}                                                               
+  ⎿  Updated src/posts/UserPostsPanel.tsx (+1 -1)
+      10  import button from '../ui/button.module.css'
+      11  import { Composer } from './Composer'
+      12  import { HeroBadge, HeroBadgeSkeleton } from './HeroBadge'
+      13 -import { nextLocalPostId } from './localIds'                   
+      13 +import { nextLocalPostId } from '../api/localIds'              
+      14  import { PostList, PostListSkeleton } from './PostList'
+      15  import styles from './UserPostsPanel.module.css'
+      16  
+
+● Write(src/api/queries.ts)
+  ⎿  Wrote 99 lines to src/api/queries.ts
+       1 import {
+       2   QueryClient,
+       3   queryOptions,
+       4   useMutation,
+       5   useQuery,
+       6   useQueryClient,
+       7 } from '@tanstack/react-query'
+       8 import { createPost, fetchUserPosts, fetchUsers } from './endpoi
+         nts'
+       9 import { nextLocalPostId } from './localIds'
+     … +90 lines (ctrl+o to expand)
+
+● Bash(python3 - <<'EOF'
+      p='src/main.tsx'…)
+  ⎿  Updated src/main.tsx (+3 -2)
+       1  import { StrictMode } from 'react'
+       2  import { createRoot } from 'react-dom/client'
+       3 -import { QueryClient, QueryClientProvider } from '@tanstack/rea
+         -ct-query'                                                      
+       3 +import { QueryClientProvider } from '@tanstack/react-query'    
+       4  import { ReactQueryDevtools } from '@tanstack/react-query-devto
+          ols'
+       5  import { RouterProvider } from 'react-router/dom'
+       6 +import { createQueryClient } from './api/queries'              
+       7  import './index.css'
+       8  import { router } from './router'
+       9  
+       9 -const queryClient = new QueryClient()                          
+      10 +const queryClient = createQueryClient()                        
+      11  
+      12  createRoot(document.getElementById('root')!).render(
+      13    <StrictMode>
+
+● Next, the default MSW handlers, so tests in step 7 run against the same three
+  endpoints.
+
+● Write(src/test/handlers.ts)
+  ⎿  Wrote 19 lines to src/test/handlers.ts
+       1 import { http, HttpResponse } from 'msw'
+       2 import { API_BASE_URL } from '../api/client'
+       3 import type { NewPost } from '../api/schemas'
+       4 import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
+       5
+       6 /** Happy-path API; tests override single endpoints with `server
+         .use(...)`. */
+       7 export const handlers = [
+       8   http.get(`${API_BASE_URL}/users`, () => HttpResponse.json(fixt
+         ureUsers)),
+     … +11 lines (ctrl+o to expand)
+
+● Write(src/test/server.ts)
+  ⎿  Added 3 lines, removed 3 lines
+      1  import { setupServer } from 'msw/node'
+      2 +import { handlers } from './handlers'                           
+      3  
+      3 -// Default handlers get added here once the API layer exists;   
+      4 -// individual tests override them with `server.use(...)`.       
+      5 -export const server = setupServer()                             
+      4 +// Individual tests override the defaults with `server.use(...)`
+        +.                                                               
+      5 +export const server = setupServer(...handlers)                  
+
+● Next I'll run a throwaway test to check the hooks against MSW, then the
+  post-agent gate.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Everything passes. Last, I'll update PLAN.md: tick step 3 and log the two
+  decisions.
+
+● Bash(python3 - <<'EOF'
+      p='PLAN.md'…)
+  ⎿  Updated PLAN.md (+17 -1)
+      20  
+      21  - [x] 1. Project setup: scaffold, tooling, `post-agent` gate
+      22  - [x] 2. Layout and UI/UX definition (on fixtures; see decision
+          s 7–10 and DESIGN.md)
+      23 -- [ ] 3. API layer + types (`/users`, `/users/:id/posts`, `POST
+         - /posts`)                                                      
+      23 +- [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST
+         + /posts`)                                                      
+      24  - [ ] 4. Users list with search by name
+      25  - [ ] 5. User posts + create-post form (validated, required tit
+          le and body)
+      26  - [ ] 6. Loading and error states
+     ...
+      81  11. **Agent tooling is out of lint/format scope.** `.claude`, `
+          .agents`, `.codex` and
+      82      `.impeccable` are in ESLint's `globalIgnores` and `.prettie
+          rignore`; the vendored skill
+      83      scripts were failing `post-agent`.
+      84 +12. **Created posts live in their own cache entry, not in the s
+         +erver list.** Writing                                          
+      85 +    them into `['users', id, 'posts']` with `setQueryData` brea
+         +ks in two cases: while                                         
+      86 +    that list is still loading, the fetch result overwrites the
+         + new post; after it has                                        
+      87 +    failed, the query flips to success and hides the error. So 
+         +`useCreatePost` writes                                         
+      88 +    to `['local-posts', id]` (`gcTime`/`staleTime: Infinity`, a
+         + no-op `queryFn`) and                                          
+      89 +    the UI shows local posts above server posts. The server pos
+         +ts query keeps its own                                         
+      90 +    loading and error states.                                  
+      91 +13. **Search is client-side, no debounce.** `/users` returns on
+         +ly 10 users, so                                                
+      92 +    `fetchUsers()` takes no search parameter; the panel filters
+         + the cached list on                                            
+      93 +    each keystroke. There's no request per keystroke, so nothin
+         +g needs debouncing.                                            
+      94 +14. **API layer shape.** `src/api/` holds the Zod schemas (type
+         +s in `src/types.ts`                                            
+      95 +    are inferred from them), a `request()` helper that throws `
+         +ApiError` on non-2xx                                           
+      96 +    responses and validates every response body, plain endpoint
+         + functions, and the                                            
+      97 +    TanStack Query hooks. The query client sets `staleTime: Inf
+         +inity` (the data never                                         
+      98 +    changes) and `retry: 1`, so the error state shows quickly. 
+         +`src/test/handlers.ts`                                         
+      99 +    gives MSW a happy-path default for all three endpoints.    
+
+● Step 3 (the API layer) is done. The UI still runs on fixtures; connecting it
+  is steps 4 and 5. npm run post-agent passes. I also ran a throwaway hook test
+  against MSW (3 of 3 passed) and then deleted it, since tests belong to step 7.
+
+  What's in src/api/
+  - schemas.ts (src/api/schemas.ts): Zod schemas for users and posts. The User,
+    Post and NewPost types are now generated from them; types.ts (src/types.ts)
+    just re-exports them, so existing imports still work.
+  - client.ts (src/api/client.ts): a request() helper. It throws an ApiError
+    (with the HTTP status) when a response isn't 2xx, and checks every response
+    body against its schema.
+  - endpoints.ts (src/api/endpoints.ts): fetchUsers, fetchUserPosts and
+    createPost. As you asked, fetchUsers() has no search parameter and there's
+    no debounce. Step 4 will filter the cached list with the existing
+    filterByName.
+  - queries.ts (src/api/queries.ts):
+    - createQueryClient(): data is fetched once per session and never refetched
+      (staleTime: Infinity, since JSONPlaceholder data never changes), with one
+      retry so errors show quickly.
+    - Hooks: useUsers, useUser(id) (picks one user out of the cached list, no
+      extra request), useUserPosts, useLocalPosts and useCreatePost.
+  - localIds.ts (src/api/localIds.ts): moved here from src/posts/, with its
+    import updated.
+  - src/test/handlers.ts: MSW now has default handlers for all three endpoints.
+    The POST handler mimics JSONPlaceholder and always returns id: 101.
+
+  One change from the plan: created posts don't go into the server posts list.
+  They get their own cache entry and the UI shows them above the server posts.
+  Putting them in the server list breaks in two cases:
+  - While the list is still loading, the incoming fetch overwrites the new post.
+  - After the list has failed to load, adding the post marks the query as
+    successful, so the error disappears and the real posts never load. That
+    conflicts with the "you can still write a new post" message in the error
+    state.
+
+  I logged this as decision 12 in PLAN.md, with client-side search (13) and the
+  API layer layout (14), and ticked step 3.
+
+  Nothing is committed yet.

@@ -1,7 +1,13 @@
-import { Link, Outlet, ScrollRestoration, useMatch } from 'react-router'
-import { ThemeSwitch } from '../theme/ThemeSwitch'
-import { UsersPanel } from '../users/UsersPanel'
-import { cx } from '../lib/cx'
+import {
+  Link,
+  Outlet,
+  ScrollRestoration,
+  useLocation,
+  useMatch,
+} from 'react-router'
+import { ThemeSwitch } from '../../theme/ThemeSwitch'
+import { UsersPanel } from '../../users/UsersPanel/UsersPanel'
+import { cx } from '../../lib/cx'
 import styles from './RootLayout.module.css'
 
 /**
@@ -10,6 +16,7 @@ import styles from './RootLayout.module.css'
  */
 export function RootLayout() {
   const atRoot = useMatch({ path: '/', end: true })
+  const { search } = useLocation()
 
   return (
     <div className={cx(styles.layout, !atRoot && styles['layout--detail'])}>
@@ -17,7 +24,7 @@ export function RootLayout() {
         Skip to content
       </a>
       <header className={styles.topbar}>
-        <Link to="/" className={styles.wordmark}>
+        <Link to={{ pathname: '/', search }} className={styles.wordmark}>
           Posts Explorer
         </Link>
         <ThemeSwitch />

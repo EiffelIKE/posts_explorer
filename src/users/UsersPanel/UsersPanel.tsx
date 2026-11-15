@@ -1,31 +1,26 @@
-import { useId, useMemo, useState } from 'react'
+import { useId, useMemo } from 'react'
 import { Search, X } from 'lucide-react'
-import { fixtureUsers } from '../fixtures/data'
-import { useFixtureState } from '../fixtures/useFixtureState'
-import type { User } from '../types'
-import { StateMessage } from '../ui/StateMessage'
-import button from '../ui/button.module.css'
-import { cx } from '../lib/cx'
-import { UserBadge, UserBadgeSkeleton } from './UserBadge'
+import { useUsers } from '../../api/queries'
+import { StateMessage } from '../../ui/StateMessage/StateMessage'
+import button from '../../ui/button.module.css'
+import { cx } from '../../lib/cx'
+import { filterByName, SEARCH_MAX_LENGTH, useSearchQuery } from '../searchQuery'
+import { UserBadge, UserBadgeSkeleton } from '../UserBadge/UserBadge'
 import styles from './UsersPanel.module.css'
-
-function filterByName(users: User[], query: string) {
-  const needle = query.trim().toLocaleLowerCase()
-  if (!needle) return users
-  return users.filter((user) => user.name.toLocaleLowerCase().includes(needle))
-}
 
 /** The badge rack: search on top, the directory of users below. */
 export function UsersPanel() {
-  const fixture = useFixtureState()
-  const [query, setQuery] = useState('')
+  const { data: users, isPending, isError, refetch } = useUsers()
+  const [query, setQuery] = useSearchQuery()
   const searchId = useId()
-  const users = fixtureUsers
-  const visible = useMemo(() => filterByName(users, query), [users, query])
+  const visible = useMemo(
+    () => (users ? filterByName(users, query) : []),
+    [users, query],
+  )
   const isFiltering = query.trim() !== ''
 
   let count = ''
-  if (fixture.users === 'ready') {
+  if (users) {
     count = isFiltering
       ? `${visible.length} of ${users.length}`
       : `${users.length}`
@@ -60,6 +55,7 @@ export function UsersPanel() {
             placeholder="Search by name"
             autoComplete="off"
             spellCheck={false}
+            maxLength={SEARCH_MAX_LENGTH}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
@@ -68,7 +64,7 @@ export function UsersPanel() {
                 setQuery('')
               }
             }}
-            disabled={fixture.users !== 'ready'}
+            disabled={!users}
           />
           {query && (
             <button
@@ -84,7 +80,7 @@ export function UsersPanel() {
       </div>
 
       <div className={styles.panel__body}>
-        {fixture.users === 'loading' && (
+        {isPending && (
           <div aria-busy="true">
             <p className="visually-hidden" role="status">
               Loading users…
@@ -99,7 +95,7 @@ export function UsersPanel() {
           </div>
         )}
 
-        {fixture.users === 'error' && (
+        {isError && !users && (
           <StateMessage
             kind="error"
             title="Couldn't load users"
@@ -107,6 +103,7 @@ export function UsersPanel() {
               <button
                 type="button"
                 className={cx(button.button, button['button--secondary'])}
+                onClick={() => void refetch()}
               >
                 Try again
               </button>
@@ -116,7 +113,7 @@ export function UsersPanel() {
           </StateMessage>
         )}
 
-        {fixture.users === 'ready' && visible.length === 0 && (
+        {users && visible.length === 0 && (
           <StateMessage
             kind="no-results"
             title={`No users match “${query.trim()}”`}
@@ -134,7 +131,7 @@ export function UsersPanel() {
           </StateMessage>
         )}
 
-        {fixture.users === 'ready' && visible.length > 0 && (
+        {users && visible.length > 0 && (
           <nav aria-label="Users">
             <ul className={styles.list}>
               {visible.map((user) => (

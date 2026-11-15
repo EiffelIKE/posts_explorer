@@ -20,8 +20,8 @@ Working plan and decision log. Product scope lives in [PRODUCT.md](PRODUCT.md).
 
 - [x] 1. Project setup: scaffold, tooling, `post-agent` gate
 - [x] 2. Layout and UI/UX definition (on fixtures; see decisions 7–10 and DESIGN.md)
-- [ ] 3. API layer + types (`/users`, `/users/:id/posts`, `POST /posts`)
-- [ ] 4. Users list with search by name
+- [x] 3. API layer + types (`/users`, `/users/:id/posts`, `POST /posts`)
+- [x] 4. Users list with search by name (synced with `?q=`, see decision 15)
 - [ ] 5. User posts + create-post form (validated, required title and body)
 - [ ] 6. Loading and error states
 - [ ] 7. Tests (at least 3) and add them to the `post-agent` gate
@@ -81,3 +81,30 @@ Test gates get appended once tests exist (step 7).
 11. **Agent tooling is out of lint/format scope.** `.claude`, `.agents`, `.codex` and
     `.impeccable` are in ESLint's `globalIgnores` and `.prettierignore`; the vendored skill
     scripts were failing `post-agent`.
+12. **Created posts live in their own cache entry, not in the server list.** Writing
+    them into `['users', id, 'posts']` with `setQueryData` breaks in two cases: while
+    that list is still loading, the fetch result overwrites the new post; after it has
+    failed, the query flips to success and hides the error. So `useCreatePost` writes
+    to `['local-posts', id]` (`gcTime`/`staleTime: Infinity`, a no-op `queryFn`) and
+    the UI shows local posts above server posts. The server posts query keeps its own
+    loading and error states.
+13. **Search is client-side, no debounce.** `/users` returns only 10 users, so
+    `fetchUsers()` takes no search parameter; the panel filters the cached list on
+    each keystroke. There's no request per keystroke, so nothing needs debouncing.
+14. **API layer shape.** `src/api/` holds the Zod schemas (types in `src/types.ts`
+    are inferred from them), a `request()` helper that throws `ApiError` on non-2xx
+    responses and validates every response body, plain endpoint functions, and the
+    TanStack Query hooks. The query client sets `staleTime: Infinity` (the data never
+    changes) and `retry: 1`, so the error state shows quickly. `src/test/handlers.ts`
+    gives MSW a happy-path default for all three endpoints.
+15. **Search lives in the URL as `?q=`.** It survives reloads, back/forward and links:
+    in-app links carry the current query string. The input keeps exactly what was
+    typed; matching trims and lowercases it (partial, case-insensitive), so an empty
+    or whitespace-only search shows everyone. The URL gets the trimmed value in the
+    user's casing, `q` is removed when that is empty, and other parameters stay.
+    Typing uses `replace` (one history entry per search, not per keystroke) and
+    `preventScrollReset`. One-character searches are allowed (10 users); `maxLength`
+    is 60. `UsersPanel` now reads `useUsers()` instead of the fixture, so its
+    loading/error UI is live and "Try again" refetches; the posts panel still uses
+    fixtures until step 5. `src/users/UsersPanel/UsersPanel.test.tsx` covers the search rules
+    (not yet in the `post-agent` gate; step 7).

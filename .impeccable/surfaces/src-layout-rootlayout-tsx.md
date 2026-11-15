@@ -1,11 +1,11 @@
 ---
 version: 1
 slug: "src-layout-rootlayout-tsx"
-primary_target: "src/layout/RootLayout.tsx"
+primary_target: "src/layout/RootLayout/RootLayout.tsx"
 related_targets: ["src/router.tsx","src/main.tsx"]
 ---
 
-# Surface brief: Posts Explorer app shell (`/` and `/users/:userId`), src/layout/RootLayout.tsx
+# Surface brief: Posts Explorer app shell (`/` and `/users/:userId`), src/layout/RootLayout/RootLayout.tsx
 
 Mode: Operate. Code-led (operate surface). Chosen sketch: `.impeccable/mocks/decision/model-pick.html`.
 

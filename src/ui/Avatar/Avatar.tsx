@@ -1,5 +1,5 @@
-import { getInitials } from '../lib/names'
-import { cx } from '../lib/cx'
+import { getInitials } from '../../lib/names'
+import { cx } from '../../lib/cx'
 import styles from './Avatar.module.css'
 
 interface AvatarProps {

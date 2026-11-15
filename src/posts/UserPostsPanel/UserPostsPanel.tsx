@@ -1,17 +1,17 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
-import { fixturePostsFor, fixtureUsers } from '../fixtures/data'
-import { useFixtureState } from '../fixtures/useFixtureState'
-import { getFirstName } from '../lib/names'
-import { cx } from '../lib/cx'
-import type { NewPost, Post } from '../types'
-import { StateMessage } from '../ui/StateMessage'
-import button from '../ui/button.module.css'
-import { Composer } from './Composer'
-import { HeroBadge, HeroBadgeSkeleton } from './HeroBadge'
-import { nextLocalPostId } from './localIds'
-import { PostList, PostListSkeleton } from './PostList'
+import { fixturePostsFor, fixtureUsers } from '../../fixtures/data'
+import { useFixtureState } from '../../fixtures/useFixtureState'
+import { getFirstName } from '../../lib/names'
+import { cx } from '../../lib/cx'
+import type { NewPost, Post } from '../../types'
+import { StateMessage } from '../../ui/StateMessage/StateMessage'
+import button from '../../ui/button.module.css'
+import { Composer } from '../Composer/Composer'
+import { HeroBadge, HeroBadgeSkeleton } from '../HeroBadge/HeroBadge'
+import { nextLocalPostId } from '../../api/localIds'
+import { PostList, PostListSkeleton } from '../PostList/PostList'
 import styles from './UserPostsPanel.module.css'
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -23,8 +23,9 @@ export function UserPostsRoute() {
 }
 
 function BackLink() {
+  const { search } = useLocation()
   return (
-    <Link to="/" viewTransition className={styles.back}>
+    <Link to={{ pathname: '/', search }} viewTransition className={styles.back}>
       <ArrowLeft aria-hidden="true" />
       All users
     </Link>
@@ -33,6 +34,7 @@ function BackLink() {
 
 function UserPostsPanel({ userId }: { userId: number }) {
   const fixture = useFixtureState()
+  const { search } = useLocation()
   const user = fixtureUsers.find((candidate) => candidate.id === userId)
   const [localPosts, setLocalPosts] = useState<Post[]>([])
 
@@ -66,7 +68,7 @@ function UserPostsPanel({ userId }: { userId: number }) {
           title="We couldn’t find that user"
           action={
             <Link
-              to="/"
+              to={{ pathname: '/', search }}
               className={cx(button.button, button['button--secondary'])}
             >
               Back to all users

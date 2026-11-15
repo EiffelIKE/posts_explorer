@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { CircleAlert, SearchX, FileText, UserX } from 'lucide-react'
-import { cx } from '../lib/cx'
+import { cx } from '../../lib/cx'
 import styles from './StateMessage.module.css'
 
 const icons = {

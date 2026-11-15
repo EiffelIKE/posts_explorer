@@ -1,6 +1,6 @@
-import type { User } from '../types'
-import { Avatar } from '../ui/Avatar'
-import { cx } from '../lib/cx'
+import type { User } from '../../types'
+import { Avatar } from '../../ui/Avatar/Avatar'
+import { cx } from '../../lib/cx'
 import styles from './HeroBadge.module.css'
 
 /** The selected user's badge, clipped to the top of the posts panel. */

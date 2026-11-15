@@ -1,5 +1,5 @@
-import type { Post } from '../types'
-import { cx } from '../lib/cx'
+import type { Post } from '../../types'
+import { cx } from '../../lib/cx'
 import styles from './PostList.module.css'
 
 /** Posts as flat entries on hairlines, one reading measure. */

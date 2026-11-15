@@ -1,9 +1,9 @@
 import { useId, useRef, useState, type FormEvent } from 'react'
 import { CircleAlert, LoaderCircle, PenLine, Plus } from 'lucide-react'
 import { z } from 'zod'
-import type { NewPost } from '../types'
-import { cx } from '../lib/cx'
-import button from '../ui/button.module.css'
+import type { NewPost } from '../../types'
+import { cx } from '../../lib/cx'
+import button from '../../ui/button.module.css'
 import styles from './Composer.module.css'
 
 const postSchema = z.object({
