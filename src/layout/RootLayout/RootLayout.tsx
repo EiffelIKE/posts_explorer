@@ -7,6 +7,7 @@ import {
 } from 'react-router'
 import { ThemeSwitch } from '../../theme/ThemeSwitch'
 import { UsersPanel } from '../../users/UsersPanel/UsersPanel'
+import { Logo } from '../../ui/Logo/Logo'
 import { cx } from '../../lib/cx'
 import styles from './RootLayout.module.css'
 
@@ -25,6 +26,7 @@ export function RootLayout() {
       </a>
       <header className={styles.topbar}>
         <Link to={{ pathname: '/', search }} className={styles.wordmark}>
+          <Logo />
           Posts Explorer
         </Link>
         <ThemeSwitch />

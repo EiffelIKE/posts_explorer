@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="5" y="4" width="22" height="25" rx="4" fill="#ffffff" stroke="#1a1d26" stroke-width="2"/><rect x="12" y="4" width="8" height="3" rx="1" fill="#4f46e5"/><circle cx="16" cy="14" r="4" fill="#4f46e5"/><path d="M10 23h12" stroke="#1a1d26" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .circle { fill: #5048e4; }
+    @media (prefers-color-scheme: dark) { .circle { fill: #5851eb; } }
+  </style>
+  <circle class="circle" cx="16" cy="16" r="15.5"/>
+  <g fill="#fff" fill-rule="evenodd">
+    <path id="capital-p" transform="translate(0 -1.3)" d="M10.75 10h5.9a4.6 4.6 0 0 1 0 9.2H13.5V22h-2.75V10Zm2.75 2.5v4.2h3.15a2.1 2.1 0 0 0 0-4.2H13.5Z"/>
+    <path id="lowercase-e" transform="translate(2.9 3.808) scale(.88)" d="M29.5 18.6h-5.6a2.1 2.1 0 0 0 2.2 1.65c.8 0 1.45-.28 2-.85l1.15 1.2a4.4 4.4 0 0 1-3.25 1.55c-2.55 0-4.15-1.7-4.15-4.15s1.65-4.15 3.95-4.15c2.25 0 3.75 1.65 3.75 4.1l-.05.65Zm-5.6-1.5h3.65c-.16-.94-.8-1.5-1.8-1.5-.93 0-1.64.56-1.85 1.5Z"/>
+  </g>
+</svg>

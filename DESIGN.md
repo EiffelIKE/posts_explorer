@@ -355,7 +355,7 @@ The badge silhouette carries two marks: a clip tab, a short indigo bar centered 
 
 ### Navigation
 
-- **Top bar:** sticky, Badge Stock with a bottom Hairline, 800-weight wordmark.
+- **Top bar:** sticky, Badge Stock with a bottom Hairline, 800-weight wordmark led by the 28px logo mark (`src/ui/Logo`, disc painted with the primary fill via `--posts-explorer-primary`, 10px gap).
 - **Theme switch:** a segmented control on Ground with a Hairline border; options are 600/13px with a 15px icon; the checked option lifts to Badge Stock with the Stock shadow. Below 640px, labels collapse to icons (36 by 32px targets) with the label kept for screen readers.
 - **Mobile back link:** 44px tall, arrow plus label, Hairline hover fill.
 
